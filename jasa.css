@@ -849,3 +849,58 @@ body {
 #questionnaireJasaForm .vendor-documents {
   margin-top: 10px;
 }
+
+
+/* =========================================
+   E-SPEC JASA - SUBSECTION THEME COLOR
+========================================= */
+
+/* Subsection container */
+#questionnaireJasaForm .service-subsection {
+  background: #ffffff;
+  border: 1px solid #e8e5ff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Subsection heading */
+#questionnaireJasaForm .service-subsection h4 {
+  background: #f3f1ff;
+  color: #5143d0;
+  border-bottom: 1px solid #e5e0ff;
+  padding: 13px 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Subsection content */
+#questionnaireJasaForm .service-subsection .q-grid,
+#questionnaireJasaForm .service-subsection .q-checkbox-group {
+  padding: 0;
+}
+
+/* Input focus */
+#questionnaireJasaForm .service-subsection input:focus,
+#questionnaireJasaForm .service-subsection textarea:focus,
+#questionnaireJasaForm .service-subsection select:focus {
+  border-color: #6558e8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.10);
+}
+
+/* Add technical specification button */
+#questionnaireJasaForm #addTechnicalSpecificationBtn {
+  background: #6558e8;
+  color: #ffffff;
+  border: 1px solid #6558e8;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#questionnaireJasaForm #addTechnicalSpecificationBtn:hover {
+  background: #5143d0;
+  border-color: #5143d0;
+}
