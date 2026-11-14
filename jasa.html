@@ -21,7 +21,6 @@
 
   <div>
     <button type="button" id="resetJasaBtn">Reset Form</button>
-    </button>
   </div>
 </header>
 
@@ -41,223 +40,455 @@
       ← Kembali ke pilihan spesifikasi
     </a>
   </div>
-    <p class="questionnaire-help">
-      Lengkapi seluruh parameter spesifikasi jasa. Field bertanda * wajib diisi.
-    </p>
-  
-    <!-- KUESIONER JASA -->
+
+  <p class="questionnaire-help">
+    Lengkapi seluruh parameter spesifikasi jasa.
+    Field bertanda * wajib diisi.
+  </p>
+
+  <!-- =================================================
+       KUESIONER JASA
+  ================================================== -->
+
   <form id="questionnaireJasaForm" class="questionnaire-screen no-print">
 
-    <!-- 01 INFORMASI DOKUMEN -->
+    <!-- 01 VERSION -->
+
     <section class="q-section">
-      <h2>01. Informasi Dokumen</h2>
+      <h2>01. Version</h2>
 
       <div class="q-grid">
 
         <label class="q-field">
-          Nomor Dokumen
-          <input name="docNo" value="F/SJ-001">
+          Version
+          <input
+            type="text"
+            name="version"
+            value="00"
+            readonly
+          >
         </label>
 
         <label class="q-field">
-          Revisi
-          <input name="revision" value="00">
-        </label>
-
-        <label class="q-field">
-          Tanggal Revisi
-          <input name="revisionDate" type="date">
-        </label>
-
-        <label class="q-field">
-          Versi
-          <input name="version" value="01">
-        </label>
-
-        <label class="q-field">
-          Tanggal Dibuat
-          <input name="createdDate" type="date">
+          Created Date
+          <input
+            type="date"
+            name="createdDate"
+            readonly
+          >
         </label>
 
       </div>
     </section>
 
-    <!-- 02 IDENTITAS -->
+    <!-- 02 IDENTITY -->
+
     <section class="q-section">
-      <h2>02. Identitas Pemohon</h2>
+      <h2>02. Identity</h2>
 
       <div class="q-grid">
 
         <label class="q-field">
-          Plant
-          <input name="plant">
-        </label>
-
-        <label class="q-field">
-          Requestor *
-          <input name="requestor" required>
-        </label>
-
-        <label class="q-field">
-          Departemen
-          <input name="department">
-        </label>
-
-        <label class="q-field">
-          Service Group
-          <input name="serviceGroup">
-        </label>
-
-        <label class="q-field">
-          Service Category
-          <select name="serviceCategory">
-            <option value="">Pilih kategori jasa</option>
-            <option>Jasa Maintenance</option>
-            <option>Jasa Engineering</option>
-            <option>Jasa Konsultan</option>
-            <option>Jasa Konstruksi / Instalasi</option>
-            <option>Jasa Transportasi</option>
-            <option>Jasa Kebersihan</option>
-            <option>Jasa Lainnya</option>
+          Plant *
+          <select name="plant" id="plantSelect" required>
+            <option value="">Pilih Plant</option>
+            <option value="1210 - Plant Gending">
+              1210 - Plant Gending
+            </option>
+            <option value="1220 - Plant Cikarang">
+              1220 - Plant Cikarang
+            </option>
+            <option value="1230 - Plant Minahasa Selatan">
+              1230 - Plant Minahasa Selatan
+            </option>
           </select>
         </label>
 
         <label class="q-field">
-          Cost Center / Budget
-          <input name="costCenter">
+          Requestor *
+          <input
+            type="text"
+            name="requestor"
+            required
+            placeholder="Masukkan nama requestor"
+          >
         </label>
+
+        <label class="q-field">
+          Department *
+          <select name="department" id="deptSelect" required>
+            <option value="">Pilih Plant terlebih dahulu</option>
+          </select>
+        </label>
+
+        <label class="q-field">
+          Material Group *
+          <select name="materialGroup" required>
+            <option value="">Pilih Material Group</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Mechanical">Mechanical</option>
+            <option value="Instrument">Instrument</option>
+            <option value="Utility">Utility</option>
+            <option value="Chemical">Chemical</option>
+            <option value="Packaging">Packaging</option>
+            <option value="General">General</option>
+            <option value="Others">Others</option>
+          </select>
+        </label>
+
+        <div class="q-field">
+          Material Category *
+          <div class="q-checkbox-group">
+
+            <label>
+              <input
+                type="checkbox"
+                name="materialCategory"
+                value="Asset Jasa"
+              >
+              Asset Jasa
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                name="materialCategory"
+                value="Expense Jasa"
+              >
+              Expense Jasa
+            </label>
+
+          </div>
+        </div>
 
       </div>
     </section>
 
-    <!-- 03 SERVICE OBJECTIVE -->
+    <!-- 03 PURCHASE OBJECTIVE -->
+
     <section class="q-section">
-      <h2>03. Tujuan Pengadaan Jasa</h2>
+      <h2>03. Purchase Objective</h2>
 
       <div class="q-grid">
 
         <label class="q-field">
-          Nama Jasa / Service Description *
-          <input name="serviceName" required>
+          Reason to Procure *
+          <select name="reasonChoice" required>
+            <option value="">Pilih alasan pengadaan</option>
+            <option value="Facility Management & Maintenance">
+              Facility Management & Maintenance
+            </option>
+            <option value="General IT">
+              General IT
+            </option>
+            <option value="New Project">
+              New Project
+            </option>
+            <option value="Others">
+              Others
+            </option>
+          </select>
         </label>
 
         <label class="q-field">
-          Background / Reason to Procure
-          <textarea name="reason" rows="3"></textarea>
+          Other Reason
+          <input
+            type="text"
+            name="reasonOther"
+            placeholder="Isi alasan lainnya"
+          >
+        </label>
+
+        <label class="q-field">
+          Nama Jasa / Service Description *
+          <input
+            type="text"
+            name="serviceName"
+            required
+          >
         </label>
 
         <label class="q-field">
           Lokasi Pekerjaan
-          <input name="location">
-        </label>
-
-        <label class="q-field">
-          Target Mulai Pekerjaan
-          <input name="startDate" type="date">
-        </label>
-
-        <label class="q-field">
-          Target Selesai Pekerjaan
-          <input name="endDate" type="date">
-        </label>
-
-        <label class="q-field">
-          Durasi / Periode Kontrak
-          <input name="duration" placeholder="Contoh: 30 hari / 1 tahun">
+          <input type="text" name="location">
         </label>
 
       </div>
     </section>
 
-    <!-- 04 SERVICE SPECIFICATION -->
+    <!-- 04 GENERAL SPECIFICATION -->
+
     <section class="q-section">
-      <h2>04. Spesifikasi Jasa</h2>
+      <h2>04. General Specification</h2>
 
       <div class="q-grid">
 
         <label class="q-field">
-          Tujuan dan Hasil yang Diharapkan
-          <textarea name="objective"></textarea>
+          Project Name *
+          <input
+            type="text"
+            name="projectName"
+            required
+          >
         </label>
 
         <label class="q-field">
-          Ruang Lingkup Pekerjaan / Scope of Work *
-          <textarea name="scopeOfWork" required></textarea>
+          Project Description *
+          <textarea
+            name="projectDescription"
+            rows="4"
+            required
+          ></textarea>
         </label>
 
         <label class="q-field">
-          Persyaratan Teknis
-          <textarea name="technicalRequirements"></textarea>
-        </label>
-
-        <label class="q-field">
-          Standar / Regulasi yang Harus Dipenuhi
-          <textarea name="standards"></textarea>
-        </label>
-
-        <label class="q-field">
-          Kualifikasi Tenaga Kerja
-          <textarea name="personnel"></textarea>
-        </label>
-
-        <label class="q-field">
-          Peralatan / Tools dari Penyedia
-          <textarea name="tools"></textarea>
+          Timeline *
+          <input
+            type="date"
+            name="timeline"
+            required
+          >
         </label>
 
       </div>
     </section>
 
-    <!-- 05 SCOPE DAN DELIVERABLES -->
+    <!-- 05 TECHNICAL SPECIFICATION -->
+
     <section class="q-section">
-      <h2>05. Lingkup, Hasil Pekerjaan & Penerimaan</h2>
+      <h2>05. Technical Specification</h2>
+
+      <div id="technicalSpecificationList">
+
+        <label class="q-field">
+          Technical Specification 1
+          <textarea
+            name="technicalSpecification[]"
+            rows="3"
+            placeholder="Masukkan persyaratan teknis"
+          ></textarea>
+        </label>
+
+      </div>
+
+      <button
+        type="button"
+        id="addTechnicalSpecificationBtn"
+      >
+        + Tambah Technical Specification
+      </button>
+    </section>
+
+    <!-- 06 KPI -->
+
+    <section class="q-section">
+      <h2>06. Key Performance Indicator (KPI)</h2>
+
+      <div id="kpiList">
+
+        <label class="q-field">
+          KPI 1
+          <textarea
+            name="kpi[]"
+            rows="3"
+            placeholder="Masukkan indikator kinerja"
+          ></textarea>
+        </label>
+
+      </div>
+
+      <button type="button" id="addKpiBtn">
+        + Tambah KPI
+      </button>
+    </section>
+
+    <!-- 07 SCOPE -->
+
+    <section class="q-section">
+      <h2>07. Scope & Requirements</h2>
 
       <div class="q-grid">
 
         <label class="q-field">
-          Tanggung Jawab Penyedia Jasa
-          <textarea name="vendorResponsibility"></textarea>
+          Environment Condition & Restriction
+          <textarea
+            name="environmentCondition"
+            rows="3"
+          ></textarea>
         </label>
 
         <label class="q-field">
-          Tanggung Jawab User / Perusahaan
-          <textarea name="userResponsibility"></textarea>
+          Health, Safety & Environment Standard
+          <textarea
+            name="hse"
+            rows="3"
+          ></textarea>
         </label>
 
         <label class="q-field">
-          Deliverables / Output Pekerjaan *
-          <textarea name="deliverables" required></textarea>
+          License & Regulation
+          <textarea
+            name="licenseRegulation"
+            rows="3"
+          ></textarea>
         </label>
 
         <label class="q-field">
-          Kriteria Penerimaan / Acceptance Criteria *
-          <textarea name="acceptanceCriteria" required></textarea>
-        </label>
-
-        <label class="q-field">
-          HSE / Safety Requirements
-          <textarea name="hse"></textarea>
-        </label>
-
-        <label class="q-field">
-          Dokumen yang Wajib Diserahkan
-          <textarea name="requiredDocuments"></textarea>
-        </label>
-
-        <label class="q-field">
-          Garansi / Masa Pemeliharaan
-          <input name="warranty">
-        </label>
-
-        <label class="q-field">
-          Ketentuan Tambahan
-          <textarea name="additionalTerms"></textarea>
+          Warranty / After Sales Service
+          <textarea
+            name="warranty"
+            rows="3"
+          ></textarea>
         </label>
 
       </div>
     </section>
 
-    <!-- TOMBOL SAVE AS & SUBMIT -->
+    <!-- 08 ATTACHMENT DOCUMENTS -->
+
+    <section class="q-section">
+      <h2>08. Attachment Documents</h2>
+
+      <p>
+        Dokumen yang disediakan oleh User / SASA.
+        Setiap dokumen yang dipilih harus dilengkapi file.
+      </p>
+
+      <div class="q-grid">
+
+        <label class="q-field">
+          Spec Detail
+          <input
+            type="file"
+            name="attachmentSpecDetail"
+          >
+        </label>
+
+        <label class="q-field">
+          BQ
+          <input
+            type="file"
+            name="attachmentBQ"
+          >
+        </label>
+
+        <label class="q-field">
+          Gambar / Design
+          <input
+            type="file"
+            name="attachmentDesign"
+          >
+        </label>
+
+        <label class="q-field">
+          Timeline
+          <input
+            type="file"
+            name="attachmentTimeline"
+          >
+        </label>
+
+        <label class="q-field">
+          Lainnya
+          <input
+            type="text"
+            name="attachmentOther"
+            placeholder="Nama dokumen lainnya"
+          >
+          <input
+            type="file"
+            name="attachmentOtherFile"
+          >
+        </label>
+
+      </div>
+    </section>
+
+    <!-- 09 REQUIRED DOCUMENTS -->
+
+    <section class="q-section">
+      <h2>09. Required Documents</h2>
+
+      <p>
+        Dokumen yang harus disediakan oleh Vendor.
+      </p>
+
+      <div class="q-checkbox-group">
+
+        <label>
+          <input
+            type="checkbox"
+            name="vendorDocuments"
+            value="Garansi Produsen"
+          >
+          Garansi Produsen
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="vendorDocuments"
+            value="Garansi Distributor"
+          >
+          Garansi Distributor
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="vendorDocuments"
+            value="MSDS / COA / Halal"
+          >
+          MSDS / COA / Halal
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="vendorDocuments"
+            value="Manual Book / User Manual"
+          >
+          Manual Book / User Manual
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            name="vendorDocuments"
+            value="Others"
+          >
+          Others
+        </label>
+
+      </div>
+
+      <label class="q-field">
+        Other Required Documents
+        <input
+          type="text"
+          name="vendorDocumentsOther"
+          placeholder="Isi dokumen lainnya"
+        >
+      </label>
+    </section>
+
+    <!-- 10 NOTES -->
+
+    <section class="q-section">
+      <h2>10. Notes</h2>
+
+      <label class="q-field">
+        Catatan Tambahan
+        <textarea
+          name="notes"
+          rows="4"
+          placeholder="Masukkan catatan tambahan jika ada"
+        ></textarea>
+      </label>
+    </section>
+
+    <!-- ACTIONS -->
+
     <div class="form-bottom-actions no-print">
 
       <div class="form-bottom-info">
@@ -284,16 +515,20 @@
 
   </form>
 
-  <!-- TEMPLATE PDF JASA -->
-  </form>
+  <!-- =================================================
+       TEMPLATE DOKUMEN CETAK JASA
+  ================================================== -->
 
-  <!-- TEMPLATE PDF JASA -->
   <form id="printJasaForm" class="document service-document">
 
     <div class="doc-top">
 
       <div class="logo">
-        <img src="img/sasa-logo.png" alt="Logo Sasa" class="sasa-logo">
+        <img
+          src="img/sasa-logo.png"
+          alt="Logo Sasa"
+          class="sasa-logo"
+        >
       </div>
 
       <h2>
@@ -302,6 +537,7 @@
       </h2>
 
       <div class="meta">
+
         <label>
           No Doc <b>:</b>
           <input name="docNo" readonly value="F/SJ-001">
@@ -321,23 +557,26 @@
           Halaman <b>:</b>
           <span>1 / 1</span>
         </label>
-      </div>
 
+      </div>
     </div>
 
     <div class="version">
+
       <label>
         Version <b>:</b>
-        <input name="version" readonly value="01">
+        <input name="version" readonly value="00">
       </label>
 
       <label>
         Created Date <b>:</b>
         <input name="createdDate" readonly>
       </label>
+
     </div>
 
     <!-- IDENTITY -->
+
     <section>
       <h3>IDENTITY</h3>
 
@@ -354,156 +593,226 @@
         </label>
 
         <label class="field">
-          <span>3. Departemen</span>
+          <span>3. Department</span>
           <input name="department" readonly>
         </label>
 
         <label class="field">
-          <span>4. Service Group</span>
-          <input name="serviceGroup" readonly>
+          <span>4. Material Group</span>
+          <input name="materialGroup" readonly>
         </label>
 
-        <label class="field">
-          <span>5. Service Category</span>
-          <input name="serviceCategory" readonly>
-        </label>
+        <div class="field wide">
+          <span>5. Material Category</span>
 
-        <label class="field">
-          <span>6. Cost Center / Budget</span>
-          <input name="costCenter" readonly>
-        </label>
+          <label>
+            <input
+              type="checkbox"
+              name="materialCategory"
+              value="Asset Jasa"
+              disabled
+            >
+            Asset Jasa
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="materialCategory"
+              value="Expense Jasa"
+              disabled
+            >
+            Expense Jasa
+          </label>
+        </div>
 
       </div>
     </section>
 
-    <!-- SERVICE OBJECTIVE -->
+    <!-- PURCHASE OBJECTIVE -->
+
     <section>
-      <h3>SERVICE OBJECTIVE</h3>
+      <h3>PURCHASE OBJECTIVE</h3>
 
       <div class="service-grid">
 
+        <label class="field">
+          <span>1. Reason to Procure</span>
+          <input name="reasonChoice" readonly>
+        </label>
+
+        <label class="field">
+          <span>2. Other Reason</span>
+          <input name="reasonOther" readonly>
+        </label>
+
         <label class="field wide">
-          <span>1. Nama Jasa / Service Description</span>
+          <span>3. Service Description</span>
           <input name="serviceName" readonly>
         </label>
 
-        <label class="field wide">
-          <span>2. Background / Reason to Procure</span>
-          <textarea name="reason" readonly></textarea>
-        </label>
-
         <label class="field">
-          <span>3. Lokasi Pekerjaan</span>
+          <span>4. Location</span>
           <input name="location" readonly>
         </label>
 
-        <label class="field">
-          <span>4. Target Mulai Pekerjaan</span>
-          <input name="startDate" readonly>
+      </div>
+    </section>
+
+    <!-- GENERAL SPECIFICATION -->
+
+    <section>
+      <h3>GENERAL SPECIFICATION</h3>
+
+      <div class="service-grid">
+
+        <label class="field wide">
+          <span>1. Project Name</span>
+          <input name="projectName" readonly>
+        </label>
+
+        <label class="field wide">
+          <span>2. Project Description</span>
+          <textarea name="projectDescription" readonly></textarea>
         </label>
 
         <label class="field">
-          <span>5. Target Selesai Pekerjaan</span>
-          <input name="endDate" readonly>
-        </label>
-
-        <label class="field">
-          <span>6. Durasi / Periode Kontrak</span>
-          <input name="duration" readonly>
+          <span>3. Timeline</span>
+          <input name="timeline" readonly>
         </label>
 
       </div>
     </section>
 
-    <!-- SERVICE SPECIFICATION -->
+    <!-- TECHNICAL SPECIFICATION -->
+
     <section>
-      <h3>SERVICE SPECIFICATION</h3>
+      <h3>TECHNICAL SPECIFICATION</h3>
 
       <div class="service-grid">
-
         <label class="field wide">
-          <span>1. Tujuan dan Hasil yang Diharapkan</span>
-          <textarea name="objective" readonly></textarea>
+          <span>Technical Specification</span>
+          <textarea
+            name="technicalSpecification"
+            readonly
+          ></textarea>
         </label>
-
-        <label class="field wide">
-          <span>2. Scope of Work</span>
-          <textarea name="scopeOfWork" readonly></textarea>
-        </label>
-
-        <label class="field">
-          <span>3. Persyaratan Teknis</span>
-          <textarea name="technicalRequirements" readonly></textarea>
-        </label>
-
-        <label class="field">
-          <span>4. Standar / Regulasi</span>
-          <textarea name="standards" readonly></textarea>
-        </label>
-
-        <label class="field">
-          <span>5. Kualifikasi Tenaga Kerja</span>
-          <textarea name="personnel" readonly></textarea>
-        </label>
-
-        <label class="field">
-          <span>6. Peralatan / Tools</span>
-          <textarea name="tools" readonly></textarea>
-        </label>
-
       </div>
     </section>
 
-    <!-- DELIVERABLES -->
+    <!-- KPI -->
+
     <section>
-      <h3>SCOPE, DELIVERABLES &amp; ACCEPTANCE</h3>
+      <h3>KEY PERFORMANCE INDICATOR (KPI)</h3>
+
+      <div class="service-grid">
+        <label class="field wide">
+          <span>KPI</span>
+          <textarea name="kpi" readonly></textarea>
+        </label>
+      </div>
+    </section>
+
+    <!-- SCOPE -->
+
+    <section>
+      <h3>SCOPE & REQUIREMENTS</h3>
 
       <div class="service-grid">
 
-        <label class="field">
-          <span>1. Tanggung Jawab Penyedia Jasa</span>
-          <textarea name="vendorResponsibility" readonly></textarea>
+        <label class="field wide">
+          <span>1. Environment Condition & Restriction</span>
+          <textarea name="environmentCondition" readonly></textarea>
         </label>
 
-        <label class="field">
-          <span>2. Tanggung Jawab User / Perusahaan</span>
-          <textarea name="userResponsibility" readonly></textarea>
-        </label>
-
-        <label class="field">
-          <span>3. Deliverables / Output Pekerjaan</span>
-          <textarea name="deliverables" readonly></textarea>
-        </label>
-
-        <label class="field">
-          <span>4. Acceptance Criteria</span>
-          <textarea name="acceptanceCriteria" readonly></textarea>
-        </label>
-
-        <label class="field">
-          <span>5. HSE / Safety Requirements</span>
+        <label class="field wide">
+          <span>2. Health, Safety & Environment Standard</span>
           <textarea name="hse" readonly></textarea>
         </label>
 
+        <label class="field wide">
+          <span>3. License & Regulation</span>
+          <textarea name="licenseRegulation" readonly></textarea>
+        </label>
+
+        <label class="field wide">
+          <span>4. Warranty / After Sales Service</span>
+          <textarea name="warranty" readonly></textarea>
+        </label>
+
+      </div>
+    </section>
+
+    <!-- ATTACHMENT DOCUMENTS -->
+
+    <section>
+      <h3>ATTACHMENT DOCUMENTS</h3>
+
+      <div class="service-grid">
+
         <label class="field">
-          <span>6. Dokumen yang Wajib Diserahkan</span>
-          <textarea name="requiredDocuments" readonly></textarea>
+          <span>Spec Detail</span>
+          <input name="attachmentSpecDetailName" readonly>
         </label>
 
         <label class="field">
-          <span>7. Garansi / Masa Pemeliharaan</span>
-          <input name="warranty" readonly>
+          <span>BQ</span>
+          <input name="attachmentBQName" readonly>
         </label>
 
         <label class="field">
-          <span>8. Ketentuan Tambahan</span>
-          <textarea name="additionalTerms" readonly></textarea>
+          <span>Gambar / Design</span>
+          <input name="attachmentDesignName" readonly>
         </label>
 
+        <label class="field">
+          <span>Timeline</span>
+          <input name="attachmentTimelineName" readonly>
+        </label>
+
+        <label class="field">
+          <span>Others</span>
+          <input name="attachmentOther" readonly>
+        </label>
+
+      </div>
+    </section>
+
+    <!-- REQUIRED DOCUMENTS -->
+
+    <section>
+      <h3>REQUIRED DOCUMENTS FROM VENDOR</h3>
+
+      <div class="service-grid">
+
+        <label class="field wide">
+          <span>Required Documents</span>
+          <textarea name="vendorDocuments" readonly></textarea>
+        </label>
+
+        <label class="field wide">
+          <span>Other Documents</span>
+          <input name="vendorDocumentsOther" readonly>
+        </label>
+
+      </div>
+    </section>
+
+    <!-- NOTES -->
+
+    <section>
+      <h3>NOTES</h3>
+
+      <div class="service-grid">
+        <label class="field wide">
+          <span>Additional Notes</span>
+          <textarea name="notes" readonly></textarea>
+        </label>
       </div>
     </section>
 
     <!-- APPROVAL -->
+
     <div class="approval">
 
       <div class="role">Requestor</div>
