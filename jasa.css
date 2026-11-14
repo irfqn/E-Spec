@@ -1,0 +1,684 @@
+
+/* =====================================================
+   E-SPEC JASA — MAIN STYLING
+   CSS KHUSUS HALAMAN JASA
+===================================================== */
+
+/* =====================================================
+   1. GLOBAL
+===================================================== */
+
+body {
+  background: #f4f6f9;
+}
+
+#questionnaireJasaForm,
+#questionnaireJasaForm * {
+  box-sizing: border-box;
+}
+
+#questionnaireJasaForm {
+  width: 100%;
+  max-width: 1100px;
+  margin: 25px auto;
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+/* =====================================================
+   2. SECTION
+===================================================== */
+
+#questionnaireJasaForm section {
+  margin-bottom: 25px;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e5eaf0;
+  border-radius: 12px;
+}
+
+#questionnaireJasaForm section h3 {
+  margin: -22px -22px 20px;
+  padding: 15px 20px;
+  background: #f0f4f8;
+  border-bottom: 1px solid #e1e7ef;
+  border-radius: 11px 11px 0 0;
+  color: #24364b;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+/* =====================================================
+   3. FORM GRID
+===================================================== */
+
+#questionnaireJasaForm .service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 22px;
+}
+
+#questionnaireJasaForm .field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+#questionnaireJasaForm .field.wide {
+  grid-column: 1 / -1;
+}
+
+/* =====================================================
+   4. LABEL
+===================================================== */
+
+#questionnaireJasaForm label,
+#questionnaireJasaForm .field-label {
+  color: #344256;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#questionnaireJasaForm label span.required {
+  color: #dc3545;
+  margin-left: 3px;
+}
+
+/* =====================================================
+   5. INPUT, SELECT, TEXTAREA
+===================================================== */
+
+#questionnaireJasaForm input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+#questionnaireJasaForm select,
+#questionnaireJasaForm textarea {
+  width: 100%;
+  min-height: 43px;
+  padding: 11px 13px;
+  border: 1px solid #d8e0e9;
+  border-radius: 8px;
+  outline: none;
+  background: #ffffff;
+  color: #253449;
+  font-family: inherit;
+  font-size: 13px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#questionnaireJasaForm textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+#questionnaireJasaForm input:focus,
+#questionnaireJasaForm select:focus,
+#questionnaireJasaForm textarea:focus {
+  border-color: #3978bd;
+  box-shadow: 0 0 0 3px rgba(57, 120, 189, 0.12);
+}
+
+#questionnaireJasaForm input::placeholder,
+#questionnaireJasaForm textarea::placeholder {
+  color: #a0aab7;
+}
+
+#questionnaireJasaForm input:disabled,
+#questionnaireJasaForm select:disabled,
+#questionnaireJasaForm textarea:disabled,
+#questionnaireJasaForm input[readonly] {
+  background: #f1f4f7;
+  color: #657386;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   6. VERSION
+===================================================== */
+
+#questionnaireJasaForm .version-section {
+  background: #f8fafc;
+}
+
+#questionnaireJasaForm .version-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* =====================================================
+   7. IDENTITY
+===================================================== */
+
+#questionnaireJasaForm .identity-section {
+  background: #ffffff;
+}
+
+#questionnaireJasaForm #plantSelect,
+#questionnaireJasaForm #deptSelect {
+  cursor: pointer;
+}
+
+/* =====================================================
+   8. CHECKBOX & RADIO
+===================================================== */
+
+#questionnaireJasaForm .checkbox-group,
+#questionnaireJasaForm .radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+#questionnaireJasaForm .checkbox-item,
+#questionnaireJasaForm .radio-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 40px;
+  padding: 9px 13px;
+  border: 1px solid #e0e6ed;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #344256;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+#questionnaireJasaForm input[type="checkbox"],
+#questionnaireJasaForm input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2875b9;
+  cursor: pointer;
+}
+
+#questionnaireJasaForm .checkbox-item:has(input:checked),
+#questionnaireJasaForm .radio-item:has(input:checked) {
+  background: #edf5ff;
+  border-color: #3978bd;
+  color: #245d94;
+}
+
+/* =====================================================
+   9. TECHNICAL SPECIFICATION & KPI
+===================================================== */
+
+#questionnaireJasaForm #technicalSpecificationList,
+#questionnaireJasaForm #kpiList {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+#questionnaireJasaForm .dynamic-question-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+#questionnaireJasaForm .dynamic-question-item textarea {
+  flex: 1;
+  min-width: 0;
+  background: #ffffff;
+}
+
+#questionnaireJasaForm .remove-question-btn {
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid #f1c7c7;
+  border-radius: 7px;
+  background: #fff2f2;
+  color: #c03939;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#questionnaireJasaForm .remove-question-btn:hover {
+  background: #ffe4e4;
+}
+
+#questionnaireJasaForm #addTechnicalSpecificationBtn,
+#questionnaireJasaForm #addKpiBtn {
+  margin-top: 13px;
+  padding: 10px 16px;
+  border: 1px solid #b9d2ed;
+  border-radius: 8px;
+  background: #edf5ff;
+  color: #2868a4;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#questionnaireJasaForm #addTechnicalSpecificationBtn:hover,
+#questionnaireJasaForm #addKpiBtn:hover {
+  background: #dcecff;
+}
+
+/* =====================================================
+   10. ATTACHMENT DOCUMENTS
+===================================================== */
+
+#questionnaireJasaForm input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed #b8c7d8;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #526174;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#questionnaireJasaForm input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 13px;
+  border: none;
+  border-radius: 6px;
+  background: #e6eff9;
+  color: #2868a4;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#questionnaireJasaForm input[type="file"]::file-selector-button:hover {
+  background: #d4e5f8;
+}
+
+/* =====================================================
+   11. VENDOR DOCUMENTS
+===================================================== */
+
+#questionnaireJasaForm .vendor-documents {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#questionnaireJasaForm .vendor-documents label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border: 1px solid #e4e9ef;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+#questionnaireJasaForm .vendor-documents label:has(input:checked) {
+  background: #edf5ff;
+  border-color: #3978bd;
+}
+
+/* =====================================================
+   12. BUTTONS
+===================================================== */
+
+.service-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 1100px;
+  margin: 20px auto 35px;
+}
+
+.service-actions button {
+  min-height: 42px;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#resetJasaBtn {
+  background: #eef1f5;
+  color: #526174;
+}
+
+#resetJasaBtn:hover {
+  background: #e0e5eb;
+}
+
+#saveJasaAdminBtn {
+  background: #2875b9;
+  color: #ffffff;
+}
+
+#saveJasaAdminBtn:hover {
+  background: #1e609d;
+}
+
+#submitJasaBtn {
+  background: #21865a;
+  color: #ffffff;
+}
+
+#submitJasaBtn:hover {
+  background: #176b47;
+}
+
+.service-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   13. DRAFT STATUS
+===================================================== */
+
+#draftStatus {
+  max-width: 1100px;
+  margin: 10px auto;
+  color: #718096;
+  font-size: 12px;
+}
+
+/* =====================================================
+   14. INTRO
+===================================================== */
+
+.intro {
+  max-width: 1100px;
+  margin: 25px auto;
+}
+
+/* =====================================================
+   15. PRINT TEMPLATE
+===================================================== */
+
+.service-document {
+  display: none;
+}
+
+.sasa-logo {
+  display: block;
+  width: 125px;
+  max-width: 100%;
+  max-height: 45px;
+  height: auto;
+  object-fit: contain;
+  margin: auto;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  #printJasaForm {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid #333 !important;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 8px !important;
+    line-height: 1.15 !important;
+  }
+
+  #printJasaForm * {
+    box-sizing: border-box !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  #printJasaForm section {
+    margin: 0 !important;
+    padding: 4px 7px !important;
+    border-bottom: 1px solid #333 !important;
+    break-inside: avoid !important;
+  }
+
+  #printJasaForm .doc-top {
+    display: grid !important;
+    grid-template-columns: 1fr 1.5fr 1fr !important;
+    align-items: center !important;
+    min-height: 57px !important;
+    border-bottom: 1px solid #333 !important;
+  }
+
+  #printJasaForm .logo {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 55px !important;
+    padding: 5px !important;
+  }
+
+  #printJasaForm .logo img {
+    width: 125px !important;
+    max-width: 100% !important;
+    max-height: 45px !important;
+    object-fit: contain !important;
+  }
+
+  #printJasaForm .doc-top h2 {
+    margin: 0 !important;
+    padding: 8px !important;
+    border-left: 1px solid #333 !important;
+    border-right: 1px solid #333 !important;
+    text-align: center !important;
+    font-size: 16px !important;
+  }
+
+  #printJasaForm .meta {
+    padding: 5px !important;
+  }
+
+  #printJasaForm .meta label,
+  #printJasaForm .version label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin: 2px 0 !important;
+    font-size: 7px !important;
+  }
+
+  #printJasaForm .meta input,
+  #printJasaForm .version input {
+    flex: 1 !important;
+    width: 1px !important;
+    min-width: 0 !important;
+    padding: 1px 2px !important;
+    border: 0 !important;
+    border-bottom: 1px dotted #777 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    font-size: 7.5px !important;
+  }
+
+  #printJasaForm .version {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 20px !important;
+    padding: 4px 8px !important;
+    border-bottom: 1px solid #333 !important;
+  }
+
+  #printJasaForm section h3 {
+    margin: 0 -7px 4px !important;
+    padding: 4px !important;
+    background: #e8e8e8 !important;
+    border-bottom: 1px solid #333 !important;
+    text-align: center !important;
+    font-size: 8px !important;
+    font-weight: 800 !important;
+  }
+
+  #printJasaForm .service-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 5px 12px !important;
+  }
+
+  #printJasaForm .field {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    min-width: 0 !important;
+    min-height: 16px !important;
+    margin: 0 !important;
+    font-size: 7px !important;
+  }
+
+  #printJasaForm .field.wide {
+    grid-column: 1 / -1 !important;
+  }
+
+  #printJasaForm .field span {
+    flex: 0 0 115px !important;
+    font-size: 7px !important;
+    font-weight: bold !important;
+  }
+
+  #printJasaForm .field input,
+  #printJasaForm .field textarea {
+    flex: 1 !important;
+    width: 1px !important;
+    min-width: 0 !important;
+    min-height: 14px !important;
+    padding: 1px 2px !important;
+    border: 0 !important;
+    border-bottom: 1px dotted #777 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: black !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 7.5px !important;
+    line-height: 1.15 !important;
+  }
+
+  #printJasaForm .field textarea {
+    height: 25px !important;
+    resize: none !important;
+    overflow: hidden !important;
+  }
+
+  #printJasaForm .field.wide textarea {
+    height: 30px !important;
+  }
+
+  #printJasaForm .approval {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    border-bottom: 1px solid #333 !important;
+  }
+
+  #printJasaForm .role {
+    padding: 4px !important;
+    background: #e8e8e8 !important;
+    border-right: 1px solid #333 !important;
+    text-align: center !important;
+    font-size: 7px !important;
+    font-weight: bold !important;
+  }
+
+  #printJasaForm .role.white {
+    background: white !important;
+  }
+
+  #printJasaForm .approve {
+    min-width: 0 !important;
+    padding: 4px !important;
+    border-right: 1px solid #333 !important;
+  }
+
+  #printJasaForm .approve label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin: 3px 0 !important;
+    font-size: 7px !important;
+  }
+
+  #printJasaForm .approve input {
+    flex: 1 !important;
+    width: 1px !important;
+    min-width: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px dotted #777 !important;
+    background: transparent !important;
+    font-size: 7px !important;
+  }
+
+  #printJasaForm .service-note {
+    margin: 4px !important;
+    font-size: 7px !important;
+  }
+
+  #printJasaForm button,
+  #printJasaForm .no-print {
+    display: none !important;
+  }
+}
+
+/* =====================================================
+   16. RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+  #questionnaireJasaForm {
+    margin: 15px auto;
+    padding: 16px;
+  }
+
+  #questionnaireJasaForm section {
+    padding: 16px;
+  }
+
+  #questionnaireJasaForm section h3 {
+    margin: -16px -16px 16px;
+    padding: 13px 15px;
+  }
+
+  #questionnaireJasaForm .service-grid,
+  #questionnaireJasaForm .version-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #questionnaireJasaForm .field.wide {
+    grid-column: auto;
+  }
+
+  #questionnaireJasaForm .dynamic-question-item {
+    flex-direction: column;
+  }
+
+  #questionnaireJasaForm .remove-question-btn {
+    align-self: flex-end;
+  }
+
+  .service-actions {
+    padding: 0 15px;
+  }
+
+  .service-actions button {
+    flex: 1;
+  }
+
+  #draftStatus {
+    padding: 0 15px;
+  }
+}
