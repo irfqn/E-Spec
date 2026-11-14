@@ -216,20 +216,21 @@
     </section>
 
 
+
 <!-- 04 SPECIFICATION -->
 
-<section>
-  <h3>04. Specification</h3>
+<section class="q-section">
+  <h2>04. Specification</h2>
 
   <!-- GENERAL SPECIFICATION -->
 
   <div class="service-subsection">
     <h4>General Specification</h4>
 
-    <div class="service-grid">
+    <div class="q-grid">
 
-      <label class="field">
-        <span>Project Name *</span>
+      <label class="q-field">
+        Project Name *
         <input
           type="text"
           name="projectName"
@@ -238,8 +239,8 @@
         >
       </label>
 
-      <label class="field wide">
-        <span>Project Description *</span>
+      <label class="q-field">
+        Project Description *
         <textarea
           name="projectDescription"
           rows="4"
@@ -248,8 +249,8 @@
         ></textarea>
       </label>
 
-      <label class="field">
-        <span>Timeline *</span>
+      <label class="q-field">
+        Timeline *
         <input
           type="date"
           name="timeline"
@@ -267,7 +268,7 @@
 
     <div id="technicalSpecificationList">
 
-      <div class="dynamic-question-item">
+      <div class="q-field">
         <textarea
           name="technicalSpecification[]"
           rows="3"
@@ -290,17 +291,17 @@
 
 <!-- 05 SCOPE -->
 
-<section>
-  <h3>05. Scope</h3>
+<section class="q-section">
+  <h2>05. Scope</h2>
 
   <!-- ENVIRONMENT CONDITION -->
 
   <div class="service-subsection">
     <h4>Environment Condition & Restriction</h4>
 
-    <div class="service-grid">
-      <label class="field wide">
-        <span>Environment Condition & Restriction</span>
+    <div class="q-grid">
+      <label class="q-field">
+        Environment Condition & Restriction
         <textarea
           name="environmentCondition"
           rows="3"
@@ -315,9 +316,9 @@
   <div class="service-subsection">
     <h4>Health, Safety, & Environment Standard</h4>
 
-    <div class="service-grid">
-      <label class="field wide">
-        <span>Health, Safety, & Environment Standard</span>
+    <div class="q-grid">
+      <label class="q-field">
+        Health, Safety, & Environment Standard
         <textarea
           name="hse"
           rows="3"
@@ -332,9 +333,9 @@
   <div class="service-subsection">
     <h4>License & Regulation</h4>
 
-    <div class="service-grid">
-      <label class="field wide">
-        <span>License & Regulation</span>
+    <div class="q-grid">
+      <label class="q-field">
+        License & Regulation
         <textarea
           name="licenseRegulation"
           rows="3"
@@ -349,9 +350,9 @@
   <div class="service-subsection">
     <h4>Warranty / After Sales Service</h4>
 
-    <div class="service-grid">
-      <label class="field wide">
-        <span>Warranty / After Sales Service</span>
+    <div class="q-grid">
+      <label class="q-field">
+        Warranty / After Sales Service
         <textarea
           name="warranty"
           rows="3"
@@ -368,35 +369,52 @@
 
     <p>Dokumen yang disediakan oleh User (SASA).</p>
 
-    <div class="service-grid">
+    <div class="q-grid">
 
-      <label class="field">
-        <span>Spec Detail</span>
-        <input type="file" name="attachmentSpecDetail">
+      <label class="q-field">
+        Spec Detail
+        <input
+          type="file"
+          name="attachmentSpecDetail"
+        >
       </label>
 
-      <label class="field">
-        <span>BQ</span>
-        <input type="file" name="attachmentBQ">
+      <label class="q-field">
+        BQ
+        <input
+          type="file"
+          name="attachmentBQ"
+        >
       </label>
 
-      <label class="field">
-        <span>Gambar / Design</span>
-        <input type="file" name="attachmentDesign">
+      <label class="q-field">
+        Gambar / Design
+        <input
+          type="file"
+          name="attachmentDesign"
+        >
       </label>
 
-      <label class="field">
-        <span>Timeline</span>
-        <input type="file" name="attachmentTimeline">
+      <label class="q-field">
+        Timeline
+        <input
+          type="file"
+          name="attachmentTimeline"
+        >
       </label>
 
-      <div class="field">
-        <span>Lainnya</span>
+      <div class="q-field">
+        <label for="attachmentOther">
+          Lainnya
+        </label>
+
         <input
           type="text"
+          id="attachmentOther"
           name="attachmentOther"
           placeholder="Nama dokumen lainnya"
         >
+
         <input
           type="file"
           name="attachmentOtherFile"
@@ -413,7 +431,7 @@
 
     <p>Dokumen yang disediakan oleh Vendor.</p>
 
-    <div class="vendor-documents">
+    <div class="q-checkbox-group">
 
       <label>
         <input
@@ -462,9 +480,9 @@
 
     </div>
 
-    <div class="service-grid" style="margin-top: 15px;">
-      <label class="field wide">
-        <span>Other Required Documents</span>
+    <div class="q-grid">
+      <label class="q-field">
+        Other Required Documents
         <input
           type="text"
           name="vendorDocumentsOther"
@@ -476,6 +494,7 @@
   </div>
 
 </section>
+
 
 
     <!-- ACTIONS -->
