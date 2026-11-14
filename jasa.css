@@ -700,23 +700,17 @@ body {
   cursor: pointer;
 }
 
-/* DROPDOWN JASA — TEMA BIRU SEPERTI BARANG */
+/* DROPDOWN JASA — WARNA BIRU */
 
 #questionnaireJasaForm select {
   background-color: #edf5ff;
   border: 1px solid #3978bd;
   color: #245d94;
   font-weight: 600;
-  cursor: pointer;
 }
 
 #questionnaireJasaForm select:focus {
   background-color: #edf5ff;
   border-color: #3978bd;
   box-shadow: 0 0 0 3px rgba(57, 120, 189, 0.15);
-}
-
-#questionnaireJasaForm select option {
-  background-color: #ffffff;
-  color: #253449;
 }
