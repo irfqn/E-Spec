@@ -4089,3 +4089,20 @@ fieldset.q-field {
     font-size: 16px !important;
   }
 }
+
+/* =========================================
+   ELECTRICAL - OTHERS INPUT
+========================================= */
+
+/* Sembunyikan input Others saat tidak aktif */
+.electric-unit-group input[data-electric-other][hidden] {
+  display: none !important;
+}
+
+/* Tampilkan input Others saat aktif */
+.electric-unit-group input[data-electric-other]:not([hidden]) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}

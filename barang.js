@@ -294,28 +294,33 @@
   // ELECTRICAL — OTHERS VISIBILITY
   // =====================================================
 
-  function updateElectricalOthers(row) {
-    if (!row) return;
+function updateElectricalOthers(row) {
+  if (!row) return;
 
-    $$("[data-electric-unit]", row).forEach(select => {
-      const position = select.dataset.electricUnit;
+  $$("[data-electric-unit]", row).forEach(select => {
+    const position = select.dataset.electricUnit;
 
-      const otherInput = $(
-        `[data-electric-other="${position}"]`,
-        row
-      );
+    const otherInput = $(
+      `[data-electric-other="${position}"]`,
+      row
+    );
 
-      if (!otherInput) return;
+    if (!otherInput) return;
 
-      const isOthers = select.value === "Others";
+    const isOthers = select.value === "Others";
 
-      otherInput.hidden = !isOthers;
-      otherInput.disabled = !isOthers;
-      otherInput.required = isOthers;
+    otherInput.hidden = !isOthers;
+    otherInput.disabled = !isOthers;
+    otherInput.required = isOthers;
 
-      if (!isOthers) otherInput.value = "";
-    });
-  }
+    // Paksa tersembunyi saat bukan Others
+    otherInput.style.display = isOthers ? "block" : "none";
+
+    if (!isOthers) {
+      otherInput.value = "";
+    }
+  });
+}
 
   function updateAllElectricalOthers() {
     $$("[data-electric-row]", questionnaire).forEach(row => {
