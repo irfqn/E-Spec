@@ -682,3 +682,20 @@ body {
     padding: 0 15px;
   }
 }
+
+/* RESET FORM JASA - SAMAKAN DENGAN BARANG */
+.toolbar-actions #resetBtn,
+.toolbar #resetJasaBtn {
+  background: inherit;
+}
+
+/* Mengikuti style tombol reset Barang */
+#resetJasaBtn {
+  background-color: var(--reset-bg, #f1f3f5);
+  color: var(--reset-color, #333);
+  border: 1px solid var(--reset-border, #ced4da);
+  border-radius: 8px;
+  padding: 10px 18px;
+  font: inherit;
+  cursor: pointer;
+}
