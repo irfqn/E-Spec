@@ -731,3 +731,16 @@ body {
     padding: 0 15px;
   }
 }
+
+/* RESET FORM JASA — HOVER SAMA DENGAN BARANG */
+
+#resetJasaBtn:hover,
+#resetJasaBtn:focus,
+#resetJasaBtn:active {
+  background: white !important;
+  background-color: white !important;
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  box-shadow: none !important;
+  transform: translateY(-1px);
+}
