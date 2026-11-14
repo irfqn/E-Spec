@@ -215,284 +215,268 @@
       </div>
     </section>
 
-    <!-- 04 SPECIFICATION -->
 
-    <section class="q-section">
-      <h2>04. Specification</h2>
+<!-- 04 SPECIFICATION -->
 
-      <!-- GENERAL SPECIFICATION -->
+<section>
+  <h3>04. Specification</h3>
 
-      <div class="specification-subsection">
+  <!-- GENERAL SPECIFICATION -->
 
-        <h3>General Specification</h3>
+  <div class="service-subsection">
+    <h4>General Specification</h4>
 
-        <div class="q-grid">
+    <div class="service-grid">
 
-          <label class="q-field">
-            Project Name *
-            <input
-              type="text"
-              name="projectName"
-              required
-              placeholder="Masukkan nama proyek"
-            >
-          </label>
-
-          <label class="q-field">
-            Project Description *
-            <textarea
-              name="projectDescription"
-              rows="4"
-              required
-              placeholder="Jelaskan gambaran umum pekerjaan jasa"
-            ></textarea>
-          </label>
-
-          <label class="q-field">
-            Timeline *
-            <input
-              type="date"
-              name="timeline"
-              required
-            >
-          </label>
-
-        </div>
-
-      </div>
-
-      <!-- TECHNICAL SPECIFICATION -->
-
-      <div class="specification-subsection">
-
-        <h3>Technical Specification</h3>
-
-        <div id="technicalSpecificationList">
-
-          <label class="q-field">
-            Technical Specification 1
-            <textarea
-              name="technicalSpecification[]"
-              rows="3"
-              placeholder="Masukkan persyaratan teknis"
-            ></textarea>
-          </label>
-
-        </div>
-
-        <button
-          type="button"
-          id="addTechnicalSpecificationBtn"
+      <label class="field">
+        <span>Project Name *</span>
+        <input
+          type="text"
+          name="projectName"
+          required
+          placeholder="Masukkan nama proyek"
         >
-          + Tambah Technical Specification
-        </button>
+      </label>
 
+      <label class="field wide">
+        <span>Project Description *</span>
+        <textarea
+          name="projectDescription"
+          rows="4"
+          required
+          placeholder="Jelaskan gambaran umum pekerjaan jasa"
+        ></textarea>
+      </label>
+
+      <label class="field">
+        <span>Timeline *</span>
+        <input
+          type="date"
+          name="timeline"
+          required
+        >
+      </label>
+
+    </div>
+  </div>
+
+  <!-- TECHNICAL SPECIFICATION -->
+
+  <div class="service-subsection">
+    <h4>Technical Specification</h4>
+
+    <div id="technicalSpecificationList">
+
+      <div class="dynamic-question-item">
+        <textarea
+          name="technicalSpecification[]"
+          rows="3"
+          placeholder="Masukkan persyaratan teknis"
+        ></textarea>
       </div>
 
-    </section>
+    </div>
 
-    <!-- 05 SCOPE -->
+    <button
+      type="button"
+      id="addTechnicalSpecificationBtn"
+    >
+      + Tambah Technical Specification
+    </button>
+  </div>
 
-    <section class="q-section">
-      <h2>05. Scope</h2>
+</section>
 
-      <!-- ENVIRONMENT CONDITION -->
 
-      <div class="specification-subsection">
-        <h3>Environment Condition & Restriction</h3>
+<!-- 05 SCOPE -->
 
-        <label class="q-field">
-          Environment Condition & Restriction
-          <textarea
-            name="environmentCondition"
-            rows="3"
-            placeholder="Masukkan kondisi lingkungan dan batasan pekerjaan"
-          ></textarea>
-        </label>
+<section>
+  <h3>05. Scope</h3>
+
+  <!-- ENVIRONMENT CONDITION -->
+
+  <div class="service-subsection">
+    <h4>Environment Condition & Restriction</h4>
+
+    <div class="service-grid">
+      <label class="field wide">
+        <span>Environment Condition & Restriction</span>
+        <textarea
+          name="environmentCondition"
+          rows="3"
+          placeholder="Masukkan kondisi lingkungan dan batasan pekerjaan"
+        ></textarea>
+      </label>
+    </div>
+  </div>
+
+  <!-- HSE -->
+
+  <div class="service-subsection">
+    <h4>Health, Safety, & Environment Standard</h4>
+
+    <div class="service-grid">
+      <label class="field wide">
+        <span>Health, Safety, & Environment Standard</span>
+        <textarea
+          name="hse"
+          rows="3"
+          placeholder="Masukkan standar kesehatan, keselamatan, dan lingkungan"
+        ></textarea>
+      </label>
+    </div>
+  </div>
+
+  <!-- LICENSE -->
+
+  <div class="service-subsection">
+    <h4>License & Regulation</h4>
+
+    <div class="service-grid">
+      <label class="field wide">
+        <span>License & Regulation</span>
+        <textarea
+          name="licenseRegulation"
+          rows="3"
+          placeholder="Masukkan persyaratan lisensi dan regulasi"
+        ></textarea>
+      </label>
+    </div>
+  </div>
+
+  <!-- WARRANTY -->
+
+  <div class="service-subsection">
+    <h4>Warranty / After Sales Service</h4>
+
+    <div class="service-grid">
+      <label class="field wide">
+        <span>Warranty / After Sales Service</span>
+        <textarea
+          name="warranty"
+          rows="3"
+          placeholder="Masukkan ketentuan garansi dan layanan purna jual"
+        ></textarea>
+      </label>
+    </div>
+  </div>
+
+  <!-- ATTACHMENT DOCUMENTS -->
+
+  <div class="service-subsection">
+    <h4>Attachment Documents</h4>
+
+    <p>Dokumen yang disediakan oleh User (SASA).</p>
+
+    <div class="service-grid">
+
+      <label class="field">
+        <span>Spec Detail</span>
+        <input type="file" name="attachmentSpecDetail">
+      </label>
+
+      <label class="field">
+        <span>BQ</span>
+        <input type="file" name="attachmentBQ">
+      </label>
+
+      <label class="field">
+        <span>Gambar / Design</span>
+        <input type="file" name="attachmentDesign">
+      </label>
+
+      <label class="field">
+        <span>Timeline</span>
+        <input type="file" name="attachmentTimeline">
+      </label>
+
+      <div class="field">
+        <span>Lainnya</span>
+        <input
+          type="text"
+          name="attachmentOther"
+          placeholder="Nama dokumen lainnya"
+        >
+        <input
+          type="file"
+          name="attachmentOtherFile"
+        >
       </div>
 
-      <!-- HSE -->
+    </div>
+  </div>
 
-      <div class="specification-subsection">
-        <h3>Health, Safety, & Environment Standard</h3>
+  <!-- REQUIRED DOCUMENTS -->
 
-        <label class="q-field">
-          Health, Safety, & Environment Standard
-          <textarea
-            name="hse"
-            rows="3"
-            placeholder="Masukkan standar kesehatan, keselamatan, dan lingkungan"
-          ></textarea>
-        </label>
-      </div>
+  <div class="service-subsection">
+    <h4>Required Documents</h4>
 
-      <!-- LICENSE AND REGULATION -->
+    <p>Dokumen yang disediakan oleh Vendor.</p>
 
-      <div class="specification-subsection">
-        <h3>License & Regulation</h3>
+    <div class="vendor-documents">
 
-        <label class="q-field">
-          License & Regulation
-          <textarea
-            name="licenseRegulation"
-            rows="3"
-            placeholder="Masukkan persyaratan lisensi dan regulasi"
-          ></textarea>
-        </label>
-      </div>
+      <label>
+        <input
+          type="checkbox"
+          name="vendorDocuments"
+          value="Garansi Produsen"
+        >
+        Garansi Produsen
+      </label>
 
-      <!-- WARRANTY -->
+      <label>
+        <input
+          type="checkbox"
+          name="vendorDocuments"
+          value="Garansi Distributor"
+        >
+        Garansi Distributor
+      </label>
 
-      <div class="specification-subsection">
-        <h3>Warranty / After Sales Service</h3>
+      <label>
+        <input
+          type="checkbox"
+          name="vendorDocuments"
+          value="MSDS / COA / Halal"
+        >
+        MSDS / COA / Halal
+      </label>
 
-        <label class="q-field">
-          Warranty / After Sales Service
-          <textarea
-            name="warranty"
-            rows="3"
-            placeholder="Masukkan ketentuan garansi dan layanan purna jual"
-          ></textarea>
-        </label>
-      </div>
+      <label>
+        <input
+          type="checkbox"
+          name="vendorDocuments"
+          value="Manual Book / User Manual"
+        >
+        Manual Book / User Manual
+      </label>
 
-      <!-- ATTACHMENT DOCUMENTS -->
+      <label>
+        <input
+          type="checkbox"
+          name="vendorDocuments"
+          value="Others"
+        >
+        Lainnya
+      </label>
 
-      <div class="specification-subsection">
+    </div>
 
-        <h3>Attachment Documents</h3>
+    <div class="service-grid" style="margin-top: 15px;">
+      <label class="field wide">
+        <span>Other Required Documents</span>
+        <input
+          type="text"
+          name="vendorDocumentsOther"
+          placeholder="Masukkan dokumen lainnya"
+        >
+      </label>
+    </div>
 
-        <p>
-          Dokumen yang disediakan oleh User (SASA).
-        </p>
+  </div>
 
-        <div class="q-grid">
+</section>
 
-          <label class="q-field">
-            Spec Detail
-            <input
-              type="file"
-              name="attachmentSpecDetail"
-            >
-          </label>
-
-          <label class="q-field">
-            BQ
-            <input
-              type="file"
-              name="attachmentBQ"
-            >
-          </label>
-
-          <label class="q-field">
-            Gambar / Design
-            <input
-              type="file"
-              name="attachmentDesign"
-            >
-          </label>
-
-          <label class="q-field">
-            Timeline
-            <input
-              type="file"
-              name="attachmentTimeline"
-            >
-          </label>
-
-          <div class="q-field">
-            <label for="attachmentOther">
-              Lainnya
-            </label>
-
-            <input
-              type="text"
-              id="attachmentOther"
-              name="attachmentOther"
-              placeholder="Nama dokumen lainnya"
-            >
-
-            <input
-              type="file"
-              name="attachmentOtherFile"
-            >
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- REQUIRED DOCUMENTS -->
-
-      <div class="specification-subsection">
-
-        <h3>Required Documents</h3>
-
-        <p>
-          Dokumen yang harus disediakan oleh Vendor.
-        </p>
-
-        <div class="q-checkbox-group">
-
-          <label>
-            <input
-              type="checkbox"
-              name="vendorDocuments"
-              value="Garansi Produsen"
-            >
-            Garansi Produsen
-          </label>
-
-          <label>
-            <input
-              type="checkbox"
-              name="vendorDocuments"
-              value="Garansi Distributor"
-            >
-            Garansi Distributor
-          </label>
-
-          <label>
-            <input
-              type="checkbox"
-              name="vendorDocuments"
-              value="MSDS / COA / Halal"
-            >
-            MSDS / COA / Halal
-          </label>
-
-          <label>
-            <input
-              type="checkbox"
-              name="vendorDocuments"
-              value="Manual Book / User Manual"
-            >
-            Manual Book / User Manual
-          </label>
-
-          <label>
-            <input
-              type="checkbox"
-              name="vendorDocuments"
-              value="Others"
-            >
-            Lainnya
-          </label>
-
-        </div>
-
-        <label class="q-field">
-          Other Required Documents
-          <input
-            type="text"
-            name="vendorDocumentsOther"
-            placeholder="Masukkan dokumen lainnya"
-          >
-        </label>
-
-      </div>
-
-    </section>
 
     <!-- ACTIONS -->
 

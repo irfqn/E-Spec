@@ -807,3 +807,45 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================
+   SPECIFICATION & SCOPE SUBSECTION
+========================================= */
+
+#questionnaireJasaForm .service-subsection {
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid #e5eaf0;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+#questionnaireJasaForm .service-subsection:first-of-type {
+  margin-top: 0;
+}
+
+#questionnaireJasaForm .service-subsection h4 {
+  margin: -18px -18px 18px;
+  padding: 13px 16px;
+  background: #f0f4f8;
+  border-bottom: 1px solid #e1e7ef;
+  border-radius: 9px 9px 0 0;
+  color: #344256;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#questionnaireJasaForm .service-subsection p {
+  margin: 0 0 15px;
+  color: #718096;
+  font-size: 12px;
+}
+
+#questionnaireJasaForm .service-subsection .service-grid {
+  width: 100%;
+}
+
+#questionnaireJasaForm .vendor-documents {
+  margin-top: 10px;
+}
