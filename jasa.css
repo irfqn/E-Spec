@@ -784,3 +784,26 @@ body {
   font-weight: 800;
 }
 
+/* VERSION & CREATE DATE — BERSEBELAHAN */
+
+.auto-generated-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.auto-generated-container .auto-generated-group {
+  min-width: 0;
+  width: 100%;
+}
+
+.auto-generated-container .auto-generated-field {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .auto-generated-container {
+    grid-template-columns: 1fr;
+  }
+}
