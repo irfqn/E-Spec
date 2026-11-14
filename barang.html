@@ -489,8 +489,8 @@
         tidak perlu ditampilkan pada dokumen spesifikasi.
       </p>
 
-      <!-- ELECTRIC -->
 
+<!-- ELECTRIC -->
 <div class="q-technical-group electric-spec-card">
 
   <div class="electric-spec-heading">
@@ -521,21 +521,245 @@
 
       <input type="text" data-electric-value="1" placeholder="Data 1">
 
-      <select data-electric-unit="1">
-        <option value="">UoM</option>
-        <option value="V">V</option>
-        <option value="mV">mV</option>
-        <option value="kV">kV</option>
-      </select>
+      <div class="electric-unit-group">
+        <select data-electric-unit="1">
+          <option value="">-- Pilih UoM --</option>
+          <option value="V">V</option>
+          <option value="kV">kV</option>
+          <option value="MV">MV</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden>
+      </div>
 
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
-      <select data-electric-unit="2">
-        <option value="">UoM</option>
-        <option value="V">V</option>
-        <option value="mV">mV</option>
-        <option value="kV">kV</option>
+      <div class="electric-unit-group">
+        <select data-electric-unit="2">
+          <option value="">-- Pilih UoM --</option>
+          <option value="V">V</option>
+          <option value="kV">kV</option>
+          <option value="MV">MV</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <select data-electric-symbol>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
       </select>
+    </div>
+
+    <!-- CURRENT -->
+    <div class="electric-spec-row" data-electric-row="Current">
+      <div class="electric-parameter">
+        <strong>Current</strong>
+        <small>Contoh: 10 A</small>
+      </div>
+
+      <input type="text" data-electric-value="1" placeholder="Data 1">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="1">
+          <option value="">-- Pilih UoM --</option>
+          <option value="A">A</option>
+          <option value="kA">kA</option>
+          <option value="µA">µA</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <input type="text" data-electric-value="2" placeholder="Data 2">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="2">
+          <option value="">-- Pilih UoM --</option>
+          <option value="A">A</option>
+          <option value="kA">kA</option>
+          <option value="µA">µA</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <select data-electric-symbol>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+    </div>
+
+    <!-- POWER -->
+    <div class="electric-spec-row" data-electric-row="Power">
+      <div class="electric-parameter">
+        <strong>Power</strong>
+        <small>Contoh: 100 W - 200 W</small>
+      </div>
+
+      <input type="text" data-electric-value="1" placeholder="Data 1">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="1">
+          <option value="">-- Pilih UoM --</option>
+          <option value="W">W</option>
+          <option value="kW">kW</option>
+          <option value="MW">MW</option>
+          <option value="VA">VA</option>
+          <option value="VAR">VAR</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <input type="text" data-electric-value="2" placeholder="Data 2">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="2">
+          <option value="">-- Pilih UoM --</option>
+          <option value="W">W</option>
+          <option value="kW">kW</option>
+          <option value="MW">MW</option>
+          <option value="VA">VA</option>
+          <option value="VAR">VAR</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <select data-electric-symbol>
+        <option value="-">-</option>
+        <option value="/">/</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+    </div>
+
+    <!-- RESISTANCE -->
+    <div class="electric-spec-row" data-electric-row="Resistance">
+      <div class="electric-parameter">
+        <strong>Resistance</strong>
+        <small>Contoh: 10 Ω</small>
+      </div>
+
+      <input type="text" data-electric-value="1" placeholder="Data 1">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="1">
+          <option value="">-- Pilih UoM --</option>
+          <option value="Ω">Ω</option>
+          <option value="mΩ">mΩ</option>
+          <option value="kΩ">kΩ</option>
+          <option value="S">S</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <input type="text" data-electric-value="2" placeholder="Data 2">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="2">
+          <option value="">-- Pilih UoM --</option>
+          <option value="Ω">Ω</option>
+          <option value="mΩ">mΩ</option>
+          <option value="kΩ">kΩ</option>
+          <option value="S">S</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <select data-electric-symbol>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+    </div>
+
+    <!-- FREQUENCY -->
+    <div class="electric-spec-row" data-electric-row="Frequency">
+      <div class="electric-parameter">
+        <strong>Frequency</strong>
+        <small>Contoh: 50 Hz / 60 Hz</small>
+      </div>
+
+      <input type="text" data-electric-value="1" placeholder="Data 1">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="1">
+          <option value="">-- Pilih UoM --</option>
+          <option value="Hz">Hz</option>
+          <option value="kHz">kHz</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <input type="text" data-electric-value="2" placeholder="Data 2">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="2">
+          <option value="">-- Pilih UoM --</option>
+          <option value="Hz">Hz</option>
+          <option value="kHz">kHz</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <select data-electric-symbol>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+    </div>
+
+    <!-- CAPACITANCE -->
+    <div class="electric-spec-row" data-electric-row="Capacitance">
+      <div class="electric-parameter">
+        <strong>Capacitance</strong>
+        <small>Contoh: 100 µF</small>
+      </div>
+
+      <input type="text" data-electric-value="1" placeholder="Data 1">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="1">
+          <option value="">-- Pilih UoM --</option>
+          <option value="F">F</option>
+          <option value="µF">µF</option>
+          <option value="nF">nF</option>
+          <option value="pF">pF</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden>
+      </div>
+
+      <input type="text" data-electric-value="2" placeholder="Data 2">
+
+      <div class="electric-unit-group">
+        <select data-electric-unit="2">
+          <option value="">-- Pilih UoM --</option>
+          <option value="F">F</option>
+          <option value="µF">µF</option>
+          <option value="nF">nF</option>
+          <option value="pF">pF</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden>
+      </div>
 
       <select data-electric-symbol>
         <option value="/">/</option>
@@ -556,115 +780,15 @@
       <input type="text" data-electric-value="1" placeholder="Data 1">
 
       <select data-electric-unit="1">
+        <option value="">-- Pilih UoM --</option>
         <option value="Phase">Phase</option>
       </select>
 
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
       <select data-electric-unit="2">
+        <option value="">-- Pilih UoM --</option>
         <option value="Phase">Phase</option>
-      </select>
-
-      <select data-electric-symbol>
-        <option value="/">/</option>
-        <option value="-">-</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
-    </div>
-
-    <!-- POWER -->
-    <div class="electric-spec-row" data-electric-row="Power">
-      <div class="electric-parameter">
-        <strong>Power</strong>
-        <small>Contoh: 100 W - 200 W</small>
-      </div>
-
-      <input type="text" data-electric-value="1" placeholder="Data 1">
-
-      <select data-electric-unit="1">
-        <option value="">UoM</option>
-        <option value="W">W</option>
-        <option value="kW">kW</option>
-        <option value="HP">HP</option>
-        <option value="VA">VA</option>
-        <option value="kVA">kVA</option>
-      </select>
-
-      <input type="text" data-electric-value="2" placeholder="Data 2">
-
-      <select data-electric-unit="2">
-        <option value="">UoM</option>
-        <option value="W">W</option>
-        <option value="kW">kW</option>
-        <option value="HP">HP</option>
-        <option value="VA">VA</option>
-        <option value="kVA">kVA</option>
-      </select>
-
-      <select data-electric-symbol>
-        <option value="-">-</option>
-        <option value="/">/</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
-    </div>
-
-    <!-- CURRENT -->
-    <div class="electric-spec-row" data-electric-row="Current">
-      <div class="electric-parameter">
-        <strong>Current</strong>
-        <small>Contoh: 10 A</small>
-      </div>
-
-      <input type="text" data-electric-value="1" placeholder="Data 1">
-
-      <select data-electric-unit="1">
-        <option value="">UoM</option>
-        <option value="A">A</option>
-        <option value="mA">mA</option>
-        <option value="kA">kA</option>
-      </select>
-
-      <input type="text" data-electric-value="2" placeholder="Data 2">
-
-      <select data-electric-unit="2">
-        <option value="">UoM</option>
-        <option value="A">A</option>
-        <option value="mA">mA</option>
-        <option value="kA">kA</option>
-      </select>
-
-      <select data-electric-symbol>
-        <option value="/">/</option>
-        <option value="-">-</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
-    </div>
-
-    <!-- FREQUENCY -->
-    <div class="electric-spec-row" data-electric-row="Frequency">
-      <div class="electric-parameter">
-        <strong>Frequency</strong>
-        <small>Contoh: 50 Hz / 60 Hz</small>
-      </div>
-
-      <input type="text" data-electric-value="1" placeholder="Data 1">
-
-      <select data-electric-unit="1">
-        <option value="Hz">Hz</option>
-        <option value="kHz">kHz</option>
-      </select>
-
-      <input type="text" data-electric-value="2" placeholder="Data 2">
-
-      <select data-electric-unit="2">
-        <option value="Hz">Hz</option>
-        <option value="kHz">kHz</option>
       </select>
 
       <select data-electric-symbol>
@@ -685,19 +809,29 @@
 
       <input type="text" data-electric-value="1" placeholder="Data 1">
 
-      <select data-electric-unit="1">
-        <option value="°C">°C</option>
-        <option value="°F">°F</option>
-        <option value="K">K</option>
-      </select>
+      <div class="electric-unit-group">
+        <select data-electric-unit="1">
+          <option value="">-- Pilih UoM --</option>
+          <option value="°C">°C</option>
+          <option value="°K">°K</option>
+          <option value="°F">°F</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden>
+      </div>
 
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
-      <select data-electric-unit="2">
-        <option value="°C">°C</option>
-        <option value="°F">°F</option>
-        <option value="K">K</option>
-      </select>
+      <div class="electric-unit-group">
+        <select data-electric-unit="2">
+          <option value="">-- Pilih UoM --</option>
+          <option value="°C">°C</option>
+          <option value="°K">°K</option>
+          <option value="°F">°F</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden>
+      </div>
 
       <select data-electric-symbol>
         <option value="~">~</option>
@@ -710,6 +844,7 @@
 
   </div>
 </div>
+
 
 <!-- =========================================
      B. SUB CATEGORY: MECHANICAL

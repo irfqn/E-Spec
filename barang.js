@@ -47,7 +47,6 @@
   const uniqueContainer = $("#dynamicCustomUniqueContainer");
 
   const DIMENSION_OPTIONS = ["L", "W", "H", "T", "ID", "OD", "DN"];
-
   const DIMENSION_SYMBOLS = ["x", "~", "/", "±", "-"];
 
   const MECHANICAL_PARAMETERS = [
@@ -57,14 +56,7 @@
     "Speed & Tolerance"
   ];
 
-  const MECHANICAL_SYMBOLS = [
-    "x",
-    "--",
-    "~",
-    "/",
-    "±",
-    "-"
-  ];
+  const MECHANICAL_SYMBOLS = ["x", "--", "~", "/", "±", "-"];
 
   const PLANT_DATA = {
     "1210 - Plant Gending": [
@@ -144,9 +136,7 @@
   }
 
   function setStatus(message) {
-    if (draftStatus) {
-      draftStatus.textContent = message;
-    }
+    if (draftStatus) draftStatus.textContent = message;
   }
 
   function formatDate(value) {
@@ -197,25 +187,19 @@
     const selectedPlant = plantSelect.value;
     const description = selectedPlant.split(" - ")[1] || "";
 
-    if (plantDesc) {
-      plantDesc.value = description;
-    }
+    if (plantDesc) plantDesc.value = description;
 
     deptSelect.innerHTML =
       '<option value="">-- Pilih Departemen --</option>';
 
     (PLANT_DATA[selectedPlant] || []).forEach(department => {
       const option = document.createElement("option");
-
       option.value = department;
       option.textContent = department;
-
       deptSelect.appendChild(option);
     });
 
-    if (restoreValue) {
-      deptSelect.value = restoreValue;
-    }
+    if (restoreValue) deptSelect.value = restoreValue;
   }
 
   // =====================================================
@@ -251,15 +235,11 @@
   }
 
   questionnaire.addEventListener("change", event => {
-    if (!event.target.matches('[name="materialCategory"]')) {
-      return;
-    }
+    if (!event.target.matches('[name="materialCategory"]')) return;
 
     if (event.target.checked) {
       $$('[name="materialCategory"]', questionnaire).forEach(field => {
-        if (field !== event.target) {
-          field.checked = false;
-        }
+        if (field !== event.target) field.checked = false;
       });
     }
 
@@ -276,18 +256,14 @@
 
     const isOthers = reasonChoice.value === "Others";
 
-    if (reasonOthers) {
-      reasonOthers.hidden = !isOthers;
-    }
+    if (reasonOthers) reasonOthers.hidden = !isOthers;
 
     if (reasonOther) {
       reasonOther.hidden = !isOthers;
       reasonOther.disabled = !isOthers;
       reasonOther.required = isOthers;
 
-      if (!isOthers) {
-        reasonOther.value = "";
-      }
+      if (!isOthers) reasonOther.value = "";
     }
 
     reasonFinal.value = isOthers
@@ -311,93 +287,138 @@
     uomOther.disabled = !isOthers;
     uomOther.required = isOthers;
 
-    if (!isOthers) {
-      uomOther.value = "";
+    if (!isOthers) uomOther.value = "";
+  }
+
+  // =====================================================
+  // ELECTRICAL — OTHERS VISIBILITY
+  // =====================================================
+
+  function updateElectricalOthers(row) {
+    if (!row) return;
+
+    $$("[data-electric-unit]", row).forEach(select => {
+      const position = select.dataset.electricUnit;
+
+      const otherInput = $(
+        `[data-electric-other="${position}"]`,
+        row
+      );
+
+      if (!otherInput) return;
+
+      const isOthers = select.value === "Others";
+
+      otherInput.hidden = !isOthers;
+      otherInput.disabled = !isOthers;
+      otherInput.required = isOthers;
+
+      if (!isOthers) otherInput.value = "";
+    });
+  }
+
+  function updateAllElectricalOthers() {
+    $$("[data-electric-row]", questionnaire).forEach(row => {
+      updateElectricalOthers(row);
+    });
+  }
+
+  function getElectricalEffectiveUnit(row, position) {
+    const select = $(
+      `[data-electric-unit="${position}"]`,
+      row
+    );
+
+    const otherInput = $(
+      `[data-electric-other="${position}"]`,
+      row
+    );
+
+    if (!select) return "";
+
+    if (select.value === "Others") {
+      return otherInput?.value.trim() || "";
     }
+
+    return select.value || "";
   }
 
   // =====================================================
   // DIMENSION
   // =====================================================
 
-function createDimensionRow(item = {}) {
-  if (!dimensionContainer) return;
+  function createDimensionRow(item = {}) {
+    if (!dimensionContainer) return;
 
-  // Maksimal 3 baris
-  if (dimensionContainer.querySelectorAll(".dimension-row").length >= 3) {
-    return;
-  }
+    if (dimensionContainer.querySelectorAll(".dimension-row").length >= 3) {
+      return;
+    }
 
-  const row = document.createElement("div");
-  row.className = "dimension-row";
+    const row = document.createElement("div");
+    row.className = "dimension-row";
 
-  const typeSelect = document.createElement("select");
-  typeSelect.className = "dimension-type";
+    const typeSelect = document.createElement("select");
+    typeSelect.className = "dimension-type";
 
-  const defaultType = document.createElement("option");
-  defaultType.value = "";
-  defaultType.textContent = "-- Pilih Dimension --";
-  typeSelect.appendChild(defaultType);
+    const defaultType = document.createElement("option");
+    defaultType.value = "";
+    defaultType.textContent = "-- Pilih Dimension --";
+    typeSelect.appendChild(defaultType);
 
-  DIMENSION_OPTIONS.forEach(value => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = value;
-    typeSelect.appendChild(option);
-  });
-
-  typeSelect.value = item.type || "";
-
-  const valueInput = document.createElement("input");
-  valueInput.type = "text";
-  valueInput.className = "dimension-value";
-  valueInput.placeholder = "Masukkan nilai";
-  valueInput.value = item.value || "";
-
-  // Symbol hanya ditampilkan pada baris 1 dan 2
-  const currentRowCount =
-    dimensionContainer.querySelectorAll(".dimension-row").length + 1;
-
-  let symbolSelect = null;
-
-  if (currentRowCount < 3) {
-    symbolSelect = document.createElement("select");
-    symbolSelect.className = "dimension-symbol";
-
-
-
-    ["x", "~", "/", "±", "-"].forEach(value => {
+    DIMENSION_OPTIONS.forEach(value => {
       const option = document.createElement("option");
       option.value = value;
       option.textContent = value;
-      symbolSelect.appendChild(option);
+      typeSelect.appendChild(option);
     });
 
-    symbolSelect.value = item.symbol || "x";
-  }
+    typeSelect.value = item.type || "";
 
-  const removeButton = document.createElement("button");
-  removeButton.type = "button";
-  removeButton.className = "remove-dimension";
-  removeButton.textContent = "×";
+    const valueInput = document.createElement("input");
+    valueInput.type = "text";
+    valueInput.className = "dimension-value";
+    valueInput.placeholder = "Masukkan nilai";
+    valueInput.value = item.value || "";
 
-  removeButton.addEventListener("click", () => {
-    row.remove();
+    const currentRowCount =
+      dimensionContainer.querySelectorAll(".dimension-row").length + 1;
+
+    let symbolSelect = null;
+
+    if (currentRowCount < 3) {
+      symbolSelect = document.createElement("select");
+      symbolSelect.className = "dimension-symbol";
+
+      DIMENSION_SYMBOLS.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        symbolSelect.appendChild(option);
+      });
+
+      symbolSelect.value = item.symbol || "x";
+    }
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "remove-dimension";
+    removeButton.textContent = "×";
+
+    removeButton.addEventListener("click", () => {
+      row.remove();
+      updateDimension();
+      saveDraft();
+    });
+
+    row.append(typeSelect, valueInput);
+
+    if (symbolSelect) row.appendChild(symbolSelect);
+
+    row.appendChild(removeButton);
+    dimensionContainer.appendChild(row);
+
     updateDimension();
-    saveDraft();
-  });
-
-  row.append(typeSelect, valueInput);
-
-  if (symbolSelect) {
-    row.appendChild(symbolSelect);
   }
-
-  row.appendChild(removeButton);
-  dimensionContainer.appendChild(row);
-
-  updateDimension();
-}
 
   function collectDimensionItems() {
     if (!dimensionContainer) return [];
@@ -411,18 +432,14 @@ function createDimensionRow(item = {}) {
       .filter(item => item.type && item.value);
   }
 
-function updateDimension() {
-  if (!dimensionContainer) return;
+  function updateDimension() {
+    if (!dimensionContainer) return;
 
-  const rows = $$(".dimension-row", dimensionContainer);
-  const totalRows = rows.length;
+    const totalRows = $$(".dimension-row", dimensionContainer).length;
+    const addButton = $("#addDimensionBtn");
 
-  const addButton = $("#addDimensionBtn");
-
-  if (addButton) {
-    addButton.disabled = totalRows >= 3;
+    if (addButton) addButton.disabled = totalRows >= 3;
   }
-}
 
   // =====================================================
   // PACK SIZE
@@ -445,9 +462,7 @@ function updateDimension() {
 
     if (!finalField) return;
 
-    const firstPart = [quantity, packUom]
-      .filter(Boolean)
-      .join(" ");
+    const firstPart = [quantity, packUom].filter(Boolean).join(" ");
 
     let result = firstPart;
 
@@ -491,24 +506,20 @@ function updateDimension() {
       const placeholder = document.createElement("option");
       placeholder.value = "";
       placeholder.textContent = "-- Pilih UoM --";
-
       select.appendChild(placeholder);
 
       sourceOptions.forEach(item => {
         if (item.value === "Others") return;
 
         const option = document.createElement("option");
-
         option.value = item.value;
         option.textContent = item.text;
-
         select.appendChild(option);
       });
 
       const othersOption = document.createElement("option");
       othersOption.value = "Others";
       othersOption.textContent = "Others";
-
       select.appendChild(othersOption);
 
       if (
@@ -529,7 +540,6 @@ function updateDimension() {
   function updateMechanicalOthers(row) {
     if (!row) return;
 
-    // UOM OTHERS
     $$("[data-mechanical-unit]", row).forEach(select => {
       const position = select.dataset.mechanicalUnit;
 
@@ -545,12 +555,9 @@ function updateDimension() {
       otherInput.hidden = !isOthers;
       otherInput.disabled = !isOthers;
 
-      if (!isOthers) {
-        otherInput.value = "";
-      }
+      if (!isOthers) otherInput.value = "";
     });
 
-    // SYMBOL OTHERS
     const symbolSelect = $("[data-mechanical-symbol]", row);
     const symbolOther = $("[data-mechanical-symbol-other]", row);
 
@@ -560,9 +567,7 @@ function updateDimension() {
       symbolOther.hidden = !isOthers;
       symbolOther.disabled = !isOthers;
 
-      if (!isOthers) {
-        symbolOther.value = "";
-      }
+      if (!isOthers) symbolOther.value = "";
     }
   }
 
@@ -577,11 +582,7 @@ function updateDimension() {
   // =====================================================
 
   function getMechanicalEffectiveUnit(row, position) {
-    const select = $(
-      `[data-mechanical-unit="${position}"]`,
-      row
-    );
-
+    const select = $(`[data-mechanical-unit="${position}"]`, row);
     const otherInput = $(
       `[data-mechanical-unit-other="${position}"]`,
       row
@@ -598,7 +599,6 @@ function updateDimension() {
 
   function getMechanicalEffectiveSymbol(row) {
     const select = $("[data-mechanical-symbol]", row);
-
     const otherInput = $("[data-mechanical-symbol-other]", row);
 
     if (!select) return "";
@@ -637,21 +637,12 @@ function updateDimension() {
       const symbol = getMechanicalEffectiveSymbol(row);
 
       const hasData =
-        value1 ||
-        value2 ||
-        unit1 ||
-        unit2 ||
-        symbol;
+        value1 || value2 || unit1 || unit2 || symbol;
 
       if (!hasData) return;
 
-      const first = [value1, unit1]
-        .filter(Boolean)
-        .join(" ");
-
-      const second = [value2, unit2]
-        .filter(Boolean)
-        .join(" ");
+      const first = [value1, unit1].filter(Boolean).join(" ");
+      const second = [value2, unit2].filter(Boolean).join(" ");
 
       let formattedValue = first;
 
@@ -691,6 +682,73 @@ function updateDimension() {
   }
 
   // =====================================================
+  // ELECTRICAL — COLLECT DATA
+  // =====================================================
+
+  function collectElectricalAttributes() {
+    const result = [];
+
+    $$("[data-electric-row]", questionnaire).forEach(row => {
+      const label = row.dataset.electricRow || "";
+
+      const value1 =
+        $('[data-electric-value="1"]', row)?.value.trim() || "";
+
+      const value2 =
+        $('[data-electric-value="2"]', row)?.value.trim() || "";
+
+      const unit1 = getElectricalEffectiveUnit(row, "1");
+      const unit2 = getElectricalEffectiveUnit(row, "2");
+
+      const unitSelect1 = $('[data-electric-unit="1"]', row);
+      const unitSelect2 = $('[data-electric-unit="2"]', row);
+
+      const unitOther1 = $('[data-electric-other="1"]', row);
+      const unitOther2 = $('[data-electric-other="2"]', row);
+
+      const symbol = $("[data-electric-symbol]", row)?.value || "/";
+
+      if (!value1 && !value2 && !unit1 && !unit2) return;
+
+      const first = [value1, unit1].filter(Boolean).join(" ");
+      const second = [value2, unit2].filter(Boolean).join(" ");
+
+      let formattedValue = first;
+
+      if (second) {
+        formattedValue += `${
+          first && symbol
+            ? ` ${symbol} `
+            : first
+              ? " "
+              : ""
+        }${second}`;
+      }
+
+      result.push({
+        category: "Electric",
+        label,
+        value: formattedValue,
+        unit: "",
+
+        data1: value1,
+        unit1,
+        unit1Selection: unitSelect1?.value || "",
+        unit1Other: unitOther1?.value.trim() || "",
+
+        data2: value2,
+        unit2,
+        unit2Selection: unitSelect2?.value || "",
+        unit2Other: unitOther2?.value.trim() || "",
+
+        symbol
+      });
+    });
+
+    return result;
+  }
+
+  // =====================================================
   // TECHNICAL SPECIFICATION
   // =====================================================
 
@@ -709,44 +767,13 @@ function updateDimension() {
     const attributes = [];
 
     // ELECTRICAL
-    $$("[data-electric-row]", questionnaire).forEach(row => {
-      const label = row.dataset.electricRow || "";
+    const electricalAttributes = collectElectricalAttributes();
 
-      const value1 =
-        $('[data-electric-value="1"]', row)?.value.trim() || "";
-
-      const unit1 =
-        $('[data-electric-unit="1"]', row)?.value || "";
-
-      const value2 =
-        $('[data-electric-value="2"]', row)?.value.trim() || "";
-
-      const unit2 =
-        $('[data-electric-unit="2"]', row)?.value || "";
-
-      const symbol =
-        $("[data-electric-symbol]", row)?.value || "/";
-
-      if (!value1 && !value2) return;
-
-      const first = [value1, unit1]
-        .filter(Boolean)
-        .join(" ");
-
-      const second = [value2, unit2]
-        .filter(Boolean)
-        .join(" ");
-
-      let value = first;
-
-      if (second) {
-        value += `${first ? ` ${symbol} ` : ""}${second}`;
-      }
-
+    electricalAttributes.forEach(item => {
       attributes.push({
         category: "Electric",
-        label,
-        value,
+        label: item.label,
+        value: item.value,
         unit: ""
       });
     });
@@ -758,10 +785,8 @@ function updateDimension() {
 
       if (!label || !value) return;
 
-      const unitInput = $$(
-        "[data-tech-unit]",
-        questionnaire
-      ).find(field => field.dataset.techUnit === label);
+      const unitInput = $$("[data-tech-unit]", questionnaire)
+        .find(field => field.dataset.techUnit === label);
 
       attributes.push({
         category: getTechnicalCategory(input),
@@ -772,9 +797,7 @@ function updateDimension() {
     });
 
     // MECHANICAL PARAMETERS
-    const mechanicalAttributes = collectMechanicalAttributes();
-
-    mechanicalAttributes.forEach(item => {
+    collectMechanicalAttributes().forEach(item => {
       attributes.push({
         category: "Mechanical",
         label: item.label,
@@ -783,23 +806,23 @@ function updateDimension() {
       });
     });
 
-// CUSTOM TECHNICAL
-$$(".custom-tech-row", questionnaire).forEach(row => {
-  const label =
-    $("[data-custom-tech-name]", row)?.value.trim() || "";
+    // CUSTOM TECHNICAL
+    $$(".custom-tech-row", questionnaire).forEach(row => {
+      const label =
+        $("[data-custom-tech-name]", row)?.value.trim() || "";
 
-  const value =
-    $("[data-custom-tech-value]", row)?.value.trim() || "";
+      const value =
+        $("[data-custom-tech-value]", row)?.value.trim() || "";
 
-  if (label || value) {
-    attributes.push({
-      category: "Other",
-      label,
-      value,
-      unit: ""
+      if (label || value) {
+        attributes.push({
+          category: "Other",
+          label,
+          value,
+          unit: ""
+        });
+      }
     });
-  }
-});
 
     return attributes;
   }
@@ -815,9 +838,7 @@ $$(".custom-tech-row", questionnaire).forEach(row => {
       const labelField = $(`#technical${index}`, questionnaire);
       const valueField = $(`#technicalUnit${index}`, questionnaire);
 
-      if (labelField) {
-        labelField.value = item?.label || "";
-      }
+      if (labelField) labelField.value = item?.label || "";
 
       if (valueField) {
         valueField.value = item
@@ -846,37 +867,17 @@ $$(".custom-tech-row", questionnaire).forEach(row => {
     const detail2 =
       $('[name="uniqueDetail2"]', questionnaire)?.value.trim() || "";
 
-    if (name1 || detail1) {
-      attributes.push({
-        name: name1,
-        detail: detail1
-      });
-    }
-
-    if (name2 || detail2) {
-      attributes.push({
-        name: name2,
-        detail: detail2
-      });
-    }
+    if (name1 || detail1) attributes.push({ name: name1, detail: detail1 });
+    if (name2 || detail2) attributes.push({ name: name2, detail: detail2 });
 
     $$(".custom-unique-row", questionnaire).forEach(row => {
-      const name = $(
-        'input[name^="customUniqueName"]',
-        row
-      )?.value.trim() || "";
+      const name = $('input[name^="customUniqueName"]', row)
+        ?.value.trim() || "";
 
-      const detail = $(
-        'input[name^="customUniqueDetail"]',
-        row
-      )?.value.trim() || "";
+      const detail = $('input[name^="customUniqueDetail"]', row)
+        ?.value.trim() || "";
 
-      if (name || detail) {
-        attributes.push({
-          name,
-          detail
-        });
-      }
+      if (name || detail) attributes.push({ name, detail });
     });
 
     return attributes;
@@ -891,8 +892,10 @@ $$(".custom-tech-row", questionnaire).forEach(row => {
     updateCategory();
     updateDimension();
     updatePackSize();
+    updateAllElectricalOthers();
     updateAllMechanicalOthers();
 
+    const electricalAttributes = collectElectricalAttributes();
     const technicalAttributes = collectTechnicalAttributes();
     const mechanicalAttributes = collectMechanicalAttributes();
     const uniqueAttributes = collectUniqueAttributes();
@@ -928,9 +931,7 @@ $$(".custom-tech-row", questionnaire).forEach(row => {
       }
 
       if (first.type === "radio") {
-        data[name] =
-          fields.find(field => field.checked)?.value || "";
-
+        data[name] = fields.find(field => field.checked)?.value || "";
         return;
       }
 
@@ -944,6 +945,7 @@ $$(".custom-tech-row", questionnaire).forEach(row => {
       questionnaire
     ).map(field => field.value);
 
+    data.electricalAttributes = electricalAttributes;
     data.technicalAttributes = technicalAttributes;
     data.mechanicalAttributes = mechanicalAttributes;
     data.uniqueAttributes = uniqueAttributes;
@@ -958,44 +960,44 @@ $$(".custom-tech-row", questionnaire).forEach(row => {
   // DYNAMIC TECHNICAL ROWS
   // =====================================================
 
-function createCustomTechnicalRow(item = {}) {
-  if (!technicalContainer) return;
+  function createCustomTechnicalRow(item = {}) {
+    if (!technicalContainer) return;
 
-  const row = document.createElement("div");
-  row.className = "custom-tech-row q-grid";
+    const row = document.createElement("div");
+    row.className = "custom-tech-row q-grid";
 
-  row.innerHTML = `
-    <label class="q-field">
-      Attribute Name
-      <input
-        type="text"
-        data-custom-tech-name
-        placeholder="Enter attribute name"
-      >
-    </label>
+    row.innerHTML = `
+      <label class="q-field">
+        Attribute Name
+        <input
+          type="text"
+          data-custom-tech-name
+          placeholder="Enter attribute name"
+        >
+      </label>
 
-    <label class="q-field">
-      Attribute Detail
-      <input
-        type="text"
-        data-custom-tech-value
-        placeholder="Enter attribute detail"
-      >
-    </label>
+      <label class="q-field">
+        Attribute Detail
+        <input
+          type="text"
+          data-custom-tech-value
+          placeholder="Enter attribute detail"
+        >
+      </label>
 
-    <button type="button" class="q-remove-button">
-      Hapus
-    </button>
-  `;
+      <button type="button" class="q-remove-button">
+        Hapus
+      </button>
+    `;
 
-  $("[data-custom-tech-name]", row).value =
-    item.label || item.name || "";
+    $("[data-custom-tech-name]", row).value =
+      item.label || item.name || "";
 
-  $("[data-custom-tech-value]", row).value =
-    item.value || item.detail || "";
+    $("[data-custom-tech-value]", row).value =
+      item.value || item.detail || "";
 
-  technicalContainer.appendChild(row);
-}
+    technicalContainer.appendChild(row);
+  }
 
   // =====================================================
   // DYNAMIC UNIQUE ROWS
@@ -1017,7 +1019,6 @@ function createCustomTechnicalRow(item = {}) {
     nameInput.type = "text";
     nameInput.name = `customUniqueName${index}`;
     nameInput.value = item.name || "";
-
     nameLabel.appendChild(nameInput);
 
     const detailLabel = document.createElement("label");
@@ -1028,7 +1029,6 @@ function createCustomTechnicalRow(item = {}) {
     detailInput.type = "text";
     detailInput.name = `customUniqueDetail${index}`;
     detailInput.value = item.detail || "";
-
     detailLabel.appendChild(detailInput);
 
     const removeButton = document.createElement("button");
@@ -1036,12 +1036,7 @@ function createCustomTechnicalRow(item = {}) {
     removeButton.className = "q-remove-button";
     removeButton.textContent = "Hapus";
 
-    row.append(
-      nameLabel,
-      detailLabel,
-      removeButton
-    );
-
+    row.append(nameLabel, detailLabel, removeButton);
     uniqueContainer.appendChild(row);
   }
 
@@ -1078,23 +1073,72 @@ function createCustomTechnicalRow(item = {}) {
   }
 
   // =====================================================
+  // RESTORE ELECTRICAL ATTRIBUTES
+  // =====================================================
+
+  function restoreElectricalAttributes(data) {
+    if (!Array.isArray(data)) return;
+
+    data.forEach(item => {
+      if (!item?.label) return;
+
+      const row = $$("[data-electric-row]", questionnaire)
+        .find(element =>
+          element.dataset.electricRow === item.label
+        );
+
+      if (!row) return;
+
+      const value1 = $('[data-electric-value="1"]', row);
+      const value2 = $('[data-electric-value="2"]', row);
+
+      const unitSelect1 = $('[data-electric-unit="1"]', row);
+      const unitSelect2 = $('[data-electric-unit="2"]', row);
+
+      const unitOther1 = $('[data-electric-other="1"]', row);
+      const unitOther2 = $('[data-electric-other="2"]', row);
+
+      const symbolSelect = $("[data-electric-symbol]", row);
+
+      if (value1) value1.value = item.data1 || "";
+      if (value2) value2.value = item.data2 || "";
+
+      if (unitSelect1) {
+        unitSelect1.value =
+          item.unit1Selection || item.unit1 || "";
+      }
+
+      if (unitOther1) unitOther1.value = item.unit1Other || "";
+
+      if (unitSelect2) {
+        unitSelect2.value =
+          item.unit2Selection || item.unit2 || "";
+      }
+
+      if (unitOther2) unitOther2.value = item.unit2Other || "";
+
+      if (symbolSelect && item.symbol) {
+        symbolSelect.value = item.symbol;
+      }
+
+      updateElectricalOthers(row);
+    });
+  }
+
+  // =====================================================
   // RESTORE MECHANICAL ATTRIBUTES
   // =====================================================
 
   function restoreMechanicalAttributes(data) {
-    const savedAttributes = Array.isArray(data)
-      ? data
-      : [];
+    const savedAttributes = Array.isArray(data) ? data : [];
 
     savedAttributes.forEach(item => {
       if (!item?.label) return;
 
-      const row = $$(
-        "[data-mechanical-row]",
-        questionnaire
-      ).find(element =>
-        element.dataset.mechanicalRow === item.label
-      );
+      const row = $$("[data-mechanical-row]", questionnaire)
+        .find(element =>
+          element.dataset.mechanicalRow === item.label
+        );
 
       if (!row) return;
 
@@ -1110,15 +1154,9 @@ function createCustomTechnicalRow(item = {}) {
       const symbolSelect = $("[data-mechanical-symbol]", row);
       const symbolOther = $("[data-mechanical-symbol-other]", row);
 
-      if (value1) {
-        value1.value = item.data1 || "";
-      }
+      if (value1) value1.value = item.data1 || "";
+      if (value2) value2.value = item.data2 || "";
 
-      if (value2) {
-        value2.value = item.data2 || "";
-      }
-
-      // UOM 1
       if (unitSelect1) {
         if (item.unit1Selection) {
           unitSelect1.value = item.unit1Selection;
@@ -1127,11 +1165,8 @@ function createCustomTechnicalRow(item = {}) {
         }
       }
 
-      if (unitOther1) {
-        unitOther1.value = item.unit1Other || "";
-      }
+      if (unitOther1) unitOther1.value = item.unit1Other || "";
 
-      // UOM 2
       if (unitSelect2) {
         if (item.unit2Selection) {
           unitSelect2.value = item.unit2Selection;
@@ -1140,11 +1175,8 @@ function createCustomTechnicalRow(item = {}) {
         }
       }
 
-      if (unitOther2) {
-        unitOther2.value = item.unit2Other || "";
-      }
+      if (unitOther2) unitOther2.value = item.unit2Other || "";
 
-      // SYMBOL
       if (symbolSelect) {
         if (item.symbolSelection) {
           symbolSelect.value = item.symbolSelection;
@@ -1155,9 +1187,7 @@ function createCustomTechnicalRow(item = {}) {
         }
       }
 
-      if (symbolOther) {
-        symbolOther.value = item.symbolOther || "";
-      }
+      if (symbolOther) symbolOther.value = item.symbolOther || "";
 
       updateMechanicalOthers(row);
     });
@@ -1176,12 +1206,10 @@ function createCustomTechnicalRow(item = {}) {
         MECHANICAL_PARAMETERS.includes(item.label)
       )
       .forEach(item => {
-        const row = $$(
-          "[data-mechanical-row]",
-          questionnaire
-        ).find(element =>
-          element.dataset.mechanicalRow === item.label
-        );
+        const row = $$("[data-mechanical-row]", questionnaire)
+          .find(element =>
+            element.dataset.mechanicalRow === item.label
+          );
 
         if (!row) return;
 
@@ -1222,8 +1250,6 @@ function createCustomTechnicalRow(item = {}) {
     if (dimensionContainer) {
       dimensionContainer.replaceChildren();
 
-      
-
       if (
         Array.isArray(data.dimensionItems) &&
         data.dimensionItems.length
@@ -1236,6 +1262,7 @@ function createCustomTechnicalRow(item = {}) {
 
     Object.entries(data).forEach(([name, value]) => {
       if ([
+        "electricalAttributes",
         "technicalAttributes",
         "mechanicalAttributes",
         "uniqueAttributes",
@@ -1249,10 +1276,14 @@ function createCustomTechnicalRow(item = {}) {
       setFieldValue(name, value);
     });
 
-    // Pastikan hanya satu Material Category yang dipulihkan.
     normalizeMaterialCategory();
 
-    // Restore mechanical setelah dropdown UoM selesai dibuat.
+    // Restore Electrical
+    if (Array.isArray(data.electricalAttributes)) {
+      restoreElectricalAttributes(data.electricalAttributes);
+    }
+
+    // Restore Mechanical
     if (Array.isArray(data.mechanicalAttributes)) {
       restoreMechanicalAttributes(data.mechanicalAttributes);
     } else {
@@ -1277,6 +1308,7 @@ function createCustomTechnicalRow(item = {}) {
 
     updateReason();
     updateUomOther();
+    updateElectricalOthersInAllRows();
     updateCategory();
     updateDimension();
     updatePackSize();
@@ -1285,6 +1317,11 @@ function createCustomTechnicalRow(item = {}) {
     updateLegacyTechnicalFields(
       collectTechnicalAttributes()
     );
+  }
+
+  // Helper agar semua dropdown Electrical diperbarui.
+  function updateElectricalOthersInAllRows() {
+    updateAllElectricalOthers();
   }
 
   // =====================================================
@@ -1318,10 +1355,7 @@ function createCustomTechnicalRow(item = {}) {
     try {
       const data = getFormData();
 
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
-      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 
       setStatus("Draft tersimpan otomatis di browser");
     } catch (error) {
@@ -1346,9 +1380,7 @@ function createCustomTechnicalRow(item = {}) {
       if (!data) return false;
 
       loadingDocument = true;
-
       restoreForm(data);
-
       loadingDocument = false;
 
       setStatus("Draft sebelumnya berhasil dipulihkan");
@@ -1358,7 +1390,6 @@ function createCustomTechnicalRow(item = {}) {
       loadingDocument = false;
 
       console.error("Gagal memulihkan draft:", error);
-
       setStatus("Draft sebelumnya gagal dipulihkan");
 
       return false;
@@ -1399,9 +1430,7 @@ function createCustomTechnicalRow(item = {}) {
       saveDraft();
     };
 
-    reader.onerror = () => {
-      alert("Gagal membaca gambar.");
-    };
+    reader.onerror = () => alert("Gagal membaca gambar.");
 
     reader.readAsDataURL(file);
   });
@@ -1414,22 +1443,14 @@ function createCustomTechnicalRow(item = {}) {
     updateReason();
     updateCategory();
 
-    if (!questionnaire.reportValidity()) {
-      return false;
-    }
+    if (!questionnaire.reportValidity()) return false;
 
-    // Wajib memilih tepat satu Material Category.
     const categories = getSelectedCategories();
 
     if (categories.length !== 1) {
       alert("Pilih tepat satu Material Category.");
 
-      const firstCategory = $(
-        '[name="materialCategory"]',
-        questionnaire
-      );
-
-      firstCategory?.focus();
+      $('[name="materialCategory"]', questionnaire)?.focus();
 
       return false;
     }
@@ -1439,9 +1460,7 @@ function createCustomTechnicalRow(item = {}) {
       !reasonOther?.value.trim()
     ) {
       alert("Reason Others wajib diisi.");
-
       reasonOther?.focus();
-
       return false;
     }
 
@@ -1459,9 +1478,7 @@ function createCustomTechnicalRow(item = {}) {
       const versionInput = getVersionInput();
       const createdDateInput = getCreatedDateInput();
 
-      const currentVersion = Number(
-        versionInput?.value || 0
-      );
+      const currentVersion = Number(versionInput?.value || 0);
 
       const history = safeJSONParse(
         localStorage.getItem(HISTORY_KEY),
@@ -1476,10 +1493,7 @@ function createCustomTechnicalRow(item = {}) {
         formData: data
       });
 
-      localStorage.setItem(
-        HISTORY_KEY,
-        JSON.stringify(history)
-      );
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 
       const nextVersion = currentVersion + 1;
 
@@ -1538,15 +1552,10 @@ function createCustomTechnicalRow(item = {}) {
     );
 
     if (categoryField) {
-      categoryField.value = (
-        data.materialCategory || []
-      ).join(", ");
+      categoryField.value = (data.materialCategory || []).join(", ");
     }
 
-    const revisionDate = $(
-      '[name="revisionDate"]',
-      printForm
-    );
+    const revisionDate = $('[name="revisionDate"]', printForm);
 
     if (revisionDate && !revisionDate.value) {
       revisionDate.value = formatDate(data.createdDate);
@@ -1565,26 +1574,22 @@ function createCustomTechnicalRow(item = {}) {
     }
   }
 
+  // =====================================================
+  // BUTTON EVENTS — DIMENSION
+  // =====================================================
 
-// =====================================================
-// BUTTON EVENTS — DIMENSION
-// =====================================================
+  $("#addDimensionBtn")?.addEventListener("click", () => {
+    const totalRows = $$(".dimension-row", dimensionContainer).length;
 
-$("#addDimensionBtn")?.addEventListener("click", () => {
-  const totalRows = $$(".dimension-row", dimensionContainer).length;
+    if (totalRows >= 3) {
+      updateDimension();
+      return;
+    }
 
-  // Maksimal 3 baris
-  if (totalRows >= 3) {
+    createDimensionRow();
     updateDimension();
-    return;
-  }
-
-  createDimensionRow();
-  updateDimension();
-  saveDraft();
-});
-
-
+    saveDraft();
+  });
 
   dimensionContainer?.addEventListener("click", event => {
     const button = event.target.closest(".remove-dimension");
@@ -1597,15 +1602,13 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
     if (rows.length > 1) {
       row.remove();
     } else {
-  $(".dimension-type", row).value = "";
-  $(".dimension-value", row).value = "";
+      $(".dimension-type", row).value = "";
+      $(".dimension-value", row).value = "";
 
-  const symbolSelect = $(".dimension-symbol", row);
+      const symbolSelect = $(".dimension-symbol", row);
 
-  if (symbolSelect) {
-    symbolSelect.value = "";
-  }
-}
+      if (symbolSelect) symbolSelect.value = "";
+    }
 
     updateDimension();
     saveDraft();
@@ -1637,7 +1640,6 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
     if (!row) return;
 
     row.remove();
-
     saveDraft();
   });
 
@@ -1663,6 +1665,21 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
   });
 
   // =====================================================
+  // ELECTRICAL SELECT EVENTS
+  // =====================================================
+
+  questionnaire.addEventListener("change", event => {
+    const electricalRow = event.target.closest("[data-electric-row]");
+
+    if (!electricalRow) return;
+
+    if (event.target.matches("[data-electric-unit]")) {
+      updateElectricalOthers(electricalRow);
+      saveDraft();
+    }
+  });
+
+  // =====================================================
   // INPUT EVENTS
   // =====================================================
 
@@ -1677,6 +1694,7 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
   questionnaire.addEventListener("change", () => {
     updateReason();
     updateUomOther();
+    updateAllElectricalOthers();
     updateDimension();
     updatePackSize();
     updateCategory();
@@ -1712,9 +1730,7 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
 
     drawingImage = "";
 
-    if (drawingUpload) {
-      drawingUpload.value = "";
-    }
+    if (drawingUpload) drawingUpload.value = "";
 
     if (drawingPreview) {
       drawingPreview.removeAttribute("src");
@@ -1730,10 +1746,11 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
     }
 
     updateDepartment();
-
     initializeDocumentInfo();
 
     updateReason();
+    updateUomOther();
+    updateAllElectricalOthers();
     updateCategory();
     updateDimension();
     updatePackSize();
@@ -1755,7 +1772,6 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
 
   saveBtn?.addEventListener("click", () => {
     if (saving) return;
-
     if (!validateForm()) return;
 
     saving = true;
@@ -1823,9 +1839,7 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
           row.docNo ??
           "",
 
-        revision:
-          row.revision ??
-          "",
+        revision: row.revision ?? "",
 
         plant:
           row.plant ??
@@ -1852,22 +1866,17 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
           formData.materialCode ??
           "",
 
-        specType:
-          row.spec_type ||
-          "Barang"
+        specType: row.spec_type || "Barang"
       };
 
       restoreForm(data);
-
       transferToPrint(data);
 
       loadingDocument = false;
 
       setStatus("Dokumen berhasil dimuat dari database");
 
-      setTimeout(() => {
-        window.print();
-      }, 500);
+      setTimeout(() => window.print(), 500);
 
     } catch (error) {
       loadingDocument = false;
@@ -1885,13 +1894,9 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
   // =====================================================
 
   function initialize() {
-    const params = new URLSearchParams(
-      window.location.search
-    );
-
+    const params = new URLSearchParams(window.location.search);
     const printId = params.get("printId");
 
-    // Isi dropdown Mechanical dari UoM utama.
     initializeMechanicalUomOptions();
 
     if (printId) {
@@ -1900,7 +1905,6 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
     }
 
     updateDepartment();
-
     initializeDocumentInfo();
 
     const restored = restoreDraft();
@@ -1916,6 +1920,8 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
     normalizeMaterialCategory();
 
     updateReason();
+    updateUomOther();
+    updateAllElectricalOthers();
     updateCategory();
     updateDimension();
     updatePackSize();
@@ -1936,7 +1942,6 @@ $("#addDimensionBtn")?.addEventListener("click", () => {
     const data = getFormData();
 
     saveDraft();
-
     transferToPrint(data);
 
     window.print();
