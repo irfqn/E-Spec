@@ -744,3 +744,42 @@ body {
   box-shadow: none !important;
   transform: translateY(-1px);
 }
+
+/* =========================================
+   AUTO GENERATED — VERSION & CREATE DATE
+========================================= */
+
+#serviceQuestionnaireForm .auto-generated-field {
+  background: #f0f5ff;
+  border: 1px solid #cbdcff;
+  color: #355b9a;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+
+#serviceQuestionnaireForm .auto-generated-group label {
+  color: #35445b;
+}
+
+#serviceQuestionnaireForm .auto-generated-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+#serviceQuestionnaireForm .auto-generated-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+  font-size: 10px;
+  font-weight: 800;
+}
