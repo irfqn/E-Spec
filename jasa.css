@@ -1409,50 +1409,49 @@ body {
   }
 
 }
+
 /* =====================================================
    REQUIRED FIELD — RED ASTERISK ONLY
+   FIX POSITION LABEL & REQUIRED STAR
 ===================================================== */
 
-#questionnaireJasaForm .required {
-  display: inline !important;
-  color: #dc3545 !important;
-  font-weight: 800 !important;
-  margin-left: 3px;
-}
-
-/* Pastikan teks label tetap menggunakan warna normal */
+/* LABEL FIELD */
 #questionnaireJasaForm .q-field {
+  display: block !important;
+  width: 100%;
   color: #344256;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-/* Pastikan judul section tidak ikut berubah merah */
-#questionnaireJasaForm .q-section > h2 {
-  color: inherit;
+/* REQUIRED STAR */
+#questionnaireJasaForm .q-field .required,
+#questionnaireJasaForm .q-field .required-star {
+  display: inline !important;
+  position: static !important;
+  margin-left: 3px;
+  color: #dc3545 !important;
+  font-size: inherit;
+  font-weight: 800 !important;
+  vertical-align: baseline;
 }
 
-/* =====================================================
-   LABEL REQUIRED — INLINE ALIGNMENT FIX
-===================================================== */
-
-#questionnaireJasaForm .q-field {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-#questionnaireJasaForm .q-field .q-field-label {
+/* INPUT DI BAWAH LABEL */
+#questionnaireJasaForm .q-field > input,
+#questionnaireJasaForm .q-field > select,
+#questionnaireJasaForm .q-field > textarea {
   display: block;
   width: 100%;
-  margin-bottom: 7px;
-  color: #344256;
-  font-size: inherit;
-  font-weight: 600;
-  line-height: 1.5;
+  margin-top: 8px;
 }
 
-#questionnaireJasaForm .q-field .q-field-label .required {
-  display: inline !important;
-  color: #dc3545 !important;
-  font-weight: 800 !important;
-  margin-left: 3px;
+/* MATERIAL CATEGORY */
+#questionnaireJasaForm .q-field > .q-checkbox-group {
+  display: block;
+  margin-top: 8px;
+}
+
+/* JUDUL SECTION TETAP NORMAL */
+#questionnaireJasaForm .q-section > h2 {
+  color: inherit;
 }
