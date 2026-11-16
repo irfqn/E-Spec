@@ -1036,3 +1036,337 @@ body {
   background: #fef2f2;
 }
 
+
+/* =====================================================
+   E-SPEC JASA — SPECIFICATION REDESIGN
+   GENERAL SPECIFICATION & TECHNICAL SPECIFICATION
+===================================================== */
+
+/* MAIN SECTION */
+
+#questionnaireJasaForm .specification-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e5eaf0;
+  border-radius: 12px;
+}
+
+/* SECTION TITLE */
+
+#questionnaireJasaForm .specification-section > h2 {
+  margin: 0 0 2px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid #e5eaf0;
+  color: #24364b;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* PANEL */
+
+#questionnaireJasaForm .specification-panel {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e5eaf0;
+  border-radius: 9px;
+  background: #f8fafc;
+}
+
+/* PANEL HEADING */
+
+#questionnaireJasaForm .specification-panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: -14px -14px 14px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5eaf0;
+  border-radius: 8px 8px 0 0;
+  background: #f0f4f8;
+}
+
+/* NUMBER */
+
+#questionnaireJasaForm .specification-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  border-radius: 5px;
+  background: #6558e8;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* PANEL TITLE
+   Override heading h3 dari CSS lama */
+
+#questionnaireJasaForm .specification-panel-heading h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #5143d0 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.4px;
+}
+
+/* PANEL CONTENT */
+
+#questionnaireJasaForm .specification-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* GENERAL SPECIFICATION FIELD */
+
+#questionnaireJasaForm .specification-content > .q-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  color: #344256;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+#questionnaireJasaForm .specification-content .required {
+  color: #dc3545;
+}
+
+/* GENERAL INPUT */
+
+#questionnaireJasaForm .specification-content > .q-field input,
+#questionnaireJasaForm .specification-content > .q-field textarea {
+  width: 100%;
+  min-height: 36px;
+  padding: 9px 11px;
+  border: 1px solid #d8e0e9;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #253449;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+#questionnaireJasaForm .specification-content > .q-field textarea {
+  min-height: 75px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* TIMELINE */
+
+#questionnaireJasaForm .specification-content > .timeline-field {
+  max-width: 100%;
+}
+
+/* INPUT FOCUS */
+
+#questionnaireJasaForm .specification-content input:focus,
+#questionnaireJasaForm .specification-content textarea:focus {
+  outline: none;
+  border-color: #6558e8;
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.10);
+}
+
+/* TECHNICAL & KPI GROUP */
+
+#questionnaireJasaForm .specification-group {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5eaf0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+#questionnaireJasaForm .specification-group + .specification-group {
+  margin-top: 2px;
+}
+
+/* GROUP HEADING */
+
+#questionnaireJasaForm .specification-group-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+#questionnaireJasaForm .specification-group-heading h4 {
+  margin: 0;
+  padding: 0;
+  color: #344256;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+#questionnaireJasaForm .specification-group-heading p {
+  margin: 4px 0 0;
+  color: #8491a3;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ADD BUTTON */
+
+#questionnaireJasaForm .specification-add-btn {
+  flex-shrink: 0;
+  min-height: 30px;
+  padding: 7px 11px;
+  border: 1px solid #6558e8;
+  border-radius: 6px;
+  background: #6558e8;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+#questionnaireJasaForm .specification-add-btn:hover {
+  border-color: #5143d0;
+  background: #5143d0;
+  transform: translateY(-1px);
+}
+
+/* DYNAMIC QUESTION LIST */
+
+#questionnaireJasaForm .dynamic-question-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  counter-reset: specification-counter;
+}
+
+/* DYNAMIC QUESTION ITEM
+   Override CSS dynamic-question-item lama */
+
+#questionnaireJasaForm .dynamic-question-list .dynamic-question-item {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  counter-increment: specification-counter;
+}
+
+/* AUTOMATIC NUMBERING */
+
+#questionnaireJasaForm .dynamic-question-list .dynamic-question-item::before {
+  content: counter(specification-counter) ".";
+  display: inline-block;
+  flex: 0 0 20px;
+  color: #6558e8;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* DYNAMIC TEXTAREA */
+
+#questionnaireJasaForm .dynamic-question-list .dynamic-question-item textarea {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  height: 38px;
+  padding: 9px 11px;
+  border: 1px solid #d8e0e9;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #253449;
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+#questionnaireJasaForm .dynamic-question-list .dynamic-question-item textarea::placeholder {
+  color: #a0aab7;
+}
+
+#questionnaireJasaForm .dynamic-question-list .dynamic-question-item textarea:focus {
+  outline: none;
+  border-color: #6558e8;
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.10);
+}
+
+/* REMOVE BUTTON */
+
+#questionnaireJasaForm .dynamic-question-list .remove-question-btn {
+  flex-shrink: 0;
+  min-height: 30px;
+  padding: 6px 10px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fff1f2;
+  color: #dc2626;
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#questionnaireJasaForm .dynamic-question-list .remove-question-btn:hover {
+  background: #fee2e2;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  #questionnaireJasaForm .specification-section {
+    padding: 16px;
+  }
+
+  #questionnaireJasaForm .specification-group-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #questionnaireJasaForm .specification-add-btn {
+    align-self: flex-start;
+  }
+
+  #questionnaireJasaForm .dynamic-question-list .dynamic-question-item {
+    flex-direction: row;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  #questionnaireJasaForm .specification-panel {
+    padding: 10px;
+  }
+
+  #questionnaireJasaForm .specification-panel-heading {
+    margin: -10px -10px 12px;
+    padding: 11px;
+  }
+
+  #questionnaireJasaForm .specification-group {
+    padding: 9px;
+  }
+
+}
