@@ -1409,3 +1409,23 @@ body {
   }
 
 }
+/* =====================================================
+   REQUIRED FIELD — RED ASTERISK ONLY
+===================================================== */
+
+#questionnaireJasaForm .required {
+  display: inline !important;
+  color: #dc3545 !important;
+  font-weight: 800 !important;
+  margin-left: 3px;
+}
+
+/* Pastikan teks label tetap menggunakan warna normal */
+#questionnaireJasaForm .q-field {
+  color: #344256;
+}
+
+/* Pastikan judul section tidak ikut berubah merah */
+#questionnaireJasaForm .q-section > h2 {
+  color: inherit;
+}
