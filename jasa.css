@@ -1543,3 +1543,9 @@ body {
   border: 1px solid #dfe5ed !important;
   box-shadow: none !important;
 }
+
+/* Keterangan otomatis tetap berwarna hijau */
+#questionnaireJasaForm .auto-generated,
+#questionnaireJasaForm .field-hint {
+  color: #16a34a !important;
+}
