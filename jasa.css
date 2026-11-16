@@ -1487,3 +1487,44 @@ body {
   color: inherit;
 }
 
+/* =====================================================
+   SPECIFICATION — FONT & FIELD SIZE CONSISTENCY
+   Menyamakan ukuran dengan section lainnya
+===================================================== */
+
+/* LABEL */
+#questionnaireJasaForm .specification-section .q-field {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+}
+
+/* INPUT, SELECT, DAN TEXTAREA */
+#questionnaireJasaForm .specification-section .q-field input,
+#questionnaireJasaForm .specification-section .q-field select,
+#questionnaireJasaForm .specification-section .q-field textarea {
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  min-height: 43px !important;
+  padding: 11px 13px !important;
+  box-sizing: border-box !important;
+}
+
+/* PROJECT DESCRIPTION */
+#questionnaireJasaForm .specification-section .q-field textarea {
+  min-height: 100px !important;
+}
+
+/* TECHNICAL SPECIFICATION & KPI */
+#questionnaireJasaForm .specification-section .dynamic-question-item textarea {
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  min-height: 43px !important;
+  height: 43px !important;
+  padding: 11px 13px !important;
+  box-sizing: border-box !important;
+}
