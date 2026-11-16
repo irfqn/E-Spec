@@ -1429,3 +1429,16 @@ body {
 #questionnaireJasaForm .q-section > h2 {
   color: inherit;
 }
+
+/* REQUIRED STAR — INLINE POSITION */
+
+#questionnaireJasaForm .q-field .required {
+  display: inline !important;
+  position: static !important;
+  color: #dc3545 !important;
+  font-size: inherit;
+  font-weight: 800 !important;
+  margin-left: 3px;
+  vertical-align: baseline;
+  flex: none !important;
+}
