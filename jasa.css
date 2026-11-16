@@ -1544,8 +1544,12 @@ body {
   box-shadow: none !important;
 }
 
-/* Keterangan otomatis tetap berwarna hijau */
-#questionnaireJasaForm .auto-generated,
-#questionnaireJasaForm .field-hint {
-  color: #16a34a !important;
+/* =========================================
+   AUTO-GENERATED ICON — ABU-ABU
+========================================= */
+
+#questionnaireJasaForm .auto-generated-icon {
+  background-color: #e5e7eb !important;
+  color: #687386 !important;
+  border-color: #d1d5db !important;
 }
