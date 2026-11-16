@@ -219,71 +219,142 @@
 
 <!-- 04 SPECIFICATION -->
 
-<section class="q-section">
-  <h2>04. Specification</h2>
+<section class="q-section specification-section">
 
   <!-- GENERAL SPECIFICATION -->
 
-  <div class="service-subsection">
-    <h4>General Specification</h4>
+  <div class="specification-panel">
 
-    <div class="q-grid">
+    <div class="specification-panel-heading">
+      <span class="specification-number">1</span>
+      <h3>GENERAL SPECIFICATION</h3>
+    </div>
+
+    <div class="specification-content">
 
       <label class="q-field">
-        Project Name *
+        Project Name <span class="required">*</span>
         <input
           type="text"
           name="projectName"
           required
-          placeholder="Masukkan nama proyek"
+          placeholder="Masukkan Nama Proyek Jasa..."
         >
       </label>
 
       <label class="q-field">
-        Project Description *
+        Project Description <span class="required">*</span>
         <textarea
           name="projectDescription"
-          rows="4"
+          rows="3"
           required
-          placeholder="Jelaskan gambaran umum pekerjaan jasa"
+          placeholder="Masukkan deskripsi detail ruang lingkup pekerjaan jasa..."
         ></textarea>
       </label>
 
-      <label class="q-field">
-        Timeline *
+      <label class="q-field timeline-field">
+        Timeline / Duration <span class="required">*</span>
         <input
-          type="date"
+          type="text"
           name="timeline"
           required
+          placeholder="Contoh: 3 Bulan (Maret - Mei 2026)..."
         >
       </label>
 
     </div>
   </div>
 
+
   <!-- TECHNICAL SPECIFICATION -->
 
-  <div class="service-subsection">
-    <h4>Technical Specification</h4>
+  <div class="specification-panel">
 
-    <div id="technicalSpecificationList">
+    <div class="specification-panel-heading">
+      <span class="specification-number">2</span>
+      <h3>TECHNICAL SPECIFICATION</h3>
+    </div>
 
-      <div class="q-field">
-        <textarea
-          name="technicalSpecification[]"
-          rows="3"
-          placeholder="Masukkan persyaratan teknis"
-        ></textarea>
+    <div class="specification-content">
+
+      <!-- A. TECHNICAL -->
+
+      <div class="specification-group">
+
+        <div class="specification-group-heading">
+
+          <div>
+            <h4>A. TECHNICAL</h4>
+            <p>Input spesifikasi teknis pengerjaan jasa per poin (1, 2, 3...)</p>
+          </div>
+
+          <button
+            type="button"
+            id="addTechnicalSpecificationBtn"
+            class="specification-add-btn"
+          >
+            + Tambah Poin Technical
+          </button>
+
+        </div>
+
+        <div
+          id="technicalSpecificationList"
+          class="dynamic-question-list"
+        >
+
+          <div class="dynamic-question-item">
+            <textarea
+              name="technicalSpecification[]"
+              rows="1"
+              placeholder="Masukkan poin spesifikasi teknis 1..."
+            ></textarea>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- B. KPI -->
+
+      <div class="specification-group">
+
+        <div class="specification-group-heading">
+
+          <div>
+            <h4>B. KPI (KEY PERFORMANCE INDICATOR)</h4>
+            <p>Indikator keberhasilan layanan jasa per poin (1, 2, 3...)</p>
+          </div>
+
+          <button
+            type="button"
+            id="addKpiBtn"
+            class="specification-add-btn"
+          >
+            + Tambah Poin KPI
+          </button>
+
+        </div>
+
+        <div
+          id="kpiList"
+          class="dynamic-question-list"
+        >
+
+          <div class="dynamic-question-item">
+            <textarea
+              name="kpi[]"
+              rows="1"
+              placeholder="Masukkan poin indikator KPI 1..."
+            ></textarea>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
-
-    <button
-      type="button"
-      id="addTechnicalSpecificationBtn"
-    >
-      + Tambah Technical Specification
-    </button>
   </div>
 
 </section>
