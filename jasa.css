@@ -1430,15 +1430,29 @@ body {
   color: inherit;
 }
 
-/* REQUIRED STAR — INLINE POSITION */
+/* =====================================================
+   LABEL REQUIRED — INLINE ALIGNMENT FIX
+===================================================== */
 
-#questionnaireJasaForm .q-field .required {
-  display: inline !important;
-  position: static !important;
-  color: #dc3545 !important;
+#questionnaireJasaForm .q-field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#questionnaireJasaForm .q-field .q-field-label {
+  display: block;
+  width: 100%;
+  margin-bottom: 7px;
+  color: #344256;
   font-size: inherit;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+#questionnaireJasaForm .q-field .q-field-label .required {
+  display: inline !important;
+  color: #dc3545 !important;
   font-weight: 800 !important;
   margin-left: 3px;
-  vertical-align: baseline;
-  flex: none !important;
 }
