@@ -1587,8 +1587,16 @@ body {
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
+/* Efek hover — ungu seperti Material Group Barang */
 #questionnaireJasaForm .material-category-field .q-checkbox-group label:hover {
-  border-color: #cbd5e1;
+  border-color: #6558e8;
+  color: #6558e8;
+  background-color: #fbfaff;
+}
+
+/* Checkbox ikut menggunakan warna ungu */
+#questionnaireJasaForm .material-category-field .q-checkbox-group label:hover input[type="checkbox"] {
+  accent-color: #6558e8;
 }
 
 #questionnaireJasaForm .material-category-field input[type="checkbox"] {
