@@ -1448,3 +1448,21 @@ body {
   margin-left: 3px;
   vertical-align: baseline;
 }
+
+/* =====================================================
+   IDENTITY & PURCHASE OBJECTIVE — RED THEME
+===================================================== */
+
+/* IDENTITY */
+#questionnaireJasaForm .identity-section > h3 {
+  background: #dc3545 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #b92d3b !important;
+}
+
+/* PURCHASE OBJECTIVE */
+#questionnaireJasaForm .purchase-objective-section > h3 {
+  background: #dc3545 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #b92d3b !important;
+}
