@@ -901,17 +901,54 @@
     });
   }
 
-  // =====================================================
+    // =====================================================
   // VALIDASI MATERIAL CATEGORY
+  // HANYA BOLEH MEMILIH SATU
   // =====================================================
 
+  const materialCategoryFields = questionnaire.querySelectorAll(
+    'input[name="materialCategory"]'
+  );
+
+  // Jika satu checkbox dipilih, lepaskan pilihan lainnya.
+  materialCategoryFields.forEach((checkbox) => {
+    checkbox.addEventListener("change", function () {
+      if (this.checked) {
+        materialCategoryFields.forEach((otherCheckbox) => {
+          if (otherCheckbox !== this) {
+            otherCheckbox.checked = false;
+          }
+        });
+      }
+
+      saveDraft();
+      transferToPrint();
+    });
+  });
+
+  // Pastikan draft lama tidak memulihkan dua pilihan sekaligus.
+  function enforceSingleMaterialCategory() {
+    const checkedCategories = Array.from(materialCategoryFields)
+      .filter((checkbox) => checkbox.checked);
+
+    checkedCategories.slice(1).forEach((checkbox) => {
+      checkbox.checked = false;
+    });
+  }
+
+  // Validasi sebelum menyimpan.
   function validateMaterialCategory() {
     const categories = questionnaire.querySelectorAll(
       'input[name="materialCategory"]:checked'
     );
 
     if (categories.length === 0) {
-      alert("Silakan pilih minimal satu Material Category.");
+      alert("Silakan pilih salah satu Material Category.");
+      return false;
+    }
+
+    if (categories.length > 1) {
+      alert("Material Category hanya boleh memilih satu pilihan.");
       return false;
     }
 
@@ -1008,6 +1045,9 @@
     initializeDocumentInfo();
 
     restoreDraft();
+
+    // Pastikan Material Category hanya memiliki satu pilihan.
+    enforceSingleMaterialCategory();
 
     // Pulihkan pertanyaan dinamis setelah draft dibaca.
     const savedDraft = JSON.parse(
