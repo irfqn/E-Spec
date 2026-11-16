@@ -289,211 +289,188 @@
 </section>
 
 
+
 <!-- 05 SCOPE -->
 
-<section class="q-section">
+<section class="q-section scope-section">
   <h2>05. Scope</h2>
 
-  <!-- ENVIRONMENT CONDITION -->
+  <!-- 1. ENVIRONMENT CONDITION -->
 
-  <div class="service-subsection">
-    <h4>Environment Condition & Restriction</h4>
-
-    <div class="q-grid">
-      <label class="q-field">
-        Environment Condition & Restriction
-        <textarea
-          name="environmentCondition"
-          rows="3"
-          placeholder="Masukkan kondisi lingkungan dan batasan pekerjaan"
-        ></textarea>
-      </label>
+  <div class="scope-card">
+    <div class="scope-card-heading">
+      <div>
+        <span>1.</span>
+        <strong>Environment Condition & Restriction</strong>
+      </div>
+      <small>Kondisi & batasan area kerja</small>
     </div>
+
+    <input
+      type="text"
+      name="environmentCondition"
+      placeholder="Contoh: Area plant aktif, bekerja di ketinggian / confined space..."
+    >
   </div>
 
-  <!-- HSE -->
+  <!-- 2. HSE -->
 
-  <div class="service-subsection">
-    <h4>Health, Safety, & Environment Standard</h4>
-
-    <div class="q-grid">
-      <label class="q-field">
-        Health, Safety, & Environment Standard
-        <textarea
-          name="hse"
-          rows="3"
-          placeholder="Masukkan standar kesehatan, keselamatan, dan lingkungan"
-        ></textarea>
-      </label>
+  <div class="scope-card">
+    <div class="scope-card-heading">
+      <div>
+        <span>2.</span>
+        <strong>Health, Safety, & Environment Standard</strong>
+      </div>
+      <small>Standar K3</small>
     </div>
+
+    <input
+      type="text"
+      name="hse"
+      placeholder="Contoh: Wajib APD lengkap, JSA, Permit to Work (PTW)..."
+    >
   </div>
 
-  <!-- LICENSE -->
+  <!-- 3. LICENSE -->
 
-  <div class="service-subsection">
-    <h4>License & Regulation</h4>
-
-    <div class="q-grid">
-      <label class="q-field">
-        License & Regulation
-        <textarea
-          name="licenseRegulation"
-          rows="3"
-          placeholder="Masukkan persyaratan lisensi dan regulasi"
-        ></textarea>
-      </label>
+  <div class="scope-card">
+    <div class="scope-card-heading">
+      <div>
+        <span>3.</span>
+        <strong>License & Regulation</strong>
+      </div>
+      <small>Perizinan & regulasi</small>
     </div>
+
+    <input
+      type="text"
+      name="licenseRegulation"
+      placeholder="Contoh: SIO Kemenaker, SIPA, Sertifikat Badan Usaha (SBU)..."
+    >
   </div>
 
-  <!-- WARRANTY -->
+  <!-- 4. WARRANTY -->
 
-  <div class="service-subsection">
-    <h4>Warranty / After Sales Service</h4>
-
-    <div class="q-grid">
-      <label class="q-field">
-        Warranty / After Sales Service
-        <textarea
-          name="warranty"
-          rows="3"
-          placeholder="Masukkan ketentuan garansi dan layanan purna jual"
-        ></textarea>
-      </label>
+  <div class="scope-card">
+    <div class="scope-card-heading">
+      <div>
+        <span>4.</span>
+        <strong>Warranty / After Sales Service</strong>
+      </div>
+      <small>Garansi jasa</small>
     </div>
+
+    <input
+      type="text"
+      name="warranty"
+      placeholder="Contoh: Garansi pemeliharaan 3 bulan setelah pekerjaan selesai..."
+    >
   </div>
 
-  <!-- ATTACHMENT DOCUMENTS -->
+  <!-- 5. ATTACHMENT DOCUMENTS -->
 
-  <div class="service-subsection">
-    <h4>Attachment Documents</h4>
+  <div class="scope-card">
+    <div class="scope-card-heading">
+      <div>
+        <span>5.</span>
+        <strong>Attachment Documents</strong>
+      </div>
 
-    <p>Dokumen yang disediakan oleh User (SASA).</p>
+      <button
+        type="button"
+        class="scope-add-btn"
+        id="addAttachmentDocumentBtn"
+      >
+        + Tambah Lampiran
+      </button>
+    </div>
 
-    <div class="q-grid">
+    <small class="scope-description">
+      Dokumen yang disediakan oleh User (SASA).
+    </small>
 
-      <label class="q-field">
-        Spec Detail
-        <input
-          type="file"
-          name="attachmentSpecDetail"
-        >
-      </label>
+    <div id="attachmentDocumentList">
 
-      <label class="q-field">
-        BQ
-        <input
-          type="file"
-          name="attachmentBQ"
-        >
-      </label>
-
-      <label class="q-field">
-        Gambar / Design
-        <input
-          type="file"
-          name="attachmentDesign"
-        >
-      </label>
-
-      <label class="q-field">
-        Timeline
-        <input
-          type="file"
-          name="attachmentTimeline"
-        >
-      </label>
-
-      <div class="q-field">
-        <label for="attachmentOther">
-          Lainnya
-        </label>
-
-        <input
-          type="text"
-          id="attachmentOther"
-          name="attachmentOther"
-          placeholder="Nama dokumen lainnya"
-        >
+      <div class="scope-document-row">
+        <select name="attachmentDocumentType[]">
+          <option value="">-- Pilih Attachment Document --</option>
+          <option value="Spec Detail">Spec Detail</option>
+          <option value="BQ">BQ</option>
+          <option value="Gambar / Design">Gambar / Design</option>
+          <option value="Timeline">Timeline</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
 
         <input
           type="file"
-          name="attachmentOtherFile"
+          name="attachmentDocumentFile[]"
+          aria-label="File attachment"
         >
       </div>
 
     </div>
   </div>
 
-  <!-- REQUIRED DOCUMENTS -->
+  <!-- 6. REQUIRED DOCUMENTS -->
 
-  <div class="service-subsection">
-    <h4>Required Documents</h4>
+  <div class="scope-card">
+    <div class="scope-card-heading">
+      <div>
+        <span>6.</span>
+        <strong>Required Documents</strong>
+      </div>
 
-    <p>Dokumen yang disediakan oleh Vendor.</p>
-
-    <div class="q-checkbox-group">
-
-      <label>
-        <input
-          type="checkbox"
-          name="vendorDocuments"
-          value="Garansi Produsen"
-        >
-        Garansi Produsen
-      </label>
-
-      <label>
-        <input
-          type="checkbox"
-          name="vendorDocuments"
-          value="Garansi Distributor"
-        >
-        Garansi Distributor
-      </label>
-
-      <label>
-        <input
-          type="checkbox"
-          name="vendorDocuments"
-          value="MSDS / COA / Halal"
-        >
-        MSDS / COA / Halal
-      </label>
-
-      <label>
-        <input
-          type="checkbox"
-          name="vendorDocuments"
-          value="Manual Book / User Manual"
-        >
-        Manual Book / User Manual
-      </label>
-
-      <label>
-        <input
-          type="checkbox"
-          name="vendorDocuments"
-          value="Others"
-        >
-        Lainnya
-      </label>
-
+      <button
+        type="button"
+        class="scope-add-btn"
+        id="addRequiredDocumentBtn"
+      >
+        + Tambah Dokumen
+      </button>
     </div>
 
-    <div class="q-grid">
-      <label class="q-field">
-        Other Required Documents
-        <input
-          type="text"
-          name="vendorDocumentsOther"
-          placeholder="Masukkan dokumen lainnya"
-        >
-      </label>
+    <small class="scope-description">
+      Dokumen yang perlu disediakan oleh Vendor.
+    </small>
+
+    <div id="requiredDocumentList">
+
+      <div class="scope-document-row">
+        <select name="requiredDocumentType[]">
+          <option value="">-- Pilih Required Document --</option>
+          <option value="Garansi Produsen">Garansi Produsen</option>
+          <option value="Garansi Distributor">Garansi Distributor</option>
+          <option value="MSDS / COA / Halal">MSDS / COA / Halal</option>
+          <option value="Manual Book / User Manual">
+            Manual Book / User Manual
+          </option>
+          <option value="Others">Others</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 7. NOTES -->
+
+  <div class="scope-card">
+    <div class="scope-card-heading">
+      <div>
+        <span>7.</span>
+        <strong>Notes</strong>
+      </div>
+      <small>Catatan tambahan</small>
     </div>
 
+    <textarea
+      name="notes"
+      rows="3"
+      placeholder="Catatan tambahan untuk vendor atau pelaksana jasa..."
+    ></textarea>
   </div>
 
 </section>
+
 
 
 

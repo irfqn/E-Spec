@@ -904,3 +904,114 @@ body {
   background: #5143d0;
   border-color: #5143d0;
 }
+  
+/* =========================================
+   SCOPE - QUESTIONNAIRE LAYOUT
+========================================= */
+
+#questionnaireJasaForm .scope-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#questionnaireJasaForm .scope-card {
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+}
+
+#questionnaireJasaForm .scope-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+#questionnaireJasaForm .scope-card-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#questionnaireJasaForm .scope-card-heading > div span {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+#questionnaireJasaForm .scope-card-heading strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#questionnaireJasaForm .scope-card-heading small,
+#questionnaireJasaForm .scope-description {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+#questionnaireJasaForm .scope-card > input,
+#questionnaireJasaForm .scope-card > textarea,
+#questionnaireJasaForm .scope-document-row select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#questionnaireJasaForm .scope-card > input,
+#questionnaireJasaForm .scope-card > textarea,
+#questionnaireJasaForm .scope-document-row select {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 10px 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+}
+
+#questionnaireJasaForm .scope-card input:focus,
+#questionnaireJasaForm .scope-card textarea:focus,
+#questionnaireJasaForm .scope-card select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, .09);
+}
+
+#questionnaireJasaForm .scope-document-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 9px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #f8fafc;
+}
+
+#questionnaireJasaForm .scope-document-row input[type="file"] {
+  font-size: 11px;
+}
+
+#questionnaireJasaForm .scope-add-btn {
+  padding: 7px 11px;
+  border: none;
+  border-radius: 6px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#questionnaireJasaForm .scope-add-btn:hover {
+  background: var(--primary-dark);
+}
+
+@media (max-width: 600px) {
+  #questionnaireJasaForm .scope-card-heading {
+    align-items: flex-start;
+  }
+}
