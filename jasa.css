@@ -87,7 +87,7 @@ body {
 }
 
 /* =====================================================
-   4. LABEL
+   4. LABEL & REQUIRED
 ===================================================== */
 
 #questionnaireJasaForm label,
@@ -97,12 +97,28 @@ body {
   font-weight: 600;
 }
 
-#questionnaireJasaForm label span.required,
+/* Semua indikator wajib berwarna merah */
+
 #questionnaireJasaForm .required,
-#questionnaireJasaForm .required-star {
+#questionnaireJasaForm .required-star,
+#questionnaireJasaForm span.required,
+#questionnaireJasaForm label .required,
+#questionnaireJasaForm label .required-star,
+#questionnaireJasaForm .field-label .required,
+#questionnaireJasaForm .field-label .required-star,
+#questionnaireJasaForm .specification-content .required {
+  display: inline !important;
   margin-left: 3px;
-  color: var(--danger) !important;
-  font-weight: 700;
+  color: #dc3545 !important;
+  font-weight: 800 !important;
+}
+
+/* Jika indikator wajib menggunakan teks REQUIRED */
+
+#questionnaireJasaForm .required-text,
+#questionnaireJasaForm .required-label {
+  color: #dc3545 !important;
+  font-weight: 700 !important;
 }
 
 /* =====================================================
@@ -258,21 +274,12 @@ body {
   cursor: pointer;
 }
 
-/* IDENTITY HEADER — MERAH */
+/* Header Identity tetap menggunakan tema normal */
 
 #questionnaireJasaForm .identity-section > h3 {
-  background: var(--danger) !important;
-  color: #ffffff !important;
-  border-bottom: 1px solid var(--danger-dark) !important;
-}
-
-/* IDENTITY REQUIRED */
-
-#questionnaireJasaForm .identity-section .required,
-#questionnaireJasaForm .identity-section .required-star,
-#questionnaireJasaForm .identity-section label span.required {
-  color: var(--danger) !important;
-  font-weight: 700;
+  background: #f0f4f8;
+  color: #24364b;
+  border-bottom: 1px solid #e1e7ef;
 }
 
 /* =====================================================
@@ -283,21 +290,12 @@ body {
   background: #ffffff;
 }
 
-/* PURCHASE OBJECTIVE HEADER — MERAH */
+/* Header Purchase Objective tetap menggunakan tema normal */
 
 #questionnaireJasaForm .purchase-objective-section > h3 {
-  background: var(--danger) !important;
-  color: #ffffff !important;
-  border-bottom: 1px solid var(--danger-dark) !important;
-}
-
-/* PURCHASE OBJECTIVE REQUIRED */
-
-#questionnaireJasaForm .purchase-objective-section .required,
-#questionnaireJasaForm .purchase-objective-section .required-star,
-#questionnaireJasaForm .purchase-objective-section label span.required {
-  color: var(--danger) !important;
-  font-weight: 700;
+  background: #f0f4f8;
+  color: #24364b;
+  border-bottom: 1px solid #e1e7ef;
 }
 
 /* =====================================================
@@ -558,9 +556,9 @@ body {
 #questionnaireJasaForm .specification-content > .q-field .required {
   display: inline !important;
   margin-left: 3px;
-  color: var(--danger) !important;
+  color: #dc3545 !important;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800 !important;
   vertical-align: baseline;
 }
 
