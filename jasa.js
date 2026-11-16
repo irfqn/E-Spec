@@ -160,6 +160,7 @@
     deptSelect.innerHTML = "";
 
     const placeholder = document.createElement("option");
+
     placeholder.value = "";
     placeholder.textContent = selectedPlant
       ? "-- Pilih Departemen --"
@@ -217,12 +218,18 @@
       }
     }
 
-    // Simpan nama file lampiran agar dapat ditampilkan pada template.
+    // Simpan nama file lampiran berdasarkan nama field.
     const fileNames = {};
 
     questionnaire.querySelectorAll('input[type="file"]').forEach((field) => {
       if (field.files && field.files.length > 0) {
-        fileNames[field.name] = Array.from(field.files).map((file) => file.name);
+        if (!fileNames[field.name]) {
+          fileNames[field.name] = [];
+        }
+
+        fileNames[field.name].push(
+          ...Array.from(field.files).map((file) => file.name)
+        );
       }
     });
 
@@ -300,7 +307,6 @@
               : value === field.value;
 
           } else if (field.name === "department") {
-            // Department sudah dipulihkan melalui populateDepartments().
             return;
 
           } else if (field.name.endsWith("[]")) {
@@ -477,6 +483,230 @@
   }
 
   // =====================================================
+  // SCOPE — PARAMETER & DYNAMIC DOCUMENT ROWS
+  // =====================================================
+
+  const attachmentDocumentList = $(
+    "#attachmentDocumentList",
+    questionnaire
+  );
+
+  const requiredDocumentList = $(
+    "#requiredDocumentList",
+    questionnaire
+  );
+
+  const addAttachmentDocumentBtn = $(
+    "#addAttachmentDocumentBtn",
+    questionnaire
+  );
+
+  const addRequiredDocumentBtn = $(
+    "#addRequiredDocumentBtn",
+    questionnaire
+  );
+
+  const scopeDocumentGroups = [
+    {
+      container: attachmentDocumentList,
+      button: addAttachmentDocumentBtn,
+      fieldName: "attachmentDocumentType[]"
+    },
+    {
+      container: requiredDocumentList,
+      button: addRequiredDocumentBtn,
+      fieldName: "requiredDocumentType[]"
+    }
+  ];
+
+  // Ambil semua baris dokumen pada suatu kelompok.
+  function getScopeRows(container) {
+    if (!container) return [];
+
+    return Array.from(
+      container.querySelectorAll(".scope-document-row")
+    );
+  }
+
+  // Kosongkan isi baris.
+  function clearScopeRow(row) {
+    row.querySelectorAll("input, select, textarea").forEach((field) => {
+      if (field.type === "file") {
+        field.value = "";
+
+      } else if (field.type === "checkbox" || field.type === "radio") {
+        field.checked = false;
+
+      } else if (field.tagName === "SELECT") {
+        field.selectedIndex = 0;
+
+      } else {
+        field.value = "";
+      }
+    });
+  }
+
+  // Buat tombol hapus untuk baris tambahan.
+  function createScopeRemoveButton(row) {
+    if (!row || row.querySelector(".scope-remove-btn")) return;
+
+    const removeButton = document.createElement("button");
+
+    removeButton.type = "button";
+    removeButton.className = "scope-remove-btn";
+    removeButton.textContent = "Hapus";
+
+    removeButton.addEventListener("click", () => {
+      row.remove();
+
+      saveDraft();
+      transferToPrint();
+    });
+
+    row.appendChild(removeButton);
+  }
+
+  // Tambah satu baris dokumen.
+  function addScopeDocumentRow(container, shouldSave = true) {
+    if (!container) return null;
+
+    const firstRow = getScopeRows(container)[0];
+
+    if (!firstRow) {
+      console.warn(
+        "Baris awal Scope tidak ditemukan:",
+        container.id
+      );
+
+      return null;
+    }
+
+    const newRow = firstRow.cloneNode(true);
+
+    // Bersihkan nilai pada baris baru.
+    clearScopeRow(newRow);
+
+    // Hindari tombol hapus terduplikasi.
+    const oldRemoveButton = newRow.querySelector(
+      ".scope-remove-btn"
+    );
+
+    if (oldRemoveButton) {
+      oldRemoveButton.remove();
+    }
+
+    createScopeRemoveButton(newRow);
+
+    container.appendChild(newRow);
+
+    if (shouldSave) {
+      saveDraft();
+      transferToPrint();
+    }
+
+    return newRow;
+  }
+
+  // Tombol tambah Attachment Documents.
+  if (addAttachmentDocumentBtn) {
+    addAttachmentDocumentBtn.addEventListener("click", () => {
+      addScopeDocumentRow(attachmentDocumentList);
+    });
+  }
+
+  // Tombol tambah Required Documents.
+  if (addRequiredDocumentBtn) {
+    addRequiredDocumentBtn.addEventListener("click", () => {
+      addScopeDocumentRow(requiredDocumentList);
+    });
+  }
+
+  // Pulihkan jumlah baris dan pilihan dropdown Scope.
+  function restoreScopeDocumentRows(saved) {
+    if (!saved) return;
+
+    scopeDocumentGroups.forEach((group) => {
+      const container = group.container;
+
+      if (!container) return;
+
+      const savedValue = saved[group.fieldName];
+
+      if (savedValue === undefined || savedValue === null) {
+        return;
+      }
+
+      const values = Array.isArray(savedValue)
+        ? savedValue
+        : [savedValue];
+
+      if (values.length === 0) return;
+
+      let rows = getScopeRows(container);
+
+      if (rows.length === 0) return;
+
+      // Kembali ke satu baris awal.
+      rows.slice(1).forEach((row) => row.remove());
+
+      // Tambahkan baris sesuai jumlah data tersimpan.
+      while (getScopeRows(container).length < values.length) {
+        const newRow = addScopeDocumentRow(
+          container,
+          false
+        );
+
+        if (!newRow) break;
+      }
+
+      rows = getScopeRows(container);
+
+      // Pulihkan pilihan dropdown.
+      rows.forEach((row, index) => {
+        const select = row.querySelector("select");
+
+        if (select) {
+          select.value = values[index] ?? "";
+        }
+
+        // Baris tambahan harus memiliki tombol hapus.
+        if (index > 0) {
+          createScopeRemoveButton(row);
+        }
+      });
+    });
+  }
+
+  // Reset Attachment dan Required Documents.
+  function resetScopeDocumentRows() {
+    scopeDocumentGroups.forEach((group) => {
+      const container = group.container;
+
+      if (!container) return;
+
+      const rows = getScopeRows(container);
+
+      // Hapus seluruh baris tambahan.
+      rows.slice(1).forEach((row) => row.remove());
+
+      // Kosongkan baris pertama.
+      const firstRow = getScopeRows(container)[0];
+
+      if (firstRow) {
+        clearScopeRow(firstRow);
+
+        const removeButton = firstRow.querySelector(
+          ".scope-remove-btn"
+        );
+
+        if (removeButton) {
+          removeButton.remove();
+        }
+      }
+    });
+  }
+
+  // =====================================================
   // MODE CETAK DOKUMEN DARI DATABASE ADMIN
   // =====================================================
 
@@ -616,6 +846,9 @@
       if (!confirmed) return;
 
       questionnaire.reset();
+
+      // Reset baris dokumen pada bagian Scope.
+      resetScopeDocumentRows();
 
       // Hapus field dinamis tambahan.
       if (technicalList) {
@@ -783,6 +1016,7 @@
 
     if (savedDraft) {
       restoreDynamicQuestions(savedDraft);
+      restoreScopeDocumentRows(savedDraft);
     }
 
     transferToPrint();
