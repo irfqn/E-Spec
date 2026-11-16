@@ -1531,3 +1531,23 @@ body {
   padding: 11px 13px !important;
   font-size: 13px !important;
 }
+
+/* =========================================
+   VERSION & CREATED DATE — ABU-ABU
+   Menyamakan dengan halaman Barang
+========================================= */
+
+#questionnaireJasaForm #version,
+#questionnaireJasaForm #createdDate {
+  background: #f0f1f5 !important;
+  color: #687386 !important;
+  border: 1px solid #dfe2e9 !important;
+  cursor: default;
+}
+
+#questionnaireJasaForm #version:focus,
+#questionnaireJasaForm #createdDate:focus {
+  border-color: #dfe2e9 !important;
+  box-shadow: none !important;
+  outline: none;
+}
