@@ -1486,3 +1486,173 @@ body {
 #questionnaireJasaForm .q-section > h2 {
   color: inherit;
 }
+
+/* =====================================================
+   SPECIFICATION — FULL SECTION OVERRIDE
+===================================================== */
+
+/* KARTU UTAMA */
+#questionnaireJasaForm .specification-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  width: 100% !important;
+  padding: 24px !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #e5eaf0 !important;
+  border-radius: 14px !important;
+  box-sizing: border-box !important;
+}
+
+/* PANEL SPECIFICATION */
+#questionnaireJasaForm .specification-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+/* JUDUL PANEL */
+#questionnaireJasaForm .specification-panel-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 0 12px !important;
+  border-bottom: 1px solid #e5eaf0 !important;
+  box-sizing: border-box !important;
+}
+
+/* KONTEN PANEL */
+#questionnaireJasaForm .specification-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* LABEL FIELD */
+#questionnaireJasaForm .specification-content .q-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  color: #344256 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+}
+
+/* INPUT DAN TEXTAREA GENERAL SPECIFICATION */
+#questionnaireJasaForm .specification-content .q-field input,
+#questionnaireJasaForm .specification-content .q-field select,
+#questionnaireJasaForm .specification-content .q-field textarea {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 43px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 11px 13px !important;
+  border: 1px solid #d8e0e9 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #344256 !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+}
+
+/* PROJECT DESCRIPTION */
+#questionnaireJasaForm .specification-content .q-field textarea {
+  min-height: 100px !important;
+  resize: vertical !important;
+}
+
+/* DYNAMIC QUESTION LIST */
+#questionnaireJasaForm .specification-content .dynamic-question-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* SETIAP BARIS PERTANYAAN */
+#questionnaireJasaForm .specification-content .dynamic-question-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* TEXTAREA TECHNICAL DAN KPI */
+#questionnaireJasaForm .specification-content .dynamic-question-item textarea {
+  display: block !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 43px !important;
+  height: 43px !important;
+  margin: 0 !important;
+  padding: 11px 13px !important;
+  border: 1px solid #d8e0e9 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #344256 !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+}
+
+/* FOCUS INPUT */
+#questionnaireJasaForm .specification-content input:focus,
+#questionnaireJasaForm .specification-content select:focus,
+#questionnaireJasaForm .specification-content textarea:focus {
+  outline: none !important;
+  border-color: #6558e8 !important;
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.10) !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  #questionnaireJasaForm .specification-section {
+    padding: 16px !important;
+  }
+
+  #questionnaireJasaForm .specification-content {
+    gap: 15px !important;
+  }
+
+  #questionnaireJasaForm .specification-content .dynamic-question-item {
+    flex-direction: column !important;
+  }
+
+  #questionnaireJasaForm .specification-content .dynamic-question-item textarea {
+    width: 100% !important;
+  }
+}
