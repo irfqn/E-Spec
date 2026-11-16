@@ -472,12 +472,15 @@ body {
 }
 
 #questionnaireJasaForm .specification-section > h2 {
-  margin: 0 0 2px;
-  padding: 0 0 12px;
-  border-bottom: 1px solid #e5eaf0;
+  margin: -22px -22px 20px;
+  padding: 15px 20px;
+  background: #f0f4f8;
+  border-bottom: 1px solid #e1e7ef;
+  border-radius: 11px 11px 0 0;
   color: #24364b;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: 0.4px;
 }
 
 /* PANEL */
