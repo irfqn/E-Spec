@@ -1370,3 +1370,44 @@ body {
   }
 
 }
+
+/* =====================================================
+   FIX SPECIFICATION — LABEL & REQUIRED ASTERISK
+   Samakan dengan Material Category dan field lainnya
+===================================================== */
+
+/* Label dan tanda wajib berada dalam satu baris */
+#questionnaireJasaForm .specification-content > .q-field {
+  display: block !important;
+  width: 100%;
+  color: #344256;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* Tanda bintang merah tepat di samping label */
+#questionnaireJasaForm .specification-content > .q-field .required {
+  display: inline !important;
+  margin-left: 3px;
+  color: #dc3545 !important;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: baseline;
+}
+
+/* Input tetap berada di bawah label */
+#questionnaireJasaForm .specification-content > .q-field input,
+#questionnaireJasaForm .specification-content > .q-field textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  color: #253449;
+  font-weight: 400;
+}
+
+/* Placeholder */
+#questionnaireJasaForm .specification-content > .q-field input::placeholder,
+#questionnaireJasaForm .specification-content > .q-field textarea::placeholder {
+  color: #a0aab7;
+}
