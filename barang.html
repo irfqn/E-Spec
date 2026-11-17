@@ -106,18 +106,15 @@
 </label>
 
 
-<label class="q-field">
-  <span class="field-label">
-    Plant <span class="required-star">*</span>
-  </span>
-
-  <select id="plantCodeSelect" name="plant" required>
-    <option value="">-- Pilih Plant --</option>
-    <option value="1210 - Plant Gending">1210 - Plant Gending</option>
-    <option value="1220 - Plant Cikarang">1220 - Plant Cikarang</option>
-    <option value="1230 - Plant Minahasa Selatan">1230 - Plant Minahasa Selatan</option>
-  </select>
-</label>
+      <label class="q-field">
+        Plant <span class="required-star">*</span>
+        <select id="plantCodeSelect" name="plant" required>
+          <option value="">-- Pilih Plant --</option>
+          <option value="1210 - Plant Gending">1210 - Plant Gending</option>
+          <option value="1220 - Plant Cikarang">1220 - Plant Cikarang</option>
+          <option value="1230 - Plant Minahasa Selatan">1230 - Plant Minahasa Selatan</option>
+        </select>
+      </label>
 
 
 
@@ -180,7 +177,34 @@
   </span>
 
   <div class="q-checks material-category-checks">
-    <!-- Checkbox tetap seperti sebelumnya -->
+
+    <label class="q-check">
+      <input
+        type="checkbox"
+        name="materialCategory"
+        value="Asset Barang"
+      >
+      Asset Barang
+    </label>
+
+    <label class="q-check">
+      <input
+        type="checkbox"
+        name="materialCategory"
+        value="Expense Barang Umum / Teknik"
+      >
+      Expense Barang Umum / Teknik
+    </label>
+
+    <label class="q-check">
+      <input
+        type="checkbox"
+        name="materialCategory"
+        value="Expense Bahan Kimia / Sanitasi / Pelumas"
+      >
+      Expense Bahan Kimia / Sanitasi / Pelumas
+    </label>
+
   </div>
 </div>
 
@@ -1807,7 +1831,41 @@
 </main>
 
 
-<!-- JAVASCRIPT -->
+<!-- REQUIRED STAR POSITION FIX -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".required-star").forEach(function (star) {
+    // Lewati jika sudah berada di dalam field-label.
+    if (star.parentElement.classList.contains("field-label")) {
+      return;
+    }
+
+    let previous = star.previousSibling;
+
+    // Lewati whitespace untuk menemukan teks sebelumnya.
+    while (
+      previous &&
+      previous.nodeType === Node.TEXT_NODE &&
+      !previous.textContent.trim()
+    ) {
+      previous = previous.previousSibling;
+    }
+
+    // Jika teks sebelumnya berupa teks langsung, satukan dengan tanda *.
+    if (previous && previous.nodeType === Node.TEXT_NODE) {
+      const wrapper = document.createElement("span");
+      wrapper.className = "field-label";
+
+      star.parentNode.insertBefore(wrapper, previous);
+      wrapper.appendChild(previous);
+
+      // Pindahkan tanda * ke dalam wrapper yang sama.
+      wrapper.appendChild(star);
+    }
+  });
+});
+</script>
+
 <script src="barang.js"></script>
 
 </body>

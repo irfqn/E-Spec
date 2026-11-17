@@ -4107,12 +4107,14 @@ fieldset.q-field {
   box-sizing: border-box;
 }
 
-#questionnaireForm .required-star {
+/* REQUIRED STAR — MERAH DAN SEJAJAR DENGAN LABEL */
+
+.required-star {
   color: #e53935 !important;
-  font-weight: 700;
+  font-weight: 700 !important;
   display: inline !important;
   position: static !important;
-  margin-left: 2px;
+  margin-left: 3px;
   vertical-align: baseline;
 }
 
