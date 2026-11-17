@@ -123,6 +123,80 @@
     return "";
   }
 
+    // =====================================================
+  // DYNAMIC OTHERS / LAINNYA UNTUK SEMUA DROPDOWN
+  // =====================================================
+
+  function isOthersOption(option) {
+    const value = (option.value || "").trim().toLowerCase();
+    const text = (option.textContent || "").trim().toLowerCase();
+
+    return (
+      value === "others" ||
+      value === "lainnya" ||
+      text === "others" ||
+      text === "lainnya"
+    );
+  }
+
+  function setupOthersField(select) {
+    if (!select || select.tagName !== "SELECT") return;
+
+    let wrapper = select.nextElementSibling;
+
+    if (
+      !wrapper ||
+      !wrapper.classList.contains("others-input-wrapper")
+    ) {
+      wrapper = document.createElement("div");
+      wrapper.className = "others-input-wrapper";
+
+      const label = document.createElement("label");
+      label.textContent = "Isi keterangan lainnya";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = `other_${select.name}`;
+      input.placeholder = "Masukkan keterangan lainnya...";
+
+      label.appendChild(input);
+      wrapper.appendChild(label);
+
+      select.insertAdjacentElement("afterend", wrapper);
+    }
+
+    const input = wrapper.querySelector("input");
+
+    if (!input.name) {
+      input.name = `other_${select.name}`;
+    }
+
+    const selectedOption = select.options[select.selectedIndex];
+    const show = selectedOption && isOthersOption(selectedOption);
+
+    wrapper.style.display = show ? "block" : "none";
+    input.required = Boolean(show);
+
+    if (!show) {
+      input.required = false;
+    }
+  }
+
+  // Inisialisasi semua dropdown yang sudah memiliki Others/Lainnya.
+  questionnaire.querySelectorAll("select").forEach((select) => {
+    setupOthersField(select);
+  });
+
+  // Pantau perubahan seluruh dropdown, termasuk dropdown dinamis.
+  questionnaire.addEventListener("change", (event) => {
+    if (event.target.matches("select")) {
+      setupOthersField(event.target);
+
+      saveDraft();
+      transferToPrint();
+    }
+  });
+
   // =====================================================
   // VERSION DAN CREATED DATE
   // =====================================================
@@ -598,6 +672,10 @@
     createScopeRemoveButton(newRow);
 
     container.appendChild(newRow);
+
+        newRow.querySelectorAll("select").forEach((select) => {
+      setupOthersField(select);
+    });
 
     if (shouldSave) {
       saveDraft();
