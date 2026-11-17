@@ -4123,3 +4123,26 @@ fieldset.q-field {
   width: 100%;
   line-height: 1.5;
 }
+
+/* FIX SECTION HEADING — BARANG */
+
+#questionnaireForm .q-section-heading {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+}
+
+#questionnaireForm .q-section-heading .q-number {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+}
+
+#questionnaireForm .q-section-heading h2 {
+  margin: 0 !important;
+  flex: 1;
+}
