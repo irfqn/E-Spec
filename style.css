@@ -4106,3 +4106,34 @@ fieldset.q-field {
   min-width: 0;
   box-sizing: border-box;
 }
+
+
+/* =========================================
+   REQUIRED ASTERISK — BARANG
+   Membuat tanda * berwarna merah
+========================================= */
+
+#questionnaireForm .q-field,
+#questionnaireForm .q-field label {
+  /* Tidak mengubah warna teks label */
+}
+
+#questionnaireForm .q-field {
+  --required-color: #e53935;
+}
+
+/* Tanda bintang pada label */
+#questionnaireForm .q-field,
+#questionnaireForm label {
+  /* Styling khusus tanda * menggunakan HTML */
+}
+
+/* Warna merah untuk tanda * yang ditulis langsung */
+#questionnaireForm .q-field {
+  color: inherit;
+}
+
+/* Required marker */
+#questionnaireForm .q-field:has(select[required]) {
+  --required-color: #e53935;
+}
