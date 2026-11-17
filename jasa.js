@@ -406,41 +406,95 @@
     }
   }
 
+
+// =====================================================
+// SINKRONISASI KUESIONER KE TEMPLATE CETAK
+// =====================================================
+
+function transferToPrint(data = getFormData()) {
+  // Sinkronisasi field biasa ke template cetak.
+  printForm.querySelectorAll("[name]").forEach((target) => {
+    const value = getFieldValue(data, target.name);
+
+    if (target.type === "checkbox" || target.type === "radio") {
+      target.checked = Array.isArray(value)
+        ? value.includes(target.value)
+        : value === target.value;
+
+    } else if (target.type !== "file") {
+      target.value = Array.isArray(value)
+        ? value.join("\n")
+        : value ?? "";
+    }
+  });
+
   // =====================================================
-  // SINKRONISASI KUESIONER KE TEMPLATE CETAK
+  // REQUIRED DOCUMENTS — DROPDOWN KE CHECKBOX PDF
   // =====================================================
 
-  function transferToPrint(data = getFormData()) {
-    printForm.querySelectorAll("[name]").forEach((target) => {
-      const value = getFieldValue(data, target.name);
+  const requiredValues = data["requiredDocumentType[]"] || [];
 
-      if (target.type === "checkbox" || target.type === "radio") {
-        target.checked = Array.isArray(value)
-          ? value.includes(target.value)
-          : value === target.value;
+  const selectedDocuments = Array.isArray(requiredValues)
+    ? requiredValues
+    : [requiredValues];
 
-      } else if (target.type !== "file") {
-        target.value = Array.isArray(value)
-          ? value.join("\n")
-          : value ?? "";
-      }
-    });
+  const printRequiredList = document.getElementById(
+    "printRequiredDocumentList"
+  );
 
-    // Tampilkan nama file lampiran pada template cetak.
-    const fileNames = data._attachmentFileNames || {};
-
-    Object.entries(fileNames).forEach(([name, names]) => {
-      const target = printForm.querySelector(
-        `[name="${CSS.escape(name)}"]`
-      );
-
-      if (target) {
-        target.value = Array.isArray(names)
-          ? names.join(", ")
-          : names;
-      }
+  if (printRequiredList) {
+    printRequiredList.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+      checkbox.checked = selectedDocuments.includes(checkbox.value);
     });
   }
+
+  // =====================================================
+  // OTHER REQUIRED DOCUMENTS
+  // =====================================================
+
+  const otherValues = data["other_requiredDocumentType[]"] || [];
+
+  const otherDetails = Array.isArray(otherValues)
+    ? otherValues.filter(Boolean)
+    : [otherValues].filter(Boolean);
+
+  const otherInput = printForm.querySelector(
+    '[name="vendorDocumentsOther"]'
+  );
+
+  const otherWrapper = document.getElementById(
+    "printVendorDocumentsOtherWrapper"
+  );
+
+  if (otherInput) {
+    otherInput.value = otherDetails.join(", ");
+  }
+
+  if (otherWrapper) {
+    otherWrapper.style.display = otherDetails.length > 0
+      ? ""
+      : "none";
+  }
+
+  // =====================================================
+  // TAMPILKAN NAMA FILE LAMPIRAN
+  // =====================================================
+
+  const fileNames = data._attachmentFileNames || {};
+
+  Object.entries(fileNames).forEach(([name, names]) => {
+    const target = printForm.querySelector(
+      `[name="${CSS.escape(name)}"]`
+    );
+
+    if (target) {
+      target.value = Array.isArray(names)
+        ? names.join(", ")
+        : names;
+    }
+  });
+}
+
 
   // =====================================================
   // TAMBAH TECHNICAL SPECIFICATION DAN KPI

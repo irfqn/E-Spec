@@ -830,25 +830,55 @@
       </div>
     </section>
 
-    <!-- 06 REQUIRED DOCUMENTS -->
 
-    <section>
-      <h3>REQUIRED DOCUMENTS FROM VENDOR</h3>
+<!-- 06 REQUIRED DOCUMENTS -->
 
-      <div class="service-grid">
+<section>
+  <h3>REQUIRED DOCUMENTS FROM VENDOR</h3>
 
-        <label class="field wide">
-          <span>Required Documents</span>
-          <textarea name="vendorDocuments" readonly></textarea>
+  <div class="service-grid">
+
+    <div class="field wide">
+      <span>Required Documents</span>
+
+      <div id="printRequiredDocumentList" class="print-checkbox-list">
+
+        <label>
+          <input type="checkbox" value="Garansi Produsen" disabled>
+          Garansi Produsen
         </label>
 
-        <label class="field wide">
-          <span>Other Required Documents</span>
-          <input name="vendorDocumentsOther" readonly>
+        <label>
+          <input type="checkbox" value="Garansi Distributor" disabled>
+          Garansi Distributor
+        </label>
+
+        <label>
+          <input type="checkbox" value="MSDS / COA / Halal" disabled>
+          MSDS / COA / Halal
+        </label>
+
+        <label>
+          <input type="checkbox" value="Manual Book / User Manual" disabled>
+          Manual Book / User Manual
+        </label>
+
+        <label>
+          <input type="checkbox" value="Others" disabled>
+          Others
         </label>
 
       </div>
-    </section>
+    </div>
+
+    <label class="field wide" id="printVendorDocumentsOtherWrapper">
+      <span>Other Required Documents</span>
+      <input name="vendorDocumentsOther" readonly>
+    </label>
+
+  </div>
+</section>
+
 
     <!-- APPROVAL -->
 
