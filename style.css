@@ -4134,15 +4134,33 @@ fieldset.q-field {
   gap: 12px !important;
 }
 
+/* NOMOR DAN GARIS UNGU */
 #questionnaireForm .q-section-heading .q-number {
-  display: inline-flex !important;
-  flex: 0 0 auto !important;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 4px !important;
+  width: 4px !important;
+  gap: 8px !important;
   margin: 0 !important;
+  font-size: 14px;
+  font-weight: 500;
+  color: #344054;
 }
 
+/* GARIS UNGU DI BAWAH NOMOR */
+#questionnaireForm .q-section-heading .q-number::after {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 22px;
+  background: #6558e8;
+  border-radius: 5px;
+}
+
+/* JUDUL SECTION */
 #questionnaireForm .q-section-heading h2 {
-  margin: 0 !important;
   flex: 1;
+  margin: 0 !important;
 }
