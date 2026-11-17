@@ -706,6 +706,56 @@
     });
   }
 
+    // =====================================================
+  // VALIDASI ATTACHMENT DOCUMENTS — PDF ONLY
+  // =====================================================
+
+  async function isValidPDF(file) {
+    if (!file) return false;
+
+    // Periksa ekstensi file.
+    if (!file.name.toLowerCase().endsWith(".pdf")) {
+      return false;
+    }
+
+    // Periksa signature PDF (%PDF-).
+    try {
+      const header = await file.slice(0, 5).arrayBuffer();
+      const signature = new TextDecoder().decode(header);
+
+      return signature === "%PDF-";
+    } catch (error) {
+      console.error("Gagal memeriksa file PDF:", error);
+      return false;
+    }
+  }
+
+  questionnaire.addEventListener("change", async (event) => {
+    const input = event.target;
+
+    if (
+      !input.matches('input[name="attachmentDocumentFile[]"]') ||
+      !input.files.length
+    ) {
+      return;
+    }
+
+    const file = input.files[0];
+    const valid = await isValidPDF(file);
+
+    if (!valid) {
+      alert(
+        "File tidak valid!\n\n" +
+        "Attachment Documents hanya menerima file PDF yang valid."
+      );
+
+      input.value = "";
+    }
+
+    saveDraft();
+    transferToPrint();
+  });
+
   // =====================================================
   // MODE CETAK DOKUMEN DARI DATABASE ADMIN
   // =====================================================
