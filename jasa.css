@@ -1612,3 +1612,25 @@ body {
   border-color: #6558e8 !important;
   color: #6558e8 !important;
 }
+
+/* DYNAMIC OTHERS / LAINNYA */
+
+#questionnaireJasaForm .others-input-wrapper {
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+}
+
+#questionnaireJasaForm .others-input-wrapper label {
+  display: block;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+#questionnaireJasaForm .others-input-wrapper input {
+  width: 100%;
+  margin-top: 7px;
+  box-sizing: border-box;
+}
