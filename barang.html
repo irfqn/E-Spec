@@ -22,8 +22,6 @@
     <button type="button" id="resetBtn">
       Reset Form
     </button>
-
-
   </div>
 </header>
 
@@ -109,7 +107,7 @@
 
 
       <label class="q-field">
-        Plant *
+        Plant <span class="required-star">*</span>
         <select id="plantCodeSelect" name="plant" required>
           <option value="">-- Pilih Plant --</option>
           <option value="1210 - Plant Gending">1210 - Plant Gending</option>
@@ -121,12 +119,12 @@
 
 
       <label class="q-field">
-        Requestor *
+        Requestor <span class="required-star">*</span>
         <input type="text" name="requestor" required placeholder="Nama pemohon">
       </label>
 
       <label class="q-field">
-        Departemen / Sub Departemen *
+        Departemen / Sub Departemen <span class="required-star">*</span>
         <select name="department" id="deptSelect" required>
           <option value="">-- Pilih Plant Terlebih Dahulu --</option>
         </select>
@@ -174,7 +172,7 @@
 </label>
 
 <div class="q-field">
-  <span>Material Category *</span>
+  Material Category <span class="required-star">*</span>
 
   <div class="q-checks material-category-checks">
 
@@ -230,7 +228,9 @@
 
   <!-- REASON TO PROCURE -->
   <div class="q-field reason-procure-field">
-    <label for="reasonChoice">Reason to Procure *</label>
+    <label for="reasonChoice">
+  Reason to Procure <span class="required-star">*</span>
+</label>
 
     <select name="reasonChoice" id="reasonChoice" required>
       <option value="">-- Pilih Reason --</option>
@@ -281,7 +281,7 @@
       <div class="q-grid">
 
         <label class="q-field wide">
-          Material Description *
+          Material Description <span class="required-star">*</span>
           <input
             type="text"
             name="materialDescription"
@@ -377,7 +377,9 @@
 <!-- UoM -->
 <div class="q-field uom-field">
 
-  <label for="uomSelect">UoM *</label>
+  <label for="uomSelect">
+  UoM <span class="required-star">*</span>
+</label>
 
   <select name="uom" id="uomSelect" required>
     <option value="">-- Pilih UoM --</option>
@@ -1276,7 +1278,8 @@
     <div class="q-grid">
 
       <label class="q-field wide">
-        Design / Drawing / Visual / Illustration *
+        Design / Drawing / Visual / Illustration
+<span class="required-star">*</span>
         <input
           type="file"
           id="questionDrawingUpload"
@@ -1286,7 +1289,7 @@
       </label>
 
       <label class="q-field">
-        Additional Service *
+        Additional Service <span class="required-star">*</span>
         <select name="additionalService" required>
           <option value="">-- Pilih Additional Service --</option>
           <option value="Installation">Installation</option>

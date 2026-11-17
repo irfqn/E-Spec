@@ -4107,3 +4107,7 @@ fieldset.q-field {
   box-sizing: border-box;
 }
 
+.required-star {
+  color: #e53935 !important;
+  font-weight: 700;
+}
