@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const API_URL = "http://localhost:3000/api/documents";
+  const API_URL = "http://localhost:3000/api/specifications";
 
   let documents = [];
   let activeType = "barang";
@@ -110,12 +110,14 @@
       id: doc.id ?? doc.document_id ?? null,
 
       docNo:
+        doc.document_no ||
         doc.doc_no ||
         doc.docNo ||
         formData.docNo ||
         "-",
 
       revision:
+        doc.revision_no ||
         doc.revision ||
         formData.revision ||
         "-",
@@ -161,12 +163,18 @@
         doc.status ||
         "Draft",
 
-      specType: normalizeType(rawType)
+      specType: normalizeType(
+        doc.specification_type_name ||
+        doc.specification_type_code ||
+        rawType
+      )
     };
   }
 
   function getDocumentType(doc) {
     return normalizeType(
+      doc.specification_type_name ||
+      doc.specification_type_code ||
       doc.specType ||
       doc.spec_type ||
       doc.document_type ||
@@ -206,17 +214,7 @@
       const result = await response.json();
 
       // Mendukung beberapa format respons backend
-      let rawDocuments = [];
-
-      if (Array.isArray(result)) {
-        rawDocuments = result;
-      } else if (Array.isArray(result.data)) {
-        rawDocuments = result.data;
-      } else if (Array.isArray(result.documents)) {
-        rawDocuments = result.documents;
-      } else if (Array.isArray(result.rows)) {
-        rawDocuments = result.rows;
-      }
+      const rawDocuments = Array.isArray(result.data) ? result.data : [];
 
       documents = rawDocuments.map(normalizeDocument);
 

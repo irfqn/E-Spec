@@ -17,3 +17,6 @@ Thumbs.db
 
 # Editor
 .vscode/
+# Internal reference workbooks
+/docs/reference/*.xlsx
+/docs/refrence/*.xlsx

@@ -110,9 +110,6 @@
         Plant <span class="required-star">*</span>
         <select id="plantCodeSelect" name="plant" required>
           <option value="">-- Pilih Plant --</option>
-          <option value="1210 - Plant Gending">1210 - Plant Gending</option>
-          <option value="1220 - Plant Cikarang">1220 - Plant Cikarang</option>
-          <option value="1230 - Plant Minahasa Selatan">1230 - Plant Minahasa Selatan</option>
         </select>
       </label>
 
@@ -133,41 +130,7 @@
 <label class="q-field">
   Material Group
   <select name="materialGroup" id="materialGroup" required>
-    <option value="">-- Pilih Material Group --</option>
-
-    <option value="BEARING">BEARING</option>
-    <option value="MATERIAL">MATERIAL</option>
-    <option value="MEASURE">MEASURE</option>
-    <option value="GASKET">GASKET</option>
-    <option value="MS">MS</option>
-    <option value="ELECTRIC">ELECTRIC</option>
-    <option value="PIPE">PIPE</option>
-    <option value="MP">MP</option>
-    <option value="INS">INS</option>
-    <option value="HOSE">HOSE</option>
-    <option value="BNR">BNR</option>
-    <option value="MTR_UNT">MTR_UNT</option>
-    <option value="WELDING">WELDING</option>
-    <option value="VEHICLE">VEHICLE</option>
-    <option value="GLASS">GLASS</option>
-    <option value="LUBRICANT">LUBRICANT</option>
-    <option value="CABLE">CABLE</option>
-    <option value="VALVE">VALVE</option>
-    <option value="FILTER">FILTER</option>
-    <option value="PUMP_UNT">PUMP_UNT</option>
-    <option value="GBX_UNT">GBX_UNT</option>
-    <option value="EQUIPMENT">EQUIPMENT</option>
-    <option value="PAINT">PAINT</option>
-    <option value="IT">IT</option>
-    <option value="BARANG UM">BARANG UM</option>
-    <option value="K3">K3</option>
-    <option value="LAB_MAT">LAB_MAT</option>
-    <option value="ATK">ATK</option>
-    <option value="SANITARY">SANITARY</option>
-    <option value="FUEL_GAS">FUEL_GAS</option>
-    <option value="ASSET UMU">ASSET UMU</option>
-    <option value="ASSET TEK">ASSET TEK</option>
-    <option value="ASSET LAB">ASSET LAB</option>
+    <option value="">-- Pilih Material Category terlebih dahulu --</option>
   </select>
 </label>
 
@@ -176,36 +139,7 @@
     Material Category <span class="required-star">*</span>
   </span>
 
-  <div class="q-checks material-category-checks">
-
-    <label class="q-check">
-      <input
-        type="checkbox"
-        name="materialCategory"
-        value="Asset Barang"
-      >
-      Asset Barang
-    </label>
-
-    <label class="q-check">
-      <input
-        type="checkbox"
-        name="materialCategory"
-        value="Expense Barang Umum / Teknik"
-      >
-      Expense Barang Umum / Teknik
-    </label>
-
-    <label class="q-check">
-      <input
-        type="checkbox"
-        name="materialCategory"
-        value="Expense Bahan Kimia / Sanitasi / Pelumas"
-      >
-      Expense Bahan Kimia / Sanitasi / Pelumas
-    </label>
-
-  </div>
+  <div class="q-checks material-category-checks" id="materialCategoryOptions"></div>
 </div>
 
       <!-- Checkbox tersembunyi untuk kompatibilitas template PDF lama -->
@@ -236,11 +170,6 @@
 
     <select name="reasonChoice" id="reasonChoice" required>
       <option value="">-- Pilih Reason --</option>
-      <option value="Replacement">Replacement</option>
-      <option value="Stock Replenishment">Stock Replenishment</option>
-      <option value="New Project">New Project</option>
-      <option value="Trial">Trial</option>
-      <option value="Others">Others</option>
     </select>
 
     <input

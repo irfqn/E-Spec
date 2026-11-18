@@ -10,6 +10,7 @@
   const OLD_STORAGE_KEY = "eSpecBarangQuestionnaire.v1";
   const VERSION_STORAGE_KEY = "eSpecBarangVersion.v1";
   const HISTORY_KEY = "eSpecBarangTransactions.v1";
+  const API_BASE_URL = "http://localhost:3000/api";
 
   const questionnaire = document.getElementById("questionnaireForm");
   const printForm = document.getElementById("printSpecForm");
@@ -33,6 +34,8 @@
   const plantSelect = $("#plantCodeSelect");
   const plantDesc = $("#plantDescInput");
   const deptSelect = $("#deptSelect");
+  const materialGroupSelect = $("#materialGroup");
+  const materialCategoryOptions = $("#materialCategoryOptions");
 
   const reasonChoice = $("#reasonChoice");
   const reasonOther = $("#reasonOther");
@@ -79,69 +82,40 @@ const MECHANICAL_PARAMETERS = [
 
   const MECHANICAL_SYMBOLS = ["x", "--", "~", "/", "±", "-"];
 
-  const PLANT_DATA = {
-    "1210 - Plant Gending": [
-      "HRGA",
-      "Fermentation - Decalcium",
-      "Fermentation - Glucose",
-      "Fermentation - Fermentation",
-      "Isolation & Purification - Isolation",
-      "Isolation & Purification - Purification",
-      "Packing",
-      "Polycello & Technic Packing",
-      "Liquid Fertilizer Sales",
-      "SCM - PPIC",
-      "SCM - Inderect Sourcing",
-      "Engineering & Technical Development",
-      "Utility",
-      "Electrical Instrument",
-      "Mechanical & Maintenance",
-      "Logistic & Warehouse",
-      "QA & QC",
-      "SHE",
-      "IT",
-      "Costing Associate"
-    ],
-
-    "1220 - Plant Cikarang": [
-      "HRGA",
-      "Production - Dry",
-      "Production - Wet",
-      "SCM - PPIC",
-      "SCM - Inderect Sourcing",
-      "Maintenance",
-      "Project",
-      "Warehouse",
-      "QA & QC",
-      "SHE",
-      "IT",
-      "Supply Chain Finance"
-    ],
-
-    "1230 - Plant Minahasa Selatan": [
-      "Production - Opening & Processing",
-      "Production - Production & TCA",
-      "PPIC",
-      "Indirect Sourcing",
-      "Maintenance",
-      "Utility",
-      "Warehouse",
-      "QA & QC",
-      "SHE",
-      "IT",
-      "Plant Operation Controller"
-    ]
-  };
-
-  const CATEGORY_MAPPING = {
-    "Asset Barang": "Asset Barang",
-    "Expense Barang Umum / Teknik": "Expense Barang General",
-    "Expense Bahan Kimia / Sanitasi / Pelumas": "Expense Barang Kimia"
+  // Source: OLAH DATA WEB.xlsx, MATRIKS ATT. MAT (2). Only `*` values
+  // become save blockers; `O` values remain optional.
+  const MATERIAL_GROUP_REQUIRED_FIELDS = {
+    BEARING: ["materialDescription", "partNumber", "variant", "dimension", "brand", "uom"],
+    MATERIAL: ["materialDescription", "variant", "dimension", "uom"],
+    GASKET: ["materialDescription", "variant", "dimension", "uom", "technical:Material"],
+    MS: ["materialDescription", "variant", "dimension", "uom", "technical:Material"],
+    ELECTRIC: ["materialDescription", "partNumber", "variant", "brand", "uom", "technical:Voltage", "technical:Phase", "technical:Power", "technical:Current", "technical:Frequency"],
+    PIPE: ["materialDescription", "variant", "dimension", "uom", "technical:Material"],
+    BNR: ["materialDescription", "variant", "dimension", "uom", "technical:Material"],
+    LUBRICANT: ["materialDescription", "partNumber", "uom", "packSize", "technical:Konsentrasi", "technical:Viscositas"],
+    CABLE: ["materialDescription", "partNumber", "variant", "dimension", "uom"],
+    VALVE: ["materialDescription", "variant", "dimension", "uom", "technical:Material", "technical:Connection Type"],
+    EQUIPMENT: ["materialDescription", "partNumber", "variant", "dimension", "uom"],
+    PAINT: ["materialDescription", "partNumber", "variant", "brand", "catalogue", "uom", "packSize"],
+    IT: ["materialDescription", "partNumber", "variant", "uom"],
+    "BARANG UM": ["materialDescription", "partNumber", "variant", "uom"],
+    K3: ["materialDescription", "partNumber", "variant", "uom"],
+    LAB_MAT: ["materialDescription", "variant", "brand", "catalogue", "uom", "packSize"],
+    ATK: ["materialDescription", "variant", "uom"],
+    "ASSET UMU": ["materialDescription", "uom"],
+    "ASSET TEK": ["materialDescription", "uom"],
+    "ASSET LAB": ["materialDescription", "uom"]
   };
 
   let drawingImage = "";
   let loadingDocument = false;
   let saving = false;
+  let masterDataReady = false;
+  let barangSpecificationTypeId = null;
+  let plants = [];
+  let categories = [];
+  let departmentRequestId = 0;
+  let materialGroupRequestId = 0;
 
   // =====================================================
   // UTILITIES
@@ -202,25 +176,112 @@ const MECHANICAL_PARAMETERS = [
   // PLANT & DEPARTMENT
   // =====================================================
 
-  function updateDepartment(restoreValue = "") {
+  async function fetchMasterData(path) {
+    const response = await fetch(`${API_BASE_URL}${path}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    return Array.isArray(result.data) ? result.data : [];
+  }
+
+  function setSelectMessage(select, message) {
+    if (!select) return;
+
+    select.innerHTML = "";
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = message;
+    select.appendChild(option);
+  }
+
+  function findPlant(value) {
+    return plants.find((plant) =>
+      String(plant.id) === String(value) ||
+      `${plant.plantid} - ${plant.plantname}` === value ||
+      String(plant.plantid) === String(value)
+    );
+  }
+
+  function setSelectedOption(select, value, label) {
+    if (!select || value === undefined || value === null || value === "") {
+      return;
+    }
+
+    const option = [...select.options].find((item) =>
+      item.value === String(value) || item.textContent === String(value)
+    );
+
+    if (option) {
+      select.value = option.value;
+      return;
+    }
+
+    const legacyOption = document.createElement("option");
+    legacyOption.value = String(value);
+    legacyOption.textContent = label || String(value);
+    legacyOption.dataset.legacy = "true";
+    select.appendChild(legacyOption);
+    select.value = legacyOption.value;
+  }
+
+  async function loadDepartments(plantId, restoreValue = "") {
+    if (!deptSelect) return;
+
+    const requestId = ++departmentRequestId;
+
+    if (!plantId) {
+      setSelectMessage(deptSelect, "-- Pilih Plant Terlebih Dahulu --");
+      return;
+    }
+
+    setSelectMessage(deptSelect, "Memuat Departemen...");
+    deptSelect.disabled = true;
+
+    try {
+      const departments = await fetchMasterData(`/plants/${plantId}/departments`);
+
+      if (requestId !== departmentRequestId) return;
+
+      setSelectMessage(
+        deptSelect,
+        departments.length ? "-- Pilih Departemen --" : "Tidak ada Departemen tersedia"
+      );
+
+      departments.forEach((department) => {
+        const option = document.createElement("option");
+        option.value = String(department.id);
+        option.textContent = department.departmentname;
+        deptSelect.appendChild(option);
+      });
+
+      setSelectedOption(deptSelect, restoreValue);
+    } catch (error) {
+      if (requestId !== departmentRequestId) return;
+
+      console.error("Gagal memuat department:", error);
+      setSelectMessage(deptSelect, "Gagal memuat Departemen");
+      setStatus("Gagal memuat Departemen dari server");
+    } finally {
+      if (requestId === departmentRequestId) {
+        deptSelect.disabled = false;
+      }
+    }
+  }
+
+  async function updateDepartment(restoreValue = "") {
     if (!plantSelect || !deptSelect) return;
 
-    const selectedPlant = plantSelect.value;
-    const description = selectedPlant.split(" - ")[1] || "";
+    const plant = findPlant(plantSelect.value);
 
-    if (plantDesc) plantDesc.value = description;
+    if (plantDesc) {
+      plantDesc.value = plant?.plantname || "";
+    }
 
-    deptSelect.innerHTML =
-      '<option value="">-- Pilih Departemen --</option>';
-
-    (PLANT_DATA[selectedPlant] || []).forEach(department => {
-      const option = document.createElement("option");
-      option.value = department;
-      option.textContent = department;
-      deptSelect.appendChild(option);
-    });
-
-    if (restoreValue) deptSelect.value = restoreValue;
+    await loadDepartments(plant?.id, restoreValue);
   }
 
   // =====================================================
@@ -246,12 +307,10 @@ const MECHANICAL_PARAMETERS = [
   }
 
   function updateCategory() {
-    const selected = getSelectedCategories();
+    const selected = getSelectedCategories()[0] || "";
 
     $$('[name="category"]', questionnaire).forEach(field => {
-      field.checked = selected.some(
-        category => CATEGORY_MAPPING[category] === field.value
-      );
+      field.checked = field.value === selected;
     });
   }
 
@@ -265,8 +324,58 @@ const MECHANICAL_PARAMETERS = [
     }
 
     updateCategory();
+    loadMaterialGroups(event.target.value);
     saveDraft();
   });
+
+  async function loadMaterialGroups(categoryId, restoreValue = "") {
+    if (!materialGroupSelect) return;
+
+    const requestId = ++materialGroupRequestId;
+
+    if (!categoryId) {
+      setSelectMessage(
+        materialGroupSelect,
+        "-- Pilih Material Category terlebih dahulu --"
+      );
+      return;
+    }
+
+    setSelectMessage(materialGroupSelect, "Memuat Material Group...");
+    materialGroupSelect.disabled = true;
+
+    try {
+      const groups = await fetchMasterData(
+        `/material-groups/categories/${encodeURIComponent(categoryId)}`
+      );
+
+      if (requestId !== materialGroupRequestId) return;
+
+      setSelectMessage(
+        materialGroupSelect,
+        groups.length ? "-- Pilih Material Group --" : "Tidak ada Material Group tersedia"
+      );
+
+      groups.forEach((group) => {
+        const option = document.createElement("option");
+        option.value = String(group.id);
+        option.textContent = group.sapgroupcode || group.dashboardgroupname || group.description;
+        materialGroupSelect.appendChild(option);
+      });
+
+      setSelectedOption(materialGroupSelect, restoreValue);
+    } catch (error) {
+      if (requestId !== materialGroupRequestId) return;
+
+      console.error("Gagal memuat material group:", error);
+      setSelectMessage(materialGroupSelect, "Gagal memuat Material Group");
+      setStatus("Gagal memuat Material Group dari server");
+    } finally {
+      if (requestId === materialGroupRequestId) {
+        materialGroupSelect.disabled = false;
+      }
+    }
+  }
 
   // =====================================================
   // REASON TO PROCURE
@@ -275,7 +384,8 @@ const MECHANICAL_PARAMETERS = [
   function updateReason() {
     if (!reasonChoice || !reasonFinal) return;
 
-    const isOthers = reasonChoice.value === "Others";
+    const selectedOption = reasonChoice.selectedOptions[0];
+    const isOthers = selectedOption?.dataset.allowsCustom === "true";
 
     if (reasonOthers) reasonOthers.hidden = !isOthers;
 
@@ -1325,6 +1435,126 @@ const MECHANICAL_PARAMETERS = [
     return data;
   }
 
+  function getAttributeValues(formData) {
+    const values = {};
+    const add = (code, value) => {
+      if (value === undefined || value === null || value === "") return;
+      values[code] = value;
+    };
+
+    add("VERSION", formData.version);
+    add("CREATED_DATE", formData.createdDate);
+    add("PLANT", formData.plant);
+    add("REQUESTOR", formData.requestor);
+    add("DEPARTMENT", formData.department);
+    add("MATERIAL_GROUP", formData.materialGroup);
+    add("MATERIAL_CATEGORY", formData.materialCategory?.[0]);
+    add("REASON_TO_PROCURE", formData.reason || formData.reasonChoice);
+    add("LOCATION", formData.location);
+    add("MATERIAL_DESCRIPTION", formData.materialDescription);
+    add("MATERIAL_CODE", formData.materialCode);
+    add("TYPE_MODEL_PART_NUMBER", formData.partNumber);
+    add("VARIANS", formData.variant);
+    add("DIMENSION", formData.dimension);
+    add("BRAND", formData.brand);
+    add("CATALOGUE", formData.catalogue);
+    add("UOM", formData.uomOther || formData.uom);
+    add("PACK_SIZE", formData.packSize);
+    add("MATERIAL", formData.material);
+    add("KONSENTRASI", formData.concentration);
+    add("VISCOSITAS", formData.viscosity);
+    add("ADDITIONAL_SERVICE", formData.additionalService);
+    add("HSE_STANDARD", formData.hse);
+    add("LICENSE_REGULATION", formData.license);
+    add("WARRANTY_AFTER_SALES", formData.warranty);
+
+    const technicalCodeByLabel = {
+      Voltage: "VOLTAGE",
+      Phase: "PHASE",
+      Power: "POWER",
+      Current: "CURRENT",
+      Frequency: "FREQUENCY",
+      Temperature: "TEMPERATURE",
+      Material: "MATERIAL",
+      Capacity: "CAPACITY",
+      "Connection Type": "CONNECTION_TYPE",
+      Pressure: "PRESSURE",
+      Flowrate: "FLOWRATE",
+      Speed: "SPEED",
+      Tolerance: "TOLERANCE",
+      Konsentrasi: "KONSENTRASI",
+      Viscositas: "VISCOSITAS"
+    };
+
+    formData.technicalAttributes?.forEach((attribute) => {
+      const code = technicalCodeByLabel[attribute.label];
+
+      if (code && attribute.value !== "") {
+        add(code, attribute);
+      }
+    });
+
+    if (formData.requiredDocuments?.length) {
+      values.REQUIRED_DOCUMENTS = formData.requiredDocuments;
+    }
+
+    const technicalOthers = formData.technicalAttributes
+      ?.filter((item) => item.category === "Other") || [];
+
+    if (technicalOthers.length) values.TECHNICAL_OTHERS = technicalOthers;
+    if (formData.uniqueAttributes?.length) values.UNIQUE_OTHERS = formData.uniqueAttributes;
+
+    return values;
+  }
+
+  function getDraftDocumentNumber(formData) {
+    const existing = String(formData.persistedDocumentNo || "").trim();
+
+    return existing || `${formData.docNo || "DRAFT"}-${Date.now()}`;
+  }
+
+  async function saveDraftToServer() {
+    if (!barangSpecificationTypeId) {
+      throw new Error("Tipe spesifikasi Barang belum tersedia.");
+    }
+
+    const formData = getFormData();
+    const documentNo = getDraftDocumentNumber(formData);
+    formData.persistedDocumentNo = documentNo;
+    const isUpdate = Boolean(persistedDraftId);
+    const response = await fetch(
+      isUpdate
+        ? `${API_BASE_URL}/specifications/${encodeURIComponent(persistedDraftId)}`
+        : `${API_BASE_URL}/specifications`,
+      {
+        method: isUpdate ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...(isUpdate ? {} : { specificationTypeId: barangSpecificationTypeId }),
+          documentNo,
+          formData,
+          attributeValues: getAttributeValues(formData)
+        })
+      }
+    );
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.message || "Gagal menyimpan draft ke server.");
+    }
+
+    persistedDraftId = result.data?.id || persistedDraftId;
+
+    if (!persistedDraftId) {
+      throw new Error("Server tidak mengembalikan ID spesifikasi.");
+    }
+
+    localStorage.setItem(PERSISTED_DRAFT_ID_KEY, String(persistedDraftId));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+
+    return { isUpdate };
+  }
+
   // =====================================================
   // DYNAMIC TECHNICAL ROWS
   // =====================================================
@@ -1765,6 +1995,10 @@ function restoreOldMechanicalAttributes(data) {
       restoreForm(data);
       loadingDocument = false;
 
+      persistedDraftId = Number(
+        localStorage.getItem(PERSISTED_DRAFT_ID_KEY) || 0
+      ) || null;
+
       setStatus("Draft sebelumnya berhasil dipulihkan");
 
       return true;
@@ -1775,6 +2009,111 @@ function restoreOldMechanicalAttributes(data) {
       setStatus("Draft sebelumnya gagal dipulihkan");
 
       return false;
+    }
+  }
+
+  async function loadMasterData() {
+    try {
+      const [types, plantRows, categoryRows] = await Promise.all([
+        fetchMasterData("/specification-types"),
+        fetchMasterData("/plants"),
+        fetchMasterData("/material-categories")
+      ]);
+
+      const barangType = types.find((type) =>
+        String(type.typename).toLowerCase() === "barang" ||
+        String(type.typecode).toLowerCase() === "brg"
+      );
+
+      if (!barangType) {
+        throw new Error("Tipe spesifikasi Barang tidak ditemukan.");
+      }
+
+      barangSpecificationTypeId = barangType.id;
+      plants = plantRows;
+      categories = categoryRows.filter((category) =>
+        Number(category.specificationtypeid) === Number(barangSpecificationTypeId)
+      );
+
+      const savedPlant = plantSelect?.value || "";
+      const savedDepartment = deptSelect?.value || "";
+      const savedCategory = getSelectedCategories()[0] || "";
+      const savedGroup = materialGroupSelect?.value || "";
+      const savedReason = reasonChoice?.value || "";
+
+      if (plantSelect) {
+        setSelectMessage(plantSelect, "-- Pilih Plant --");
+
+        plants.forEach((plant) => {
+          const option = document.createElement("option");
+          option.value = String(plant.id);
+          option.textContent = `${plant.plantid} - ${plant.plantname}`;
+          plantSelect.appendChild(option);
+        });
+
+        setSelectedOption(plantSelect, savedPlant);
+      }
+
+      if (materialCategoryOptions) {
+        materialCategoryOptions.innerHTML = "";
+
+        categories.forEach((category) => {
+          const label = document.createElement("label");
+          label.className = "q-check";
+
+          const input = document.createElement("input");
+          input.type = "checkbox";
+          input.name = "materialCategory";
+          input.value = String(category.id);
+          input.dataset.categoryName = category.categoryname;
+
+          if (
+            String(category.id) === String(savedCategory) ||
+            category.categoryname === savedCategory
+          ) {
+            input.checked = true;
+          }
+
+          label.append(input, document.createTextNode(` ${category.categoryname}`));
+          materialCategoryOptions.appendChild(label);
+        });
+      }
+
+      if (reasonChoice) {
+        setSelectMessage(reasonChoice, "-- Pilih Reason --");
+
+        const reasons = await fetchMasterData(
+          `/reason-to-procure/specification-types/${barangSpecificationTypeId}`
+        );
+
+        reasons.forEach((reason) => {
+          const option = document.createElement("option");
+          option.value = String(reason.id);
+          option.textContent = reason.optionname;
+          option.dataset.allowsCustom = String(reason.allowscustomtext);
+          reasonChoice.appendChild(option);
+        });
+
+        const matchingReason = reasons.find((reason) =>
+          String(reason.id) === String(savedReason) ||
+          reason.optionname === savedReason
+        );
+
+        setSelectedOption(reasonChoice, matchingReason?.id || savedReason);
+      }
+
+      const selectedPlant = findPlant(plantSelect?.value);
+      await loadDepartments(selectedPlant?.id, savedDepartment);
+
+      const selectedCategory = getSelectedCategories()[0];
+      await loadMaterialGroups(selectedCategory, savedGroup);
+
+      normalizeMaterialCategory();
+      updateReason();
+      masterDataReady = true;
+    } catch (error) {
+      console.error("Gagal memuat master data Barang:", error);
+      setStatus("Gagal memuat master data dari server. Coba muat ulang halaman.");
     }
   }
 
@@ -1838,7 +2177,7 @@ function restoreOldMechanicalAttributes(data) {
     }
 
     if (
-      reasonChoice?.value === "Others" &&
+      reasonChoice?.selectedOptions[0]?.dataset.allowsCustom === "true" &&
       !reasonOther?.value.trim()
     ) {
       alert("Reason Others wajib diisi.");
@@ -1846,7 +2185,66 @@ function restoreOldMechanicalAttributes(data) {
       return false;
     }
 
+    if (!drawingImage) {
+      alert("Design / Drawing / Visual / Illustration wajib diunggah.");
+      drawingUpload?.focus();
+      return false;
+    }
+
+    const selectedGroup = materialGroupSelect?.selectedOptions[0]?.textContent
+      .trim();
+    const requiredFields = MATERIAL_GROUP_REQUIRED_FIELDS[selectedGroup] || [];
+
+    for (const field of requiredFields) {
+      const missing = getMissingRequiredField(field);
+
+      if (!missing) continue;
+
+      alert(`${getRequiredFieldLabel(field)} wajib diisi untuk Material Group ${selectedGroup}.`);
+      missing.focus?.();
+      return false;
+    }
+
     return true;
+  }
+
+  function getMissingRequiredField(field) {
+    if (field.startsWith("technical:")) {
+      const label = field.slice("technical:".length);
+
+      return !$$("[data-tech-label]", questionnaire).some((input) =>
+        input.dataset.techLabel === label && input.value.trim()
+      ) && !$$("[data-electric-row]", questionnaire).some((row) =>
+        row.dataset.electricRow === label &&
+        $$('[data-electric-value]', row).some((input) => input.value.trim())
+      ) && !$$("[data-mechanical-row]", questionnaire).some((row) =>
+        row.dataset.mechanicalRow === label &&
+        $$('[data-mechanical-value]', row).some((input) => input.value.trim())
+      )
+        ? $("[data-tech-label]", questionnaire) || $("[data-electric-value]", questionnaire)
+        : null;
+    }
+
+    const fieldElement = $(`[name="${escapeSelector(field)}"]`, questionnaire);
+
+    return !fieldElement?.value.trim() ? fieldElement : null;
+  }
+
+  function getRequiredFieldLabel(field) {
+    const labels = {
+      materialDescription: "Material Description",
+      partNumber: "Type/Model/Part Number",
+      variant: "Varians",
+      dimension: "Dimension",
+      brand: "Brand",
+      catalogue: "Catalogue",
+      uom: "UoM",
+      packSize: "Pack Size"
+    };
+
+    return field.startsWith("technical:")
+      ? field.slice("technical:".length)
+      : labels[field] || field;
   }
 
   // =====================================================
@@ -2117,6 +2515,8 @@ function restoreOldMechanicalAttributes(data) {
 
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(OLD_STORAGE_KEY);
+    localStorage.removeItem(PERSISTED_DRAFT_ID_KEY);
+    persistedDraftId = null;
 
     drawingImage = "";
 
@@ -2163,7 +2563,7 @@ function restoreOldMechanicalAttributes(data) {
   // SAVE FOR ADMIN
   // =====================================================
 
-  saveBtn?.addEventListener("click", () => {
+  saveBtn?.addEventListener("click", async () => {
     if (saving) return;
     if (!validateForm()) return;
 
@@ -2173,13 +2573,27 @@ function restoreOldMechanicalAttributes(data) {
     try {
       initializeDocumentInfo();
 
-      if (!saveTransactionLocally()) return;
+      saveDraft();
+      setStatus("Menyimpan draft ke server...");
 
-      alert(
-        "Transaksi berhasil disimpan di browser!\n" +
-        "Version berikutnya: " +
-        (getVersionInput()?.value || "00")
+      const { isUpdate } = await saveDraftToServer();
+
+      if (!isUpdate && !saveTransactionLocally()) return;
+
+      setStatus(
+        isUpdate
+          ? "Draft berhasil diperbarui di server"
+          : "Draft berhasil disimpan di server"
       );
+      alert(
+        isUpdate
+          ? "Draft spesifikasi berhasil diperbarui di server."
+          : "Draft spesifikasi berhasil disimpan di server."
+      );
+    } catch (error) {
+      console.error("Gagal menyimpan draft Barang:", error);
+      setStatus("Draft browser tersimpan, tetapi penyimpanan server gagal");
+      alert(`Gagal menyimpan draft ke server.\n\n${error.message}`);
     } finally {
       saving = false;
       saveBtn.disabled = false;
@@ -2302,7 +2716,6 @@ function restoreOldMechanicalAttributes(data) {
       return;
     }
 
-    updateDepartment();
     initializeDocumentInfo();
 
     const restored = restoreDraft();
@@ -2316,8 +2729,6 @@ function restoreOldMechanicalAttributes(data) {
     }
 
     normalizeMaterialCategory();
-
-    updateReason();
     updateUomOther();
     updateAllElectricalOthers();
     updateCategory();
@@ -2325,7 +2736,9 @@ function restoreOldMechanicalAttributes(data) {
     updatePackSize();
     updateAllMechanicalOthers();
 
-    saveDraft();
+    loadMasterData().then(() => {
+      if (masterDataReady) saveDraft();
+    });
   }
 
   // =====================================================
