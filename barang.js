@@ -46,20 +46,25 @@
   const technicalContainer = $("#dynamicCustomTechnicalContainer");
   const uniqueContainer = $("#dynamicCustomUniqueContainer");
 
+  // =====================================================
   // REQUIRED DOCUMENTS
-const requiredDocumentsContainer = $("#requiredDocumentsContainer");
-const addRequiredDocumentBtn = $("#addRequiredDocumentBtn");
+  // =====================================================
 
-const requiredDocumentOptions = [
-  ...$$(
-    'input[type="hidden"][name^="document"]',
-    questionnaire
-  ).map(input => input.value)
-];
+  const requiredDocumentsContainer = $("#requiredDocumentsContainer");
+  const addRequiredDocumentBtn = $("#addRequiredDocumentBtn");
 
-if (!requiredDocumentOptions.includes("Others")) {
-  requiredDocumentOptions.push("Others");
-}
+  const requiredDocumentOptions = [
+    ...$$(
+      'input[type="hidden"][name^="document"]',
+      questionnaire
+    )
+      .map(input => input.value.trim())
+      .filter(Boolean)
+  ];
+
+  if (!requiredDocumentOptions.includes("Others")) {
+    requiredDocumentOptions.push("Others");
+  }
 
   const DIMENSION_OPTIONS = ["L", "W", "H", "T", "ID", "OD", "DN"];
   const DIMENSION_SYMBOLS = ["x", "~", "/", "±", "-"];
@@ -309,33 +314,32 @@ if (!requiredDocumentOptions.includes("Others")) {
   // ELECTRICAL — OTHERS VISIBILITY
   // =====================================================
 
-function updateElectricalOthers(row) {
-  if (!row) return;
+  function updateElectricalOthers(row) {
+    if (!row) return;
 
-  $$("[data-electric-unit]", row).forEach(select => {
-    const position = select.dataset.electricUnit;
+    $$("[data-electric-unit]", row).forEach(select => {
+      const position = select.dataset.electricUnit;
 
-    const otherInput = $(
-      `[data-electric-other="${position}"]`,
-      row
-    );
+      const otherInput = $(
+        `[data-electric-other="${position}"]`,
+        row
+      );
 
-    if (!otherInput) return;
+      if (!otherInput) return;
 
-    const isOthers = select.value === "Others";
+      const isOthers = select.value === "Others";
 
-    otherInput.hidden = !isOthers;
-    otherInput.disabled = !isOthers;
-    otherInput.required = isOthers;
+      otherInput.hidden = !isOthers;
+      otherInput.disabled = !isOthers;
+      otherInput.required = isOthers;
 
-    // Paksa tersembunyi saat bukan Others
-    otherInput.style.display = isOthers ? "block" : "none";
+      otherInput.style.display = isOthers ? "block" : "none";
 
-    if (!isOthers) {
-      otherInput.value = "";
-    }
-  });
-}
+      if (!isOthers) {
+        otherInput.value = "";
+      }
+    });
+  }
 
   function updateAllElectricalOthers() {
     $$("[data-electric-row]", questionnaire).forEach(row => {
@@ -367,149 +371,148 @@ function updateElectricalOthers(row) {
   // DIMENSION
   // =====================================================
 
-function createDimensionRow(item = {}) {
-  if (!dimensionContainer) return;
+  function createDimensionRow(item = {}) {
+    if (!dimensionContainer) return;
 
-  if (dimensionContainer.querySelectorAll(".dimension-row").length >= 3) {
-    return;
-  }
-
-  const row = document.createElement("div");
-  row.className = "dimension-row";
-
-  // DIMENSION
-  const typeSelect = document.createElement("select");
-  typeSelect.className = "dimension-type";
-
-  const defaultType = document.createElement("option");
-  defaultType.value = "";
-  defaultType.textContent = "-- Pilih Dimension --";
-  typeSelect.appendChild(defaultType);
-
-  DIMENSION_OPTIONS.forEach(value => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = value;
-    typeSelect.appendChild(option);
-  });
-
-  typeSelect.value = item.type || "";
-
-  // DATA
-  const valueInput = document.createElement("input");
-  valueInput.type = "text";
-  valueInput.className = "dimension-value";
-  valueInput.placeholder = "Masukkan nilai";
-  valueInput.value = item.value || "";
-
-  // UOM
-  const unitSelect = document.createElement("select");
-  unitSelect.className = "dimension-unit";
-
-  const defaultUnit = document.createElement("option");
-  defaultUnit.value = "";
-  defaultUnit.textContent = "-- Pilih UoM --";
-  unitSelect.appendChild(defaultUnit);
-
-  ["MM", "CM", "M", "INCH", "Others"].forEach(value => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = value;
-    unitSelect.appendChild(option);
-  });
-
-  unitSelect.value = item.unit || "";
-
-  // INPUT UOM OTHERS
-  const othersWrapper = document.createElement("div");
-  othersWrapper.className = "dimension-unit-others";
-
-  const othersInput = document.createElement("input");
-  othersInput.type = "text";
-  othersInput.className = "dimension-unit-other-input";
-  othersInput.placeholder = "Masukkan satuan lainnya...";
-  othersInput.value = item.otherUnit || "";
-
-  othersWrapper.appendChild(othersInput);
-
-  // Tampilkan input ketika memilih Others
-  function toggleOthersInput() {
-    const isOthers = unitSelect.value === "Others";
-
-    othersWrapper.style.display = isOthers ? "block" : "none";
-    othersInput.required = isOthers;
-
-    if (!isOthers) {
-      othersInput.value = "";
+    if (dimensionContainer.querySelectorAll(".dimension-row").length >= 3) {
+      return;
     }
+
+    const row = document.createElement("div");
+    row.className = "dimension-row";
+
+    // DIMENSION
+    const typeSelect = document.createElement("select");
+    typeSelect.className = "dimension-type";
+
+    const defaultType = document.createElement("option");
+    defaultType.value = "";
+    defaultType.textContent = "-- Pilih Dimension --";
+    typeSelect.appendChild(defaultType);
+
+    DIMENSION_OPTIONS.forEach(value => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      typeSelect.appendChild(option);
+    });
+
+    typeSelect.value = item.type || "";
+
+    // DATA
+    const valueInput = document.createElement("input");
+    valueInput.type = "text";
+    valueInput.className = "dimension-value";
+    valueInput.placeholder = "Masukkan nilai";
+    valueInput.value = item.value || "";
+
+    // UOM
+    const unitSelect = document.createElement("select");
+    unitSelect.className = "dimension-unit";
+
+    const defaultUnit = document.createElement("option");
+    defaultUnit.value = "";
+    defaultUnit.textContent = "-- Pilih UoM --";
+    unitSelect.appendChild(defaultUnit);
+
+    ["MM", "CM", "M", "INCH", "Others"].forEach(value => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      unitSelect.appendChild(option);
+    });
+
+    unitSelect.value = item.unit || "";
+
+    // INPUT UOM OTHERS
+    const othersWrapper = document.createElement("div");
+    othersWrapper.className = "dimension-unit-others";
+
+    const othersInput = document.createElement("input");
+    othersInput.type = "text";
+    othersInput.className = "dimension-unit-other-input";
+    othersInput.placeholder = "Masukkan satuan lainnya...";
+    othersInput.value = item.otherUnit || "";
+
+    othersWrapper.appendChild(othersInput);
+
+    function toggleOthersInput() {
+      const isOthers = unitSelect.value === "Others";
+
+      othersWrapper.style.display = isOthers ? "block" : "none";
+      othersInput.required = isOthers;
+
+      if (!isOthers) {
+        othersInput.value = "";
+      }
+    }
+
+    unitSelect.addEventListener("change", () => {
+      toggleOthersInput();
+      saveDraft();
+    });
+
+    othersInput.addEventListener("input", saveDraft);
+
+    // SYMBOL
+    const symbolSelect = document.createElement("select");
+    symbolSelect.className = "dimension-symbol";
+
+    const defaultSymbol = document.createElement("option");
+    defaultSymbol.value = "";
+    defaultSymbol.textContent = "-- Pilih Simbol --";
+    symbolSelect.appendChild(defaultSymbol);
+
+    DIMENSION_SYMBOLS.forEach(value => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = value;
+      symbolSelect.appendChild(option);
+    });
+
+    symbolSelect.value = item.symbol || "";
+
+    // REMOVE BUTTON
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "remove-dimension";
+    removeButton.textContent = "×";
+    removeButton.title = "Hapus";
+
+    removeButton.addEventListener("click", () => {
+      row.remove();
+      updateDimension();
+      saveDraft();
+    });
+
+    row.append(
+      typeSelect,
+      valueInput,
+      unitSelect,
+      symbolSelect,
+      removeButton,
+      othersWrapper
+    );
+
+    dimensionContainer.appendChild(row);
+
+    toggleOthersInput();
+    updateDimension();
   }
 
-  unitSelect.addEventListener("change", () => {
-    toggleOthersInput();
-    saveDraft();
-  });
+  function collectDimensionItems() {
+    if (!dimensionContainer) return [];
 
-  othersInput.addEventListener("input", saveDraft);
-
-  // SYMBOL
-  const symbolSelect = document.createElement("select");
-  symbolSelect.className = "dimension-symbol";
-
-  const defaultSymbol = document.createElement("option");
-  defaultSymbol.value = "";
-  defaultSymbol.textContent = "-- Pilih Simbol --";
-  symbolSelect.appendChild(defaultSymbol);
-
-  DIMENSION_SYMBOLS.forEach(value => {
-    const option = document.createElement("option");
-    option.value = value;
-    option.textContent = value;
-    symbolSelect.appendChild(option);
-  });
-
-  symbolSelect.value = item.symbol || "";
-
-  // REMOVE BUTTON
-  const removeButton = document.createElement("button");
-  removeButton.type = "button";
-  removeButton.className = "remove-dimension";
-  removeButton.textContent = "×";
-  removeButton.title = "Hapus";
-
-  removeButton.addEventListener("click", () => {
-    row.remove();
-    updateDimension();
-    saveDraft();
-  });
-
-  row.append(
-    typeSelect,
-    valueInput,
-    unitSelect,
-    symbolSelect,
-    removeButton,
-    othersWrapper
-  );
-
-  dimensionContainer.appendChild(row);
-
-  toggleOthersInput();
-  updateDimension();
-}
-
-function collectDimensionItems() {
-  if (!dimensionContainer) return [];
-
-  return $$(".dimension-row", dimensionContainer)
-    .map(row => ({
-      type: $(".dimension-type", row)?.value || "",
-      value: $(".dimension-value", row)?.value.trim() || "",
-      unit: $(".dimension-unit", row)?.value || "",
-      otherUnit: $(".dimension-unit-other-input", row)?.value.trim() || "",
-      symbol: $(".dimension-symbol", row)?.value || ""
-    }))
-    .filter(item => item.type && item.value);
-}
+    return $$(".dimension-row", dimensionContainer)
+      .map(row => ({
+        type: $(".dimension-type", row)?.value || "",
+        value: $(".dimension-value", row)?.value.trim() || "",
+        unit: $(".dimension-unit", row)?.value || "",
+        otherUnit: $(".dimension-unit-other-input", row)?.value.trim() || "",
+        symbol: $(".dimension-symbol", row)?.value || ""
+      }))
+      .filter(item => item.type && item.value);
+  }
 
   function updateDimension() {
     if (!dimensionContainer) return;
@@ -520,41 +523,102 @@ function collectDimensionItems() {
     if (addButton) addButton.disabled = totalRows >= 3;
   }
 
-// =====================================================
-// REQUIRED DOCUMENTS — DYNAMIC DROPDOWN
-// =====================================================
+  // =====================================================
+  // REQUIRED DOCUMENTS — DYNAMIC DROPDOWN + OTHERS
+  // =====================================================
 
-function collectRequiredDocuments() {
-  if (!requiredDocumentsContainer) return [];
+  function collectRequiredDocuments() {
+    if (!requiredDocumentsContainer) return [];
 
-  return $$(".required-document-row", requiredDocumentsContainer)
-    .map(row => {
-      const select = $(".required-document-select", row);
-      const otherInput = $(".required-document-other", row);
+    return $$(".required-document-row", requiredDocumentsContainer)
+      .map(row => {
+        const select = $(".required-document-select", row);
+        const otherInput = $(".required-document-other", row);
 
-      if (!select || !select.value) return "";
+        if (!select || !select.value) return "";
 
-      if (select.value === "Others") {
-        const detail = otherInput?.value.trim() || "";
-        return detail ? `Others: ${detail}` : "Others";
+        if (select.value === "Others") {
+          const detail = otherInput?.value.trim() || "";
+
+          return detail
+            ? `Others: ${detail}`
+            : "Others";
+        }
+
+        return select.value;
+      })
+      .filter(Boolean);
+  }
+
+  function updateRequiredDocumentOptions() {
+    if (!requiredDocumentsContainer) return;
+
+    const rows = $$(".required-document-row", requiredDocumentsContainer);
+
+    const selects = rows.map(row =>
+      $(".required-document-select", row)
+    );
+
+    const selectedValues = selects.map(select => select.value);
+
+    selects.forEach((select, index) => {
+      const currentValue = select.value;
+
+      select.innerHTML = "";
+
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "-- Pilih Required Document --";
+      select.appendChild(placeholder);
+
+      requiredDocumentOptions.forEach(optionValue => {
+
+        // Others selalu tersedia di setiap dropdown.
+        // Pilihan dokumen biasa tidak boleh dipilih berulang.
+        if (optionValue !== "Others") {
+          const alreadySelected = selectedValues.some(
+            (value, selectedIndex) =>
+              selectedIndex !== index &&
+              value === optionValue
+          );
+
+          if (alreadySelected) return;
+        }
+
+        const option = document.createElement("option");
+        option.value = optionValue;
+        option.textContent = optionValue;
+
+        select.appendChild(option);
+      });
+
+      select.value = currentValue;
+    });
+
+    // Tombol hapus disembunyikan jika hanya ada satu baris.
+    rows.forEach(row => {
+      const removeButton = $(".remove-required-document", row);
+
+      if (removeButton) {
+        removeButton.hidden = rows.length <= 1;
       }
+    });
+  }
 
-      return select.value;
-    })
-    .filter(Boolean);
-}
+  function createRequiredDocumentRow(value = "", otherValue = "") {
+    if (!requiredDocumentsContainer) return;
 
-function updateRequiredDocumentOptions() {
-  if (!requiredDocumentsContainer) return;
+    const selectedValues = $$(".required-document-select", requiredDocumentsContainer)
+      .map(select => select.value)
+      .filter(Boolean);
 
-  const selects = $$(".required-document-select", requiredDocumentsContainer);
+    const row = document.createElement("div");
+    row.className = "required-document-row";
 
-  const selectedValues = selects.map(select => select.value);
-
-  selects.forEach((select, index) => {
-    const currentValue = select.value;
-
-    select.innerHTML = "";
+    // DROPDOWN REQUIRED DOCUMENT
+    const select = document.createElement("select");
+    select.className = "required-document-select";
+    select.name = "requiredDocuments";
 
     const placeholder = document.createElement("option");
     placeholder.value = "";
@@ -562,12 +626,13 @@ function updateRequiredDocumentOptions() {
     select.appendChild(placeholder);
 
     requiredDocumentOptions.forEach(optionValue => {
-      const alreadySelected = selectedValues.some(
-        (value, selectedIndex) =>
-          selectedIndex !== index && value === optionValue
-      );
-
-      if (alreadySelected) return;
+      if (
+        optionValue !== "Others" &&
+        selectedValues.includes(optionValue) &&
+        optionValue !== value
+      ) {
+        return;
+      }
 
       const option = document.createElement("option");
       option.value = optionValue;
@@ -576,231 +641,210 @@ function updateRequiredDocumentOptions() {
       select.appendChild(option);
     });
 
-    select.value = currentValue;
-  });
+    select.value = value;
 
-  if (addRequiredDocumentBtn) {
-    addRequiredDocumentBtn.disabled =
-      selects.length >= requiredDocumentOptions.length;
-  }
-}
+    // CONTAINER OTHERS
+    const otherContainer = document.createElement("div");
+    otherContainer.className = "required-document-other-container";
+    otherContainer.hidden = value !== "Others";
 
-function createRequiredDocumentRow(value = "", otherValue = "") {
-  if (!requiredDocumentsContainer) return;
+    // LABEL OTHERS
+    const otherLabel = document.createElement("label");
+    otherLabel.textContent = "Isi keterangan lainnya";
 
-  const selectedValues = $$(".required-document-select", requiredDocumentsContainer)
-    .map(select => select.value)
-    .filter(Boolean);
+    // INPUT OTHERS
+    const otherInput = document.createElement("input");
+    otherInput.type = "text";
+    otherInput.className = "required-document-other";
+    otherInput.placeholder = "Masukkan keterangan lainnya...";
+    otherInput.value = otherValue;
 
-  if (
-    $$(".required-document-select", requiredDocumentsContainer).length >=
-    requiredDocumentOptions.length
-  ) {
-    return;
-  }
+    otherContainer.append(otherLabel, otherInput);
 
-  const row = document.createElement("div");
-  row.className = "required-document-row";
+    // TOMBOL HAPUS
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "remove-required-document";
+    removeButton.textContent = "Hapus";
+    removeButton.title = "Hapus dokumen";
 
-  const select = document.createElement("select");
-  select.className = "required-document-select";
-  select.name = "requiredDocuments";
+    row.append(
+      select,
+      otherContainer,
+      removeButton
+    );
 
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.textContent = "-- Pilih Required Document --";
-  select.appendChild(placeholder);
+    requiredDocumentsContainer.appendChild(row);
 
-  requiredDocumentOptions.forEach(optionValue => {
-    if (selectedValues.includes(optionValue) && optionValue !== value) {
-      return;
-    }
+    // EVENT DROPDOWN
+    select.addEventListener("change", () => {
+      const isOthers = select.value === "Others";
 
-    const option = document.createElement("option");
-    option.value = optionValue;
-    option.textContent = optionValue;
-    select.appendChild(option);
-  });
+      otherContainer.hidden = !isOthers;
 
-  select.value = value;
+      if (!isOthers) {
+        otherInput.value = "";
+      }
 
-  // INPUT KHUSUS OTHERS
-  const otherInput = document.createElement("input");
-  otherInput.type = "text";
-  otherInput.className = "required-document-other";
-  otherInput.placeholder = "Masukkan nama dokumen lainnya...";
-  otherInput.value = otherValue;
-  otherInput.hidden = value !== "Others";
+      updateRequiredDocumentOptions();
+      saveDraft();
+    });
 
-  const removeButton = document.createElement("button");
-  removeButton.type = "button";
-  removeButton.className = "remove-required-document";
-  removeButton.textContent = "×";
-  removeButton.title = "Hapus dokumen";
+    // EVENT INPUT OTHERS
+    otherInput.addEventListener("input", saveDraft);
 
-  row.append(select, otherInput, removeButton);
-  requiredDocumentsContainer.appendChild(row);
+    // EVENT HAPUS
+    removeButton.addEventListener("click", () => {
+      row.remove();
 
-  select.addEventListener("change", () => {
-    otherInput.hidden = select.value !== "Others";
+      if (
+        !$$(".required-document-row", requiredDocumentsContainer).length
+      ) {
+        createRequiredDocumentRow();
+      }
 
-    if (select.value !== "Others") {
-      otherInput.value = "";
-    }
+      updateRequiredDocumentOptions();
+      saveDraft();
+    });
 
     updateRequiredDocumentOptions();
-    saveDraft();
-  });
+  }
 
-  otherInput.addEventListener("input", saveDraft);
+  function restoreRequiredDocuments(data) {
+    if (!requiredDocumentsContainer) return;
 
-  removeButton.addEventListener("click", () => {
-    row.remove();
+    requiredDocumentsContainer.replaceChildren();
 
-    if (!$$(".required-document-row", requiredDocumentsContainer).length) {
+    const savedDocuments = Array.isArray(data.requiredDocuments)
+      ? data.requiredDocuments
+      : [];
+
+    if (savedDocuments.length) {
+      savedDocuments.forEach(item => {
+        let value = item;
+        let otherValue = "";
+
+        if (
+          typeof item === "string" &&
+          item.startsWith("Others:")
+        ) {
+          value = "Others";
+          otherValue = item.substring("Others:".length).trim();
+        }
+
+        if (requiredDocumentOptions.includes(value)) {
+          createRequiredDocumentRow(value, otherValue);
+        }
+      });
+    }
+
+    if (!requiredDocumentsContainer.children.length) {
       createRequiredDocumentRow();
     }
 
     updateRequiredDocumentOptions();
-    saveDraft();
-  });
-
-  updateRequiredDocumentOptions();
-}
-
-function restoreRequiredDocuments(data) {
-  if (!requiredDocumentsContainer) return;
-
-  requiredDocumentsContainer.replaceChildren();
-
-  const savedDocuments = Array.isArray(data.requiredDocuments)
-    ? data.requiredDocuments
-    : [];
-
-  if (savedDocuments.length) {
-    savedDocuments.forEach(item => {
-      let value = item;
-      let otherValue = "";
-
-      if (typeof item === "string" && item.startsWith("Others:")) {
-        value = "Others";
-        otherValue = item.substring("Others:".length).trim();
-      }
-
-      if (requiredDocumentOptions.includes(value)) {
-        createRequiredDocumentRow(value, otherValue);
-      }
-    });
   }
-
-  if (!requiredDocumentsContainer.children.length) {
-    createRequiredDocumentRow();
-  }
-
-  updateRequiredDocumentOptions();
-}
 
   // =====================================================
   // PACK SIZE
   // =====================================================
 
-function updatePackSizeOthers() {
-  const packUom = $("#packUom", questionnaire);
-  const packUomOther = $("#packUomOther", questionnaire);
+  function updatePackSizeOthers() {
+    const packUom = $("#packUom", questionnaire);
+    const packUomOther = $("#packUomOther", questionnaire);
 
-  const packageUom = $("#packageUom", questionnaire);
-  const packageUomOther = $("#packageUomOther", questionnaire);
+    const packageUom = $("#packageUom", questionnaire);
+    const packageUomOther = $("#packageUomOther", questionnaire);
 
-  if (packUom && packUomOther) {
-    const showPackOther = packUom.value === "Others";
+    if (packUom && packUomOther) {
+      const showPackOther = packUom.value === "Others";
 
-    packUomOther.hidden = !showPackOther;
-    packUomOther.disabled = !showPackOther;
-    packUomOther.required = showPackOther;
+      packUomOther.hidden = !showPackOther;
+      packUomOther.disabled = !showPackOther;
+      packUomOther.required = showPackOther;
 
-    if (!showPackOther) {
-      packUomOther.value = "";
+      if (!showPackOther) {
+        packUomOther.value = "";
+      }
+    }
+
+    if (packageUom && packageUomOther) {
+      const showPackageOther = packageUom.value === "Others";
+
+      packageUomOther.hidden = !showPackageOther;
+      packageUomOther.disabled = !showPackageOther;
+      packageUomOther.required = showPackageOther;
+
+      if (!showPackageOther) {
+        packageUomOther.value = "";
+      }
     }
   }
 
-  if (packageUom && packageUomOther) {
-    const showPackageOther = packageUom.value === "Others";
+  function updatePackSize() {
+    updatePackSizeOthers();
 
-    packageUomOther.hidden = !showPackageOther;
-    packageUomOther.disabled = !showPackageOther;
-    packageUomOther.required = showPackageOther;
+    const quantity =
+      $("#packQuantity", questionnaire)?.value.trim() || "";
 
-    if (!showPackageOther) {
-      packageUomOther.value = "";
+    const packUomSelect =
+      $("#packUom", questionnaire);
+
+    const packageUomSelect =
+      $("#packageUom", questionnaire);
+
+    const packUomOther =
+      $("#packUomOther", questionnaire)?.value.trim() || "";
+
+    const packageUomOther =
+      $("#packageUomOther", questionnaire)?.value.trim() || "";
+
+    const symbol =
+      $("#packSymbol", questionnaire)?.value || "";
+
+    const packUom =
+      packUomSelect?.value === "Others"
+        ? packUomOther
+        : packUomSelect?.value || "";
+
+    const packageUom =
+      packageUomSelect?.value === "Others"
+        ? packageUomOther
+        : packageUomSelect?.value || "";
+
+    const finalField =
+      $("#packSizeFinal", questionnaire);
+
+    if (!finalField) return;
+
+    const firstPart = [quantity, packUom]
+      .filter(Boolean)
+      .join(" ");
+
+    let result = firstPart;
+
+    if (packageUom) {
+      result += `${
+        result && symbol
+          ? ` ${symbol} `
+          : result
+            ? " "
+            : ""
+      }${packageUom}`;
     }
-  }
-}
 
-
-function updatePackSize() {
-  updatePackSizeOthers();
-
-  const quantity =
-    $("#packQuantity", questionnaire)?.value.trim() || "";
-
-  const packUomSelect =
-    $("#packUom", questionnaire);
-
-  const packageUomSelect =
-    $("#packageUom", questionnaire);
-
-  const packUomOther =
-    $("#packUomOther", questionnaire)?.value.trim() || "";
-
-  const packageUomOther =
-    $("#packageUomOther", questionnaire)?.value.trim() || "";
-
-  const symbol =
-    $("#packSymbol", questionnaire)?.value || "";
-
-  const packUom =
-    packUomSelect?.value === "Others"
-      ? packUomOther
-      : packUomSelect?.value || "";
-
-  const packageUom =
-    packageUomSelect?.value === "Others"
-      ? packageUomOther
-      : packageUomSelect?.value || "";
-
-  const finalField =
-    $("#packSizeFinal", questionnaire);
-
-  if (!finalField) return;
-
-  const firstPart = [quantity, packUom]
-    .filter(Boolean)
-    .join(" ");
-
-  let result = firstPart;
-
-  if (packageUom) {
-    result += `${
-      result && symbol
-        ? ` ${symbol} `
-        : result
-          ? " "
-          : ""
-    }${packageUom}`;
+    finalField.value = result.trim();
   }
 
-  finalField.value = result.trim();
-}
+  $("#packUomOther", questionnaire)?.addEventListener(
+    "input",
+    updatePackSize
+  );
 
-$("#packUomOther", questionnaire)?.addEventListener(
-  "input",
-  updatePackSize
-);
-
-$("#packageUomOther", questionnaire)?.addEventListener(
-  "input",
-  updatePackSize
-);
+  $("#packageUomOther", questionnaire)?.addEventListener(
+    "input",
+    updatePackSize
+  );
 
   // =====================================================
   // MECHANICAL — SAP UOM DROPDOWN
@@ -1604,12 +1648,10 @@ $("#packageUomOther", questionnaire)?.addEventListener(
 
     normalizeMaterialCategory();
 
-    // Restore Electrical
     if (Array.isArray(data.electricalAttributes)) {
       restoreElectricalAttributes(data.electricalAttributes);
     }
 
-    // Restore Mechanical
     if (Array.isArray(data.mechanicalAttributes)) {
       restoreMechanicalAttributes(data.mechanicalAttributes);
     } else {
@@ -1645,7 +1687,6 @@ $("#packageUomOther", questionnaire)?.addEventListener(
     );
   }
 
-  // Helper agar semua dropdown Electrical diperbarui.
   function updateElectricalOthersInAllRows() {
     updateAllElectricalOthers();
   }
@@ -1901,14 +1942,14 @@ $("#packageUomOther", questionnaire)?.addEventListener(
   }
 
   // =====================================================
-// BUTTON EVENTS — REQUIRED DOCUMENTS
-// =====================================================
+  // BUTTON EVENTS — REQUIRED DOCUMENTS
+  // =====================================================
 
-addRequiredDocumentBtn?.addEventListener("click", () => {
-  createRequiredDocumentRow();
-  updateRequiredDocumentOptions();
-  saveDraft();
-});
+  addRequiredDocumentBtn?.addEventListener("click", () => {
+    createRequiredDocumentRow();
+    updateRequiredDocumentOptions();
+    saveDraft();
+  });
 
   // =====================================================
   // BUTTON EVENTS — DIMENSION
@@ -1938,11 +1979,11 @@ addRequiredDocumentBtn?.addEventListener("click", () => {
     if (rows.length > 1) {
       row.remove();
     } else {
-  $(".dimension-type", row).value = "";
-  $(".dimension-value", row).value = "";
-  $(".dimension-unit", row).value = "";
-  $(".dimension-symbol", row).value = "";
-}
+      $(".dimension-type", row).value = "";
+      $(".dimension-value", row).value = "";
+      $(".dimension-unit", row).value = "";
+      $(".dimension-symbol", row).value = "";
+    }
 
     updateDimension();
     saveDraft();
@@ -2073,6 +2114,7 @@ addRequiredDocumentBtn?.addEventListener("click", () => {
 
     technicalContainer?.replaceChildren();
     uniqueContainer?.replaceChildren();
+
     requiredDocumentsContainer?.replaceChildren();
     createRequiredDocumentRow();
 
@@ -2234,10 +2276,11 @@ addRequiredDocumentBtn?.addEventListener("click", () => {
     const printId = params.get("printId");
 
     initializeMechanicalUomOptions();
+
     if (requiredDocumentsContainer) {
-  requiredDocumentsContainer.replaceChildren();
-  createRequiredDocumentRow();
-}
+      requiredDocumentsContainer.replaceChildren();
+      createRequiredDocumentRow();
+    }
 
     if (printId) {
       loadDocumentFromDatabase(printId);
