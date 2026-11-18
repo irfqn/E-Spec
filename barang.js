@@ -69,12 +69,13 @@
   const DIMENSION_OPTIONS = ["L", "W", "H", "T", "ID", "OD", "DN"];
   const DIMENSION_SYMBOLS = ["x", "~", "/", "±", "-"];
 
-  const MECHANICAL_PARAMETERS = [
-    "Capacity",
-    "Pressure",
-    "Flowrate",
-    "Speed & Tolerance"
-  ];
+const MECHANICAL_PARAMETERS = [
+  "Capacity",
+  "Pressure",
+  "Flowrate",
+  "Speed",
+  "Tolerance"
+];
 
   const MECHANICAL_SYMBOLS = ["x", "--", "~", "/", "±", "-"];
 
@@ -1493,101 +1494,115 @@
     });
   }
 
-  // =====================================================
-  // RESTORE MECHANICAL ATTRIBUTES
-  // =====================================================
+// =====================================================
+// RESTORE MECHANICAL ATTRIBUTES
+// =====================================================
 
-  function restoreMechanicalAttributes(data) {
-    const savedAttributes = Array.isArray(data) ? data : [];
+function restoreMechanicalAttributes(data) {
+  const savedAttributes = Array.isArray(data) ? data : [];
 
-    savedAttributes.forEach(item => {
-      if (!item?.label) return;
+  savedAttributes.forEach(item => {
+    if (!item?.label) return;
+
+    const targetLabel =
+      item.label === "Speed & Tolerance"
+        ? "Speed"
+        : item.label;
+
+    const row = $$("[data-mechanical-row]", questionnaire)
+      .find(element =>
+        element.dataset.mechanicalRow === targetLabel
+      );
+
+    if (!row) return;
+
+    const value1 = $('[data-mechanical-value="1"]', row);
+    const value2 = $('[data-mechanical-value="2"]', row);
+
+    const unitSelect1 = $('[data-mechanical-unit="1"]', row);
+    const unitSelect2 = $('[data-mechanical-unit="2"]', row);
+
+    const unitOther1 = $('[data-mechanical-unit-other="1"]', row);
+    const unitOther2 = $('[data-mechanical-unit-other="2"]', row);
+
+    const symbolSelect = $("[data-mechanical-symbol]", row);
+    const symbolOther = $("[data-mechanical-symbol-other]", row);
+
+    if (value1) value1.value = item.data1 || "";
+    if (value2) value2.value = item.data2 || "";
+
+    if (unitSelect1) {
+      if (item.unit1Selection) {
+        unitSelect1.value = item.unit1Selection;
+      } else if (item.unit1) {
+        unitSelect1.value = item.unit1;
+      }
+    }
+
+    if (unitOther1) unitOther1.value = item.unit1Other || "";
+
+    if (unitSelect2) {
+      if (item.unit2Selection) {
+        unitSelect2.value = item.unit2Selection;
+      } else if (item.unit2) {
+        unitSelect2.value = item.unit2;
+      }
+    }
+
+    if (unitOther2) unitOther2.value = item.unit2Other || "";
+
+    if (symbolSelect) {
+      if (item.symbolSelection) {
+        symbolSelect.value = item.symbolSelection;
+      } else if (item.symbol) {
+        symbolSelect.value = MECHANICAL_SYMBOLS.includes(item.symbol)
+          ? item.symbol
+          : "Others";
+      }
+    }
+
+    if (symbolOther) symbolOther.value = item.symbolOther || "";
+
+    updateMechanicalOthers(row);
+  });
+}
+
+
+// =====================================================
+// RESTORE OLD MECHANICAL DATA
+// =====================================================
+
+function restoreOldMechanicalAttributes(data) {
+  const attributes = data.technicalAttributes || [];
+
+  attributes
+    .filter(item =>
+      item.category === "Mechanical" &&
+      (
+        MECHANICAL_PARAMETERS.includes(item.label) ||
+        item.label === "Speed & Tolerance"
+      )
+    )
+    .forEach(item => {
+      const targetLabel =
+        item.label === "Speed & Tolerance"
+          ? "Speed"
+          : item.label;
 
       const row = $$("[data-mechanical-row]", questionnaire)
         .find(element =>
-          element.dataset.mechanicalRow === item.label
+          element.dataset.mechanicalRow === targetLabel
         );
 
       if (!row) return;
 
       const value1 = $('[data-mechanical-value="1"]', row);
-      const value2 = $('[data-mechanical-value="2"]', row);
 
-      const unitSelect1 = $('[data-mechanical-unit="1"]', row);
-      const unitSelect2 = $('[data-mechanical-unit="2"]', row);
-
-      const unitOther1 = $('[data-mechanical-unit-other="1"]', row);
-      const unitOther2 = $('[data-mechanical-unit-other="2"]', row);
-
-      const symbolSelect = $("[data-mechanical-symbol]", row);
-      const symbolOther = $("[data-mechanical-symbol-other]", row);
-
-      if (value1) value1.value = item.data1 || "";
-      if (value2) value2.value = item.data2 || "";
-
-      if (unitSelect1) {
-        if (item.unit1Selection) {
-          unitSelect1.value = item.unit1Selection;
-        } else if (item.unit1) {
-          unitSelect1.value = item.unit1;
-        }
+      if (value1 && !value1.value) {
+        value1.value = item.value || "";
       }
-
-      if (unitOther1) unitOther1.value = item.unit1Other || "";
-
-      if (unitSelect2) {
-        if (item.unit2Selection) {
-          unitSelect2.value = item.unit2Selection;
-        } else if (item.unit2) {
-          unitSelect2.value = item.unit2;
-        }
-      }
-
-      if (unitOther2) unitOther2.value = item.unit2Other || "";
-
-      if (symbolSelect) {
-        if (item.symbolSelection) {
-          symbolSelect.value = item.symbolSelection;
-        } else if (item.symbol) {
-          symbolSelect.value = MECHANICAL_SYMBOLS.includes(item.symbol)
-            ? item.symbol
-            : "Others";
-        }
-      }
-
-      if (symbolOther) symbolOther.value = item.symbolOther || "";
-
-      updateMechanicalOthers(row);
     });
-  }
-
-  // =====================================================
-  // RESTORE OLD MECHANICAL DATA
-  // =====================================================
-
-  function restoreOldMechanicalAttributes(data) {
-    const attributes = data.technicalAttributes || [];
-
-    attributes
-      .filter(item =>
-        item.category === "Mechanical" &&
-        MECHANICAL_PARAMETERS.includes(item.label)
-      )
-      .forEach(item => {
-        const row = $$("[data-mechanical-row]", questionnaire)
-          .find(element =>
-            element.dataset.mechanicalRow === item.label
-          );
-
-        if (!row) return;
-
-        const value1 = $('[data-mechanical-value="1"]', row);
-
-        if (value1 && !value1.value) {
-          value1.value = item.value || "";
-        }
-      });
-  }
+}
 
   // =====================================================
   // RESTORE DYNAMIC ATTRIBUTES
