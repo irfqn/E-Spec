@@ -309,12 +309,26 @@
 
 
 
+
 <!-- DIMENSION -->
 <div class="q-field dimension-field">
-  <span>Dimension</span>
+
+  <span class="dimension-title">Dimension</span>
+
+  <!-- HEADER KOLOM -->
+  <div class="dimension-header">
+    <span>Dimensi</span>
+    <span>Data</span>
+    <span>UoM</span>
+    <span>Symbol</span>
+    <span></span>
+  </div>
 
   <div id="dimensionRows">
+
     <div class="dimension-row">
+
+      <!-- DIMENSION -->
       <select class="dimension-type">
         <option value="">-- Pilih Dimension --</option>
         <option value="L">L</option>
@@ -326,27 +340,42 @@
         <option value="DN">DN</option>
       </select>
 
+      <!-- DATA -->
       <input
         type="text"
         class="dimension-value"
         placeholder="Masukkan nilai"
       >
 
-      <select class="dimension-symbol">
-
-        <option value="x">x</option>
-        <option value="~">~</option>
-        <option value="/">/</option>
-        <option value="±">±</option>
-        <option value="-">-</option>
+      <!-- UOM -->
+      <select class="dimension-unit">
+        <option value="">-- Pilih UoM --</option>
+        <option value="MM">MM</option>
+        <option value="CM">CM</option>
+        <option value="M">M</option>
+        <option value="INCH">INCH</option>
+        <option value="Others">Others</option>
       </select>
 
+<!-- SYMBOL -->
+<select class="dimension-symbol">
+  <option value="">-- Pilih Simbol --</option>
+  <option value="x">x</option>
+  <option value="~">~</option>
+  <option value="/">/</option>
+  <option value="±">±</option>
+  <option value="-">-</option>
+</select>
+
+      <!-- REMOVE -->
       <button
         type="button"
         class="remove-dimension"
         title="Hapus"
       >&times;</button>
+
     </div>
+
   </div>
 
   <button
@@ -356,9 +385,11 @@
   >
     + Tambah Dimension
   </button>
+
 </div>
 
 <input type="hidden" name="dimension" id="dimensionFinal">
+
 
 
         <label class="q-field">

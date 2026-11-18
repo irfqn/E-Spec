@@ -353,89 +353,114 @@ function updateElectricalOthers(row) {
   // =====================================================
 
   function createDimensionRow(item = {}) {
-    if (!dimensionContainer) return;
+  if (!dimensionContainer) return;
 
-    if (dimensionContainer.querySelectorAll(".dimension-row").length >= 3) {
-      return;
-    }
-
-    const row = document.createElement("div");
-    row.className = "dimension-row";
-
-    const typeSelect = document.createElement("select");
-    typeSelect.className = "dimension-type";
-
-    const defaultType = document.createElement("option");
-    defaultType.value = "";
-    defaultType.textContent = "-- Pilih Dimension --";
-    typeSelect.appendChild(defaultType);
-
-    DIMENSION_OPTIONS.forEach(value => {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = value;
-      typeSelect.appendChild(option);
-    });
-
-    typeSelect.value = item.type || "";
-
-    const valueInput = document.createElement("input");
-    valueInput.type = "text";
-    valueInput.className = "dimension-value";
-    valueInput.placeholder = "Masukkan nilai";
-    valueInput.value = item.value || "";
-
-    const currentRowCount =
-      dimensionContainer.querySelectorAll(".dimension-row").length + 1;
-
-    let symbolSelect = null;
-
-    if (currentRowCount < 3) {
-      symbolSelect = document.createElement("select");
-      symbolSelect.className = "dimension-symbol";
-
-      DIMENSION_SYMBOLS.forEach(value => {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = value;
-        symbolSelect.appendChild(option);
-      });
-
-      symbolSelect.value = item.symbol || "x";
-    }
-
-    const removeButton = document.createElement("button");
-    removeButton.type = "button";
-    removeButton.className = "remove-dimension";
-    removeButton.textContent = "×";
-
-    removeButton.addEventListener("click", () => {
-      row.remove();
-      updateDimension();
-      saveDraft();
-    });
-
-    row.append(typeSelect, valueInput);
-
-    if (symbolSelect) row.appendChild(symbolSelect);
-
-    row.appendChild(removeButton);
-    dimensionContainer.appendChild(row);
-
-    updateDimension();
+  if (dimensionContainer.querySelectorAll(".dimension-row").length >= 3) {
+    return;
   }
+
+  const row = document.createElement("div");
+  row.className = "dimension-row";
+
+  // DIMENSION
+  const typeSelect = document.createElement("select");
+  typeSelect.className = "dimension-type";
+
+  const defaultType = document.createElement("option");
+  defaultType.value = "";
+  defaultType.textContent = "-- Pilih Dimension --";
+  typeSelect.appendChild(defaultType);
+
+  DIMENSION_OPTIONS.forEach(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    typeSelect.appendChild(option);
+  });
+
+  typeSelect.value = item.type || "";
+
+  // DATA
+  const valueInput = document.createElement("input");
+  valueInput.type = "text";
+  valueInput.className = "dimension-value";
+  valueInput.placeholder = "Masukkan nilai";
+  valueInput.value = item.value || "";
+
+  // UOM
+  const unitSelect = document.createElement("select");
+  unitSelect.className = "dimension-unit";
+
+  const defaultUnit = document.createElement("option");
+  defaultUnit.value = "";
+  defaultUnit.textContent = "-- Pilih UoM --";
+  unitSelect.appendChild(defaultUnit);
+
+  ["MM", "CM", "M", "INCH", "Others"].forEach(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    unitSelect.appendChild(option);
+  });
+
+  unitSelect.value = item.unit || "";
+
+  // SYMBOL
+  const symbolSelect = document.createElement("select");
+  symbolSelect.className = "dimension-symbol";
+
+  const defaultSymbol = document.createElement("option");
+  defaultSymbol.value = "";
+  defaultSymbol.textContent = "-- Pilih Simbol --";
+  symbolSelect.appendChild(defaultSymbol);
+
+  DIMENSION_SYMBOLS.forEach(value => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    symbolSelect.appendChild(option);
+  });
+
+  symbolSelect.value = item.symbol || "";
+
+  // REMOVE BUTTON
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "remove-dimension";
+  removeButton.textContent = "×";
+  removeButton.title = "Hapus";
+
+  removeButton.addEventListener("click", () => {
+    row.remove();
+    updateDimension();
+    saveDraft();
+  });
+
+  row.append(
+    typeSelect,
+    valueInput,
+    unitSelect,
+    symbolSelect,
+    removeButton
+  );
+
+  dimensionContainer.appendChild(row);
+
+  updateDimension();
+}
 
   function collectDimensionItems() {
-    if (!dimensionContainer) return [];
+  if (!dimensionContainer) return [];
 
-    return $$(".dimension-row", dimensionContainer)
-      .map(row => ({
-        type: $(".dimension-type", row)?.value || "",
-        value: $(".dimension-value", row)?.value.trim() || "",
-        symbol: $(".dimension-symbol", row)?.value || ""
-      }))
-      .filter(item => item.type && item.value);
-  }
+  return $$(".dimension-row", dimensionContainer)
+    .map(row => ({
+      type: $(".dimension-type", row)?.value || "",
+      value: $(".dimension-value", row)?.value.trim() || "",
+      unit: $(".dimension-unit", row)?.value || "",
+      symbol: $(".dimension-symbol", row)?.value || ""
+    }))
+    .filter(item => item.type && item.value);
+}
 
   function updateDimension() {
     if (!dimensionContainer) return;
@@ -1607,13 +1632,11 @@ function updateElectricalOthers(row) {
     if (rows.length > 1) {
       row.remove();
     } else {
-      $(".dimension-type", row).value = "";
-      $(".dimension-value", row).value = "";
-
-      const symbolSelect = $(".dimension-symbol", row);
-
-      if (symbolSelect) symbolSelect.value = "";
-    }
+  $(".dimension-type", row).value = "";
+  $(".dimension-value", row).value = "";
+  $(".dimension-unit", row).value = "";
+  $(".dimension-symbol", row).value = "";
+}
 
     updateDimension();
     saveDraft();
