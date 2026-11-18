@@ -352,7 +352,7 @@ function updateElectricalOthers(row) {
   // DIMENSION
   // =====================================================
 
-  function createDimensionRow(item = {}) {
+function createDimensionRow(item = {}) {
   if (!dimensionContainer) return;
 
   if (dimensionContainer.querySelectorAll(".dimension-row").length >= 3) {
@@ -405,6 +405,37 @@ function updateElectricalOthers(row) {
 
   unitSelect.value = item.unit || "";
 
+  // INPUT UOM OTHERS
+  const othersWrapper = document.createElement("div");
+  othersWrapper.className = "dimension-unit-others";
+
+  const othersInput = document.createElement("input");
+  othersInput.type = "text";
+  othersInput.className = "dimension-unit-other-input";
+  othersInput.placeholder = "Masukkan satuan lainnya...";
+  othersInput.value = item.otherUnit || "";
+
+  othersWrapper.appendChild(othersInput);
+
+  // Tampilkan input ketika memilih Others
+  function toggleOthersInput() {
+    const isOthers = unitSelect.value === "Others";
+
+    othersWrapper.style.display = isOthers ? "block" : "none";
+    othersInput.required = isOthers;
+
+    if (!isOthers) {
+      othersInput.value = "";
+    }
+  }
+
+  unitSelect.addEventListener("change", () => {
+    toggleOthersInput();
+    saveDraft();
+  });
+
+  othersInput.addEventListener("input", saveDraft);
+
   // SYMBOL
   const symbolSelect = document.createElement("select");
   symbolSelect.className = "dimension-symbol";
@@ -441,15 +472,17 @@ function updateElectricalOthers(row) {
     valueInput,
     unitSelect,
     symbolSelect,
-    removeButton
+    removeButton,
+    othersWrapper
   );
 
   dimensionContainer.appendChild(row);
 
+  toggleOthersInput();
   updateDimension();
 }
 
-  function collectDimensionItems() {
+function collectDimensionItems() {
   if (!dimensionContainer) return [];
 
   return $$(".dimension-row", dimensionContainer)
@@ -457,6 +490,7 @@ function updateElectricalOthers(row) {
       type: $(".dimension-type", row)?.value || "",
       value: $(".dimension-value", row)?.value.trim() || "",
       unit: $(".dimension-unit", row)?.value || "",
+      otherUnit: $(".dimension-unit-other-input", row)?.value.trim() || "",
       symbol: $(".dimension-symbol", row)?.value || ""
     }))
     .filter(item => item.type && item.value);
