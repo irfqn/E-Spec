@@ -4523,13 +4523,14 @@ fieldset.q-field {
 }
 
 /* =====================================================
-   REQUIRED DOCUMENTS — ROW LAYOUT
+   REQUIRED DOCUMENTS — HORIZONTAL LAYOUT
 ===================================================== */
 
 .required-document-row {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   padding: 14px;
   margin-bottom: 10px;
@@ -4543,8 +4544,9 @@ fieldset.q-field {
 
 .required-document-row .required-document-select {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
+  min-width: 0;
+  height: 44px;
+  padding: 10px 13px;
   border: 1px solid #dce3ee;
   border-radius: 8px;
   background: #ffffff;
@@ -4553,33 +4555,13 @@ fieldset.q-field {
   box-sizing: border-box;
 }
 
-/* OTHERS WRAPPER */
-
-.required-document-other-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.required-document-other-wrapper[hidden] {
-  display: none !important;
-}
-
-/* LABEL */
-
-.required-document-other-label {
-  color: #475467;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-/* INPUT */
+/* INPUT OTHERS */
 
 .required-document-row .required-document-other {
   width: 100%;
-  min-height: 44px;
-  padding: 11px 13px;
+  min-width: 0;
+  height: 44px;
+  padding: 10px 13px;
   border: 1px solid #dce3ee;
   border-radius: 8px;
   background: #ffffff;
@@ -4588,19 +4570,24 @@ fieldset.q-field {
   box-sizing: border-box;
 }
 
-.required-document-row .required-document-other:focus,
-.required-document-row .required-document-select:focus {
+.required-document-row .required-document-other[hidden] {
+  display: none !important;
+}
+
+/* FOCUS */
+
+.required-document-row .required-document-select:focus,
+.required-document-row .required-document-other:focus {
   outline: none;
   border-color: #6558e8;
   box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.12);
 }
 
-/* HAPUS BUTTON */
+/* HAPUS */
 
 .remove-required-document {
-  align-self: flex-end;
-  min-width: 58px;
-  padding: 9px 15px;
+  height: 40px;
+  padding: 8px 15px;
   border: 1px solid #fecaca;
   border-radius: 7px;
   background: #ffffff;
@@ -4608,10 +4595,22 @@ fieldset.q-field {
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  white-space: nowrap;
 }
 
 .remove-required-document:hover {
   background: #fef2f2;
   border-color: #ef4444;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+  .required-document-row {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-required-document {
+    justify-self: end;
+  }
 }
