@@ -46,6 +46,15 @@
   const technicalContainer = $("#dynamicCustomTechnicalContainer");
   const uniqueContainer = $("#dynamicCustomUniqueContainer");
 
+  // REQUIRED DOCUMENTS
+const requiredDocumentsContainer = $("#requiredDocumentsContainer");
+const addRequiredDocumentBtn = $("#addRequiredDocumentBtn");
+
+const requiredDocumentOptions = $$(
+  'input[type="hidden"][name^="document"]',
+  questionnaire
+).map(input => input.value);
+
   const DIMENSION_OPTIONS = ["L", "W", "H", "T", "ID", "OD", "DN"];
   const DIMENSION_SYMBOLS = ["x", "~", "/", "±", "-"];
 
@@ -504,6 +513,151 @@ function collectDimensionItems() {
 
     if (addButton) addButton.disabled = totalRows >= 3;
   }
+
+// =====================================================
+// REQUIRED DOCUMENTS — DYNAMIC DROPDOWN
+// =====================================================
+
+function collectRequiredDocuments() {
+  if (!requiredDocumentsContainer) return [];
+
+  return $$(".required-document-select", requiredDocumentsContainer)
+    .map(select => select.value)
+    .filter(Boolean);
+}
+
+function updateRequiredDocumentOptions() {
+  if (!requiredDocumentsContainer) return;
+
+  const selects = $$(".required-document-select", requiredDocumentsContainer);
+
+  const selectedValues = selects.map(select => select.value);
+
+  selects.forEach((select, index) => {
+    const currentValue = select.value;
+
+    select.innerHTML = "";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "-- Pilih Required Document --";
+    select.appendChild(placeholder);
+
+    requiredDocumentOptions.forEach(optionValue => {
+      const alreadySelected = selectedValues.some(
+        (value, selectedIndex) =>
+          selectedIndex !== index && value === optionValue
+      );
+
+      if (alreadySelected) return;
+
+      const option = document.createElement("option");
+      option.value = optionValue;
+      option.textContent = optionValue;
+
+      select.appendChild(option);
+    });
+
+    select.value = currentValue;
+  });
+
+  if (addRequiredDocumentBtn) {
+    addRequiredDocumentBtn.disabled =
+      selects.length >= requiredDocumentOptions.length;
+  }
+}
+
+function createRequiredDocumentRow(value = "") {
+  if (!requiredDocumentsContainer) return;
+
+  const selectedValues = collectRequiredDocuments();
+
+  if (
+    $$(".required-document-select", requiredDocumentsContainer).length >=
+    requiredDocumentOptions.length
+  ) {
+    return;
+  }
+
+  const row = document.createElement("div");
+  row.className = "required-document-row";
+
+  const select = document.createElement("select");
+  select.className = "required-document-select";
+  select.name = "requiredDocuments";
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "-- Pilih Required Document --";
+  select.appendChild(placeholder);
+
+  requiredDocumentOptions.forEach(optionValue => {
+    if (selectedValues.includes(optionValue) && optionValue !== value) {
+      return;
+    }
+
+    const option = document.createElement("option");
+    option.value = optionValue;
+    option.textContent = optionValue;
+
+    select.appendChild(option);
+  });
+
+  select.value = value;
+
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "remove-required-document";
+  removeButton.textContent = "×";
+  removeButton.title = "Hapus dokumen";
+
+  row.append(select, removeButton);
+  requiredDocumentsContainer.appendChild(row);
+
+  select.addEventListener("change", () => {
+    updateRequiredDocumentOptions();
+    saveDraft();
+  });
+
+  removeButton.addEventListener("click", () => {
+    row.remove();
+
+    if (
+      !$$(".required-document-row", requiredDocumentsContainer).length
+    ) {
+      createRequiredDocumentRow();
+    }
+
+    updateRequiredDocumentOptions();
+    saveDraft();
+  });
+
+  updateRequiredDocumentOptions();
+}
+
+function restoreRequiredDocuments(data) {
+  if (!requiredDocumentsContainer) return;
+
+  requiredDocumentsContainer.replaceChildren();
+
+  const savedDocuments = Array.isArray(data.requiredDocuments)
+    ? data.requiredDocuments
+    : [];
+
+  if (savedDocuments.length) {
+    savedDocuments.forEach(value => {
+      if (requiredDocumentOptions.includes(value)) {
+        createRequiredDocumentRow(value);
+      }
+    });
+  }
+
+  if (!requiredDocumentsContainer.children.length) {
+    createRequiredDocumentRow();
+  }
+
+  updateRequiredDocumentOptions();
+}
 
   // =====================================================
   // PACK SIZE
@@ -1078,6 +1232,7 @@ $("#packageUomOther", questionnaire)?.addEventListener(
     data.mechanicalAttributes = mechanicalAttributes;
     data.uniqueAttributes = uniqueAttributes;
     data.dimensionItems = collectDimensionItems();
+    data.requiredDocuments = collectRequiredDocuments();
     data.drawingImage = drawingImage;
     data.specType = "Barang";
 
@@ -1374,6 +1529,7 @@ $("#packageUomOther", questionnaire)?.addEventListener(
     if (!data || typeof data !== "object") return;
 
     restoreDynamicAttributes(data);
+    restoreRequiredDocuments(data);
 
     if (dimensionContainer) {
       dimensionContainer.replaceChildren();
@@ -1395,6 +1551,7 @@ $("#packageUomOther", questionnaire)?.addEventListener(
         "mechanicalAttributes",
         "uniqueAttributes",
         "dimensionItems",
+        "requiredDocuments",
         "drawingImage",
         "specType"
       ].includes(name)) {
@@ -1703,6 +1860,16 @@ $("#packageUomOther", questionnaire)?.addEventListener(
   }
 
   // =====================================================
+// BUTTON EVENTS — REQUIRED DOCUMENTS
+// =====================================================
+
+addRequiredDocumentBtn?.addEventListener("click", () => {
+  createRequiredDocumentRow();
+  updateRequiredDocumentOptions();
+  saveDraft();
+});
+
+  // =====================================================
   // BUTTON EVENTS — DIMENSION
   // =====================================================
 
@@ -1865,6 +2032,8 @@ $("#packageUomOther", questionnaire)?.addEventListener(
 
     technicalContainer?.replaceChildren();
     uniqueContainer?.replaceChildren();
+    requiredDocumentsContainer?.replaceChildren();
+    createRequiredDocumentRow();
 
     if (dimensionContainer) {
       dimensionContainer.replaceChildren();
@@ -2024,6 +2193,10 @@ $("#packageUomOther", questionnaire)?.addEventListener(
     const printId = params.get("printId");
 
     initializeMechanicalUomOptions();
+    if (requiredDocumentsContainer) {
+  requiredDocumentsContainer.replaceChildren();
+  createRequiredDocumentRow();
+}
 
     if (printId) {
       loadDocumentFromDatabase(printId);
