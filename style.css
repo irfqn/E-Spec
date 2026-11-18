@@ -4431,9 +4431,10 @@ fieldset.q-field {
 }
 
 /* =====================================================
-   FIELD EXAMPLE — E-SPEC THEME
+   LIQUID — CONCENTRATION & VISCOSITY
 ===================================================== */
 
+/* Contoh pengisian */
 .field-example {
   display: block;
   margin: 5px 0 8px;
@@ -4441,11 +4442,50 @@ fieldset.q-field {
   font-size: 11px;
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: 0.1px;
 }
 
-/* Contoh teks saat field difokuskan */
-.field:focus-within .field-example {
-  color: #6558e8;
-  transition: color 0.2s ease;
+/* Input Concentration dan Viscosity */
+#concentration,
+#viscosity {
+  display: block;
+  width: 100%;
+  height: 44px;
+  box-sizing: border-box;
+
+  padding: 0 13px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #344054;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+/* Placeholder */
+#concentration::placeholder,
+#viscosity::placeholder {
+  color: #a0aabd;
+  opacity: 1;
+}
+
+/* Saat input diklik */
+#concentration:focus,
+#viscosity:focus {
+  border-color: #6558e8;
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.10);
+}
+
+/* Label */
+.field label {
+  display: block;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 500;
 }
