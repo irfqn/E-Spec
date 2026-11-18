@@ -4305,3 +4305,37 @@ fieldset.q-field {
   color: #ffffff;
   cursor: not-allowed;
 }
+
+/* REQUIRED DOCUMENTS - OTHERS INPUT */
+
+.required-document-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.required-document-row .required-document-select {
+  flex: 1;
+  min-width: 200px;
+}
+
+.required-document-row .required-document-other {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 12px;
+  border: 1px solid #d8d8e2;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+}
+
+.required-document-row .required-document-other:focus {
+  border-color: #6558e8;
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.1);
+}
+
+.required-document-row .required-document-other[hidden] {
+  display: none;
+}

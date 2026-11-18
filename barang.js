@@ -521,8 +521,20 @@ function collectDimensionItems() {
 function collectRequiredDocuments() {
   if (!requiredDocumentsContainer) return [];
 
-  return $$(".required-document-select", requiredDocumentsContainer)
-    .map(select => select.value)
+  return $$(".required-document-row", requiredDocumentsContainer)
+    .map(row => {
+      const select = $(".required-document-select", row);
+      const otherInput = $(".required-document-other", row);
+
+      if (!select || !select.value) return "";
+
+      if (select.value === "Others") {
+        const detail = otherInput?.value.trim() || "";
+        return detail ? `Others: ${detail}` : "Others";
+      }
+
+      return select.value;
+    })
     .filter(Boolean);
 }
 
@@ -567,10 +579,12 @@ function updateRequiredDocumentOptions() {
   }
 }
 
-function createRequiredDocumentRow(value = "") {
+function createRequiredDocumentRow(value = "", otherValue = "") {
   if (!requiredDocumentsContainer) return;
 
-  const selectedValues = collectRequiredDocuments();
+  const selectedValues = $$(".required-document-select", requiredDocumentsContainer)
+    .map(select => select.value)
+    .filter(Boolean);
 
   if (
     $$(".required-document-select", requiredDocumentsContainer).length >=
@@ -599,11 +613,18 @@ function createRequiredDocumentRow(value = "") {
     const option = document.createElement("option");
     option.value = optionValue;
     option.textContent = optionValue;
-
     select.appendChild(option);
   });
 
   select.value = value;
+
+  // INPUT KHUSUS OTHERS
+  const otherInput = document.createElement("input");
+  otherInput.type = "text";
+  otherInput.className = "required-document-other";
+  otherInput.placeholder = "Masukkan nama dokumen lainnya...";
+  otherInput.value = otherValue;
+  otherInput.hidden = value !== "Others";
 
   const removeButton = document.createElement("button");
   removeButton.type = "button";
@@ -611,20 +632,26 @@ function createRequiredDocumentRow(value = "") {
   removeButton.textContent = "×";
   removeButton.title = "Hapus dokumen";
 
-  row.append(select, removeButton);
+  row.append(select, otherInput, removeButton);
   requiredDocumentsContainer.appendChild(row);
 
   select.addEventListener("change", () => {
+    otherInput.hidden = select.value !== "Others";
+
+    if (select.value !== "Others") {
+      otherInput.value = "";
+    }
+
     updateRequiredDocumentOptions();
     saveDraft();
   });
 
+  otherInput.addEventListener("input", saveDraft);
+
   removeButton.addEventListener("click", () => {
     row.remove();
 
-    if (
-      !$$(".required-document-row", requiredDocumentsContainer).length
-    ) {
+    if (!$$(".required-document-row", requiredDocumentsContainer).length) {
       createRequiredDocumentRow();
     }
 
@@ -645,9 +672,17 @@ function restoreRequiredDocuments(data) {
     : [];
 
   if (savedDocuments.length) {
-    savedDocuments.forEach(value => {
+    savedDocuments.forEach(item => {
+      let value = item;
+      let otherValue = "";
+
+      if (typeof item === "string" && item.startsWith("Others:")) {
+        value = "Others";
+        otherValue = item.substring("Others:".length).trim();
+      }
+
       if (requiredDocumentOptions.includes(value)) {
-        createRequiredDocumentRow(value);
+        createRequiredDocumentRow(value, otherValue);
       }
     });
   }
