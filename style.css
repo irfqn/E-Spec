@@ -4521,3 +4521,97 @@ fieldset.q-field {
   color: #ffffff;
   cursor: not-allowed;
 }
+
+/* =====================================================
+   REQUIRED DOCUMENTS — ROW LAYOUT
+===================================================== */
+
+.required-document-row {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  box-sizing: border-box;
+}
+
+/* DROPDOWN */
+
+.required-document-row .required-document-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #344054;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+/* OTHERS WRAPPER */
+
+.required-document-other-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.required-document-other-wrapper[hidden] {
+  display: none !important;
+}
+
+/* LABEL */
+
+.required-document-other-label {
+  color: #475467;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* INPUT */
+
+.required-document-row .required-document-other {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 13px;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #344054;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.required-document-row .required-document-other:focus,
+.required-document-row .required-document-select:focus {
+  outline: none;
+  border-color: #6558e8;
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.12);
+}
+
+/* HAPUS BUTTON */
+
+.remove-required-document {
+  align-self: flex-end;
+  min-width: 58px;
+  padding: 9px 15px;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.remove-required-document:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
