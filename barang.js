@@ -50,10 +50,16 @@
 const requiredDocumentsContainer = $("#requiredDocumentsContainer");
 const addRequiredDocumentBtn = $("#addRequiredDocumentBtn");
 
-const requiredDocumentOptions = $$(
-  'input[type="hidden"][name^="document"]',
-  questionnaire
-).map(input => input.value);
+const requiredDocumentOptions = [
+  ...$$(
+    'input[type="hidden"][name^="document"]',
+    questionnaire
+  ).map(input => input.value)
+];
+
+if (!requiredDocumentOptions.includes("Others")) {
+  requiredDocumentOptions.push("Others");
+}
 
   const DIMENSION_OPTIONS = ["L", "W", "H", "T", "ID", "OD", "DN"];
   const DIMENSION_SYMBOLS = ["x", "~", "/", "±", "-"];
