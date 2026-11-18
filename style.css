@@ -4430,3 +4430,22 @@ fieldset.q-field {
   }
 }
 
+/* =====================================================
+   FIELD EXAMPLE — E-SPEC THEME
+===================================================== */
+
+.field-example {
+  display: block;
+  margin: 5px 0 8px;
+  color: #8b95a7;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.1px;
+}
+
+/* Contoh teks saat field difokuskan */
+.field:focus-within .field-example {
+  color: #6558e8;
+  transition: color 0.2s ease;
+}
