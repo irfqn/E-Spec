@@ -4339,3 +4339,93 @@ fieldset.q-field {
 .required-document-row .required-document-other[hidden] {
   display: none;
 }
+
+/* =====================================================
+   REQUIRED DOCUMENTS
+===================================================== */
+
+.required-documents-section {
+  padding: 16px;
+  border: 1px solid #e5eaf3;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.required-documents-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.required-documents-header h3 {
+  margin: 0;
+}
+
+.required-documents-section .q-description {
+  margin-bottom: 12px;
+}
+
+#requiredDocumentsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #e5eaf3;
+  border-radius: 9px;
+  background: #f8faff;
+}
+
+.required-document-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.required-document-row .required-document-select {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e1e7f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #344054;
+}
+
+#addRequiredDocumentBtn {
+  padding: 9px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #6558e8;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#addRequiredDocumentBtn:hover {
+  background: #5143d0;
+}
+
+#addRequiredDocumentBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.remove-required-document {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #f3caca;
+  border-radius: 8px;
+  background: #fff5f5;
+  color: #e34b4b;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .required-documents-header {
+    align-items: flex-start;
+  }
+}
