@@ -4272,3 +4272,36 @@ fieldset.q-field {
 .remove-required-document:hover {
   background: #ffe5e5;
 }
+
+/* REQUIRED DOCUMENTS — ADD BUTTON */
+
+#addRequiredDocumentBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #6558e8;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#addRequiredDocumentBtn:hover {
+  background: #5143d0;
+}
+
+#addRequiredDocumentBtn:active {
+  transform: scale(0.97);
+}
+
+#addRequiredDocumentBtn:disabled {
+  background: #c9c5ed;
+  color: #ffffff;
+  cursor: not-allowed;
+}
