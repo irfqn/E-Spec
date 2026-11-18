@@ -509,39 +509,103 @@ function collectDimensionItems() {
   // PACK SIZE
   // =====================================================
 
-  function updatePackSize() {
-    const quantity =
-      $("#packQuantity", questionnaire)?.value.trim() || "";
+function updatePackSizeOthers() {
+  const packUom = $("#packUom", questionnaire);
+  const packUomOther = $("#packUomOther", questionnaire);
 
-    const packUom =
-      $("#packUom", questionnaire)?.value || "";
+  const packageUom = $("#packageUom", questionnaire);
+  const packageUomOther = $("#packageUomOther", questionnaire);
 
-    const symbol =
-      $("#packSymbol", questionnaire)?.value || "";
+  if (packUom && packUomOther) {
+    const showPackOther = packUom.value === "Others";
 
-    const packageUom =
-      $("#packageUom", questionnaire)?.value || "";
+    packUomOther.hidden = !showPackOther;
+    packUomOther.disabled = !showPackOther;
+    packUomOther.required = showPackOther;
 
-    const finalField = $("#packSizeFinal", questionnaire);
-
-    if (!finalField) return;
-
-    const firstPart = [quantity, packUom].filter(Boolean).join(" ");
-
-    let result = firstPart;
-
-    if (packageUom) {
-      result += `${
-        result && symbol
-          ? ` ${symbol} `
-          : result
-            ? " "
-            : ""
-      }${packageUom}`;
+    if (!showPackOther) {
+      packUomOther.value = "";
     }
-
-    finalField.value = result.trim();
   }
+
+  if (packageUom && packageUomOther) {
+    const showPackageOther = packageUom.value === "Others";
+
+    packageUomOther.hidden = !showPackageOther;
+    packageUomOther.disabled = !showPackageOther;
+    packageUomOther.required = showPackageOther;
+
+    if (!showPackageOther) {
+      packageUomOther.value = "";
+    }
+  }
+}
+
+
+function updatePackSize() {
+  updatePackSizeOthers();
+
+  const quantity =
+    $("#packQuantity", questionnaire)?.value.trim() || "";
+
+  const packUomSelect =
+    $("#packUom", questionnaire);
+
+  const packageUomSelect =
+    $("#packageUom", questionnaire);
+
+  const packUomOther =
+    $("#packUomOther", questionnaire)?.value.trim() || "";
+
+  const packageUomOther =
+    $("#packageUomOther", questionnaire)?.value.trim() || "";
+
+  const symbol =
+    $("#packSymbol", questionnaire)?.value || "";
+
+  const packUom =
+    packUomSelect?.value === "Others"
+      ? packUomOther
+      : packUomSelect?.value || "";
+
+  const packageUom =
+    packageUomSelect?.value === "Others"
+      ? packageUomOther
+      : packageUomSelect?.value || "";
+
+  const finalField =
+    $("#packSizeFinal", questionnaire);
+
+  if (!finalField) return;
+
+  const firstPart = [quantity, packUom]
+    .filter(Boolean)
+    .join(" ");
+
+  let result = firstPart;
+
+  if (packageUom) {
+    result += `${
+      result && symbol
+        ? ` ${symbol} `
+        : result
+          ? " "
+          : ""
+    }${packageUom}`;
+  }
+
+  finalField.value = result.trim();
+}
+
+$("#packUomOther", questionnaire)?.addEventListener(
+  "input",
+  updatePackSize
+);
+
+$("#packageUomOther", questionnaire)?.addEventListener(
+  "input",
+  updatePackSize
+);
 
   // =====================================================
   // MECHANICAL — SAP UOM DROPDOWN

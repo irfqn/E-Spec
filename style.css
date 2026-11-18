@@ -4225,3 +4225,8 @@ fieldset.q-field {
   outline: none;
   border-color: #6558e8;
 }
+
+/* Pastikan elemen hidden benar-benar tidak ditampilkan */
+[hidden] {
+  display: none !important;
+}

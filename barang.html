@@ -492,50 +492,59 @@
     </label>
 
     <!-- PACKSIZE UOM -->
-    <label class="pack-size-item">
-      <span>Packsize UoM</span>
+<label class="pack-size-item">
+  <span>Packsize UoM</span>
 
-      <select id="packUom">
-  <option value="">-- Pilih UoM --</option>
-  <option value="BAG">BAG</option>
-  <option value="BOX">BOX</option>
-  <option value="BTG">BTG</option>
-  <option value="BTL">BTL</option>
-  <option value="CAN">CAN</option>
-  <option value="CRT">CRT</option>
-  <option value="DR">DR</option>
-  <option value="DUS">DUS</option>
-  <option value="DZ">DZ</option>
-  <option value="EA">EA</option>
-  <option value="GLN">GLN</option>
-  <option value="GRO">GRO</option>
-  <option value="JRG">JRG</option>
-  <option value="KLG">KLG</option>
-  <option value="KRG">KRG</option>
-  <option value="L">L</option>
-  <option value="LBR">LBR</option>
-  <option value="LJR">LJR</option>
-  <option value="LOT">LOT</option>
-  <option value="M">M</option>
-  <option value="PAA">PAA</option>
-  <option value="PAC">PAC</option>
-  <option value="PAL">PAL</option>
-  <option value="PC">PC</option>
-  <option value="PL">PL</option>
-  <option value="PRS">PRS</option>
-  <option value="PSG">PSG</option>
-  <option value="REN">REN</option>
-  <option value="RIM">RIM</option>
-  <option value="RIT">RIT</option>
-  <option value="ROL">ROL</option>
-  <option value="SET">SET</option>
-  <option value="TBG">TBG</option>
-  <option value="TUB">TUB</option>
-  <option value="UNT">UNT</option>
-  <option value="ZAK">ZAK</option>
-  <option value="Others">Others</option>
-</select>
-    </label>
+  <select id="packUom">
+    <option value="">-- Pilih UoM --</option>
+    <option value="BAG">BAG</option>
+    <option value="BOX">BOX</option>
+    <option value="BTG">BTG</option>
+    <option value="BTL">BTL</option>
+    <option value="CAN">CAN</option>
+    <option value="CRT">CRT</option>
+    <option value="DR">DR</option>
+    <option value="DUS">DUS</option>
+    <option value="DZ">DZ</option>
+    <option value="EA">EA</option>
+    <option value="GLN">GLN</option>
+    <option value="GRO">GRO</option>
+    <option value="JRG">JRG</option>
+    <option value="KLG">KLG</option>
+    <option value="KRG">KRG</option>
+    <option value="L">L</option>
+    <option value="LBR">LBR</option>
+    <option value="LJR">LJR</option>
+    <option value="LOT">LOT</option>
+    <option value="M">M</option>
+    <option value="PAA">PAA</option>
+    <option value="PAC">PAC</option>
+    <option value="PAL">PAL</option>
+    <option value="PC">PC</option>
+    <option value="PL">PL</option>
+    <option value="PRS">PRS</option>
+    <option value="PSG">PSG</option>
+    <option value="REN">REN</option>
+    <option value="RIM">RIM</option>
+    <option value="RIT">RIT</option>
+    <option value="ROL">ROL</option>
+    <option value="SET">SET</option>
+    <option value="TBG">TBG</option>
+    <option value="TUB">TUB</option>
+    <option value="UNT">UNT</option>
+    <option value="ZAK">ZAK</option>
+    <option value="Others">Others</option>
+  </select>
+
+  <input
+  type="text"
+  id="packUomOther"
+  name="packUomOther"
+  placeholder="Masukkan Packsize UoM lainnya"
+  hidden
+  disabled
+>
+</label>
 
     <!-- SYMBOL -->
     <label class="pack-size-item">
@@ -552,50 +561,59 @@
     </label>
 
     <!-- PACKAGE UOM -->
-    <label class="pack-size-item">
-      <span>UoM</span>
+<label class="pack-size-item">
+  <span>UoM</span>
 
-      <select id="packageUom">
-  <option value="">-- Pilih UoM --</option>
-  <option value="BAG">BAG</option>
-  <option value="BOX">BOX</option>
-  <option value="BTG">BTG</option>
-  <option value="BTL">BTL</option>
-  <option value="CAN">CAN</option>
-  <option value="CRT">CRT</option>
-  <option value="DR">DR</option>
-  <option value="DUS">DUS</option>
-  <option value="DZ">DZ</option>
-  <option value="EA">EA</option>
-  <option value="GLN">GLN</option>
-  <option value="GRO">GRO</option>
-  <option value="JRG">JRG</option>
-  <option value="KLG">KLG</option>
-  <option value="KRG">KRG</option>
-  <option value="L">L</option>
-  <option value="LBR">LBR</option>
-  <option value="LJR">LJR</option>
-  <option value="LOT">LOT</option>
-  <option value="M">M</option>
-  <option value="PAA">PAA</option>
-  <option value="PAC">PAC</option>
-  <option value="PAL">PAL</option>
-  <option value="PC">PC</option>
-  <option value="PL">PL</option>
-  <option value="PRS">PRS</option>
-  <option value="PSG">PSG</option>
-  <option value="REN">REN</option>
-  <option value="RIM">RIM</option>
-  <option value="RIT">RIT</option>
-  <option value="ROL">ROL</option>
-  <option value="SET">SET</option>
-  <option value="TBG">TBG</option>
-  <option value="TUB">TUB</option>
-  <option value="UNT">UNT</option>
-  <option value="ZAK">ZAK</option>
-  <option value="Others">Others</option>
-</select>
-    </label>
+  <select id="packageUom">
+    <option value="">-- Pilih UoM --</option>
+    <option value="BAG">BAG</option>
+    <option value="BOX">BOX</option>
+    <option value="BTG">BTG</option>
+    <option value="BTL">BTL</option>
+    <option value="CAN">CAN</option>
+    <option value="CRT">CRT</option>
+    <option value="DR">DR</option>
+    <option value="DUS">DUS</option>
+    <option value="DZ">DZ</option>
+    <option value="EA">EA</option>
+    <option value="GLN">GLN</option>
+    <option value="GRO">GRO</option>
+    <option value="JRG">JRG</option>
+    <option value="KLG">KLG</option>
+    <option value="KRG">KRG</option>
+    <option value="L">L</option>
+    <option value="LBR">LBR</option>
+    <option value="LJR">LJR</option>
+    <option value="LOT">LOT</option>
+    <option value="M">M</option>
+    <option value="PAA">PAA</option>
+    <option value="PAC">PAC</option>
+    <option value="PAL">PAL</option>
+    <option value="PC">PC</option>
+    <option value="PL">PL</option>
+    <option value="PRS">PRS</option>
+    <option value="PSG">PSG</option>
+    <option value="REN">REN</option>
+    <option value="RIM">RIM</option>
+    <option value="RIT">RIT</option>
+    <option value="ROL">ROL</option>
+    <option value="SET">SET</option>
+    <option value="TBG">TBG</option>
+    <option value="TUB">TUB</option>
+    <option value="UNT">UNT</option>
+    <option value="ZAK">ZAK</option>
+    <option value="Others">Others</option>
+  </select>
+
+  <input
+  type="text"
+  id="packageUomOther"
+  name="packageUomOther"
+  placeholder="Masukkan UoM lainnya"
+  hidden
+  disabled
+>
+</label>
 
   </div>
 
