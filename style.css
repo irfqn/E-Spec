@@ -4522,9 +4522,43 @@ fieldset.q-field {
   cursor: not-allowed;
 }
 
+
 /* =====================================================
-   REQUIRED DOCUMENTS — HORIZONTAL LAYOUT
+   REQUIRED DOCUMENTS — CLEAN LAYOUT
 ===================================================== */
+
+.required-documents-section {
+  width: 100%;
+}
+
+.required-documents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.required-documents-header h3 {
+  margin: 0;
+}
+
+/* TOMBOL TAMBAH DOKUMEN */
+
+.required-documents-header .q-add-button {
+  flex-shrink: 0;
+}
+
+/* CONTAINER */
+
+#requiredDocumentsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* BARIS DOKUMEN */
 
 .required-document-row {
   display: grid;
@@ -4533,42 +4567,39 @@ fieldset.q-field {
   gap: 12px;
   width: 100%;
   padding: 14px;
-  margin-bottom: 10px;
+  margin: 0;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 9px;
   box-sizing: border-box;
 }
 
-/* DROPDOWN */
+/* HILANGKAN LABEL OTHERS */
 
-.required-document-row .required-document-select {
-  width: 100%;
-  min-width: 0;
-  height: 44px;
-  padding: 10px 13px;
-  border: 1px solid #dce3ee;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #344054;
-  font-size: 13px;
-  box-sizing: border-box;
+.required-document-other-label {
+  display: none !important;
 }
 
-/* INPUT OTHERS */
+/* DROPDOWN DAN INPUT */
 
+.required-document-row .required-document-select,
 .required-document-row .required-document-other {
+  display: block;
   width: 100%;
   min-width: 0;
   height: 44px;
+  min-height: 44px;
+  margin: 0;
   padding: 10px 13px;
   border: 1px solid #dce3ee;
   border-radius: 8px;
-  background: #ffffff;
+  background: #fff;
   color: #344054;
   font-size: 13px;
   box-sizing: border-box;
 }
+
+/* INPUT OTHERS TERSEMBUNYI */
 
 .required-document-row .required-document-other[hidden] {
   display: none !important;
@@ -4583,19 +4614,23 @@ fieldset.q-field {
   box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.12);
 }
 
-/* HAPUS */
+/* TOMBOL HAPUS */
 
 .remove-required-document {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 40px;
   padding: 8px 15px;
+  margin: 0;
   border: 1px solid #fecaca;
   border-radius: 7px;
-  background: #ffffff;
+  background: #fff;
   color: #ef4444;
   font-size: 12px;
   font-weight: 600;
-  cursor: pointer;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .remove-required-document:hover {
@@ -4606,47 +4641,16 @@ fieldset.q-field {
 /* RESPONSIVE */
 
 @media (max-width: 600px) {
+  .required-documents-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
   .required-document-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .remove-required-document {
     justify-self: end;
   }
-}
-
-/* REQUIRED DOCUMENTS — ALIGNMENT FIX */
-
-/* Hilangkan label keterangan lainnya */
-.required-document-other-label {
-  display: none !important;
-}
-
-/* Sejajarkan dropdown dan input */
-.required-document-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Samakan ukuran kotak */
-.required-document-row .required-document-select,
-.required-document-row .required-document-other {
-  width: 100%;
-  height: 44px;
-  min-height: 44px;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-/* Input Others tersembunyi jika belum dipilih */
-.required-document-row .required-document-other[hidden] {
-  display: none !important;
-}
-
-/* Tombol hapus sejajar di tengah */
-.remove-required-document {
-  align-self: center;
-  height: 40px;
 }
