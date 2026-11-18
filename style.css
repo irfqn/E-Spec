@@ -4179,3 +4179,10 @@ fieldset.q-field {
     36px !important;
 }
 
+/* SAMAKAN WARNA DROPDOWN UOM DENGAN DIMENSI DAN SYMBOL */
+#questionnaireForm .dimension-row .dimension-unit {
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
+  border: 1px solid #cfe1ff !important;
+  border-radius: 8px;
+}
