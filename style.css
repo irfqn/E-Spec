@@ -4524,7 +4524,7 @@ fieldset.q-field {
 
 
 /* =====================================================
-   REQUIRED DOCUMENTS — CLEAN LAYOUT
+   REQUIRED DOCUMENTS — FINAL LAYOUT
 ===================================================== */
 
 .required-documents-section {
@@ -4543,13 +4543,9 @@ fieldset.q-field {
   margin: 0;
 }
 
-/* TOMBOL TAMBAH DOKUMEN */
-
 .required-documents-header .q-add-button {
   flex-shrink: 0;
 }
-
-/* CONTAINER */
 
 #requiredDocumentsContainer {
   display: flex;
@@ -4557,8 +4553,6 @@ fieldset.q-field {
   gap: 12px;
   width: 100%;
 }
-
-/* BARIS DOKUMEN */
 
 .required-document-row {
   display: grid;
@@ -4573,14 +4567,6 @@ fieldset.q-field {
   border-radius: 9px;
   box-sizing: border-box;
 }
-
-/* HILANGKAN LABEL OTHERS */
-
-.required-document-other-label {
-  display: none !important;
-}
-
-/* DROPDOWN DAN INPUT */
 
 .required-document-row .required-document-select,
 .required-document-row .required-document-other {
@@ -4599,13 +4585,14 @@ fieldset.q-field {
   box-sizing: border-box;
 }
 
-/* INPUT OTHERS TERSEMBUNYI */
-
-.required-document-row .required-document-other[hidden] {
-  display: none !important;
+.required-document-other-container {
+  width: 100%;
+  min-width: 0;
 }
 
-/* FOCUS */
+.required-document-other-container[hidden] {
+  display: none !important;
+}
 
 .required-document-row .required-document-select:focus,
 .required-document-row .required-document-other:focus {
@@ -4613,8 +4600,6 @@ fieldset.q-field {
   border-color: #6558e8;
   box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.12);
 }
-
-/* TOMBOL HAPUS */
 
 .remove-required-document {
   display: flex;
@@ -4637,8 +4622,6 @@ fieldset.q-field {
   background: #fef2f2;
   border-color: #ef4444;
 }
-
-/* RESPONSIVE */
 
 @media (max-width: 600px) {
   .required-documents-header {

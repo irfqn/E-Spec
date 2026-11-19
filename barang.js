@@ -649,18 +649,14 @@ const MECHANICAL_PARAMETERS = [
     otherContainer.className = "required-document-other-container";
     otherContainer.hidden = value !== "Others";
 
-    // LABEL OTHERS
-    const otherLabel = document.createElement("label");
-    otherLabel.textContent = "Isi keterangan lainnya";
+// INPUT OTHERS
+const otherInput = document.createElement("input");
+otherInput.type = "text";
+otherInput.className = "required-document-other";
+otherInput.placeholder = "Masukkan keterangan lainnya...";
+otherInput.value = otherValue;
 
-    // INPUT OTHERS
-    const otherInput = document.createElement("input");
-    otherInput.type = "text";
-    otherInput.className = "required-document-other";
-    otherInput.placeholder = "Masukkan keterangan lainnya...";
-    otherInput.value = otherValue;
-
-    otherContainer.append(otherLabel, otherInput);
+otherContainer.appendChild(otherInput);
 
     // TOMBOL HAPUS
     const removeButton = document.createElement("button");
