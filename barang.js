@@ -847,55 +847,41 @@ otherContainer.appendChild(otherInput);
   // MECHANICAL — SAP UOM DROPDOWN
   // =====================================================
 
-  function initializeMechanicalUomOptions() {
-    const mainUom = $('select[name="uom"]', questionnaire);
+function initializeMechanicalUomOptions() {
+  const uomOptions = {
+    Capacity: ["L", "ML", "M3", "Others"],
+    Pressure: ["Bar", "PA", "PSI", "Others"],
+    Flowrate: ["M3H", "CFM", "KGS", "LMI", "LPH", "Others"],
+    Speed: ["RPM", "RPS", "Others"]
+  };
 
-    if (!mainUom) {
-      console.warn("Dropdown UoM utama tidak ditemukan.");
-      return;
-    }
+  document.querySelectorAll(".mechanical-parameter[data-mechanical-row]").forEach(row => {
+    const parameter = row.dataset.mechanicalRow;
 
-    const sourceOptions = $$("option", mainUom)
-      .filter(option => option.value.trim() !== "")
-      .map(option => ({
-        value: option.value,
-        text: option.textContent.trim()
-      }));
+    // Tolerance tidak diubah
+    if (parameter === "Tolerance") return;
 
-    $$('[data-mechanical-unit]', questionnaire).forEach(select => {
+    const options = uomOptions[parameter];
+    if (!options) return;
+
+    row.querySelectorAll("select[data-mechanical-unit]").forEach(select => {
       const currentValue = select.value;
 
-      select.innerHTML = "";
+      select.innerHTML = `
+        <option value="">-- Pilih UoM --</option>
+      `;
 
-      const placeholder = document.createElement("option");
-      placeholder.value = "";
-      placeholder.textContent = "-- Pilih UoM --";
-      select.appendChild(placeholder);
-
-      sourceOptions.forEach(item => {
-        if (item.value === "Others") return;
-
+      options.forEach(value => {
         const option = document.createElement("option");
-        option.value = item.value;
-        option.textContent = item.text;
+        option.value = value;
+        option.textContent = value;
         select.appendChild(option);
       });
 
-      const othersOption = document.createElement("option");
-      othersOption.value = "Others";
-      othersOption.textContent = "Others";
-      select.appendChild(othersOption);
-
-      if (
-        currentValue &&
-        [...select.options].some(option => option.value === currentValue)
-      ) {
-        select.value = currentValue;
-      } else {
-        select.value = "";
-      }
+      select.value = options.includes(currentValue) ? currentValue : "";
     });
-  }
+  });
+}
 
   // =====================================================
   // MECHANICAL — OTHERS VISIBILITY
