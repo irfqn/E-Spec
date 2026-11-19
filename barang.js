@@ -852,16 +852,14 @@ function initializeMechanicalUomOptions() {
     Capacity: ["L", "ML", "M3", "Others"],
     Pressure: ["Bar", "PA", "PSI", "Others"],
     Flowrate: ["M3H", "CFM", "KGS", "LMI", "LPH", "Others"],
-    Speed: ["RPM", "RPS", "Others"]
+    Speed: ["RPM", "RPS", "Others"],
+    Tolerance: ["µM", "MM", "CM", "%", "Others"]
   };
 
-  document.querySelectorAll(".mechanical-parameter[data-mechanical-row]").forEach(row => {
+  document.querySelectorAll("[data-mechanical-row]").forEach(row => {
     const parameter = row.dataset.mechanicalRow;
-
-    // Tolerance tidak diubah
-    if (parameter === "Tolerance") return;
-
     const options = uomOptions[parameter];
+
     if (!options) return;
 
     row.querySelectorAll("select[data-mechanical-unit]").forEach(select => {
