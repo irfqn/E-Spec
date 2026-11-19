@@ -4601,27 +4601,38 @@ fieldset.q-field {
   box-shadow: 0 0 0 3px rgba(101, 88, 232, 0.12);
 }
 
-.remove-required-document {
-  display: flex;
+/* TOMBOL HAPUS — MODERN */
+
+.required-document-row .remove-required-document {
+  display: inline-flex;
   justify-content: center;
   align-items: center;
+  width: 76px;
   height: 40px;
-  padding: 8px 15px;
+  padding: 0;
   margin: 0;
-  border: 1px solid #fecaca;
-  border-radius: 7px;
-  background: #fff;
-  color: #ef4444;
+  border: 1px solid #fee2e2;
+  border-radius: 9px;
+  background: #fff5f5;
+  color: #dc2626;
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.remove-required-document:hover {
-  background: #fef2f2;
-  border-color: #ef4444;
+.required-document-row .remove-required-document:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
 }
+
+.required-document-row .remove-required-document:active {
+  transform: scale(0.96);
+}
+
+/* RESPONSIVE */
 
 @media (max-width: 600px) {
   .required-documents-header {
@@ -4633,7 +4644,7 @@ fieldset.q-field {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .remove-required-document {
+  .required-document-row .remove-required-document {
     justify-self: end;
   }
 }
