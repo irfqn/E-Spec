@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -14,7 +15,6 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-
     <a class="brand" href="admin.html">
       <span class="brand-mark">E</span>
       <span class="brand-info">
@@ -31,36 +31,31 @@
         <span>Dashboard</span>
       </a>
 
-      <!-- STATUS -->
-<div class="nav-group status-nav-group open">
+      <div class="nav-group status-nav-group open">
+        <a href="javascript:void(0)"
+           class="nav approval-nav"
+           id="approvalNav"
+           aria-expanded="true">
+          <span class="nav-icon">✓</span>
+          <span>Status</span>
+        </a>
 
-  <a href="javascript:void(0)"
-     class="nav approval-nav"
-     id="approvalNav"
-     aria-expanded="true">
+        <div class="nav-submenu">
+          <a href="approval.html"
+             class="nav-submenu-link active"
+             id="myEspecNav">
+            <span class="submenu-dot"></span>
+            <span>My E-Spec</span>
+          </a>
 
-    <span class="nav-icon">✓</span>
-    <span>Status</span>
-  </a>
-
-  <div class="nav-submenu">
-
-    <a href="approval.html"
-       class="nav-submenu-link active"
-       id="myEspecNav">
-      <span class="submenu-dot"></span>
-      <span>My E-Spec</span>
-    </a>
-
-    <a href="my-approval.html"
-       class="nav-submenu-link"
-       id="myApprovalNav">
-      <span class="submenu-dot"></span>
-      <span>My Approval</span>
-    </a>
-
-  </div>
-</div>
+          <a href="my-approval.html"
+             class="nav-submenu-link"
+             id="myApprovalNav">
+            <span class="submenu-dot"></span>
+            <span>My Approval</span>
+          </a>
+        </div>
+      </div>
 
       <a href="pilih-spesifikasi.html" class="nav">
         <span class="nav-icon">＋</span>
@@ -80,7 +75,6 @@
     </div>
 
     <div class="sidebar-bottom">
-
       <div class="sidebar-illustration">
         <div class="illustration-icon">▤</div>
         <div class="illustration-check">✓</div>
@@ -93,17 +87,14 @@
           <small>Kelola dokumen lebih mudah.</small>
         </div>
       </div>
-
     </div>
   </aside>
-
 
   <!-- MAIN -->
   <main class="main">
 
     <!-- TOPBAR -->
     <header class="topbar">
-
       <div class="breadcrumb">
         <span>Workspace</span>
         <span class="breadcrumb-separator">/</span>
@@ -112,29 +103,22 @@
 
       <div class="profile">
         <div class="avatar">R</div>
-
         <div class="profile-info">
           <strong>Requestor</strong>
           <small>Pengguna E-Spec</small>
         </div>
-
         <span class="profile-arrow">⌄</span>
       </div>
-
     </header>
-
 
     <!-- CONTENT -->
     <section class="content">
 
       <!-- PAGE HEADING -->
       <div class="page-heading approval-heading">
-
         <div>
           <span class="eyebrow">DOCUMENT WORKFLOW</span>
-
           <h2>My <span>E-Spec.</span></h2>
-
           <p>
             Pantau status dokumen spesifikasi Barang dan Jasa
             yang telah kamu buat.
@@ -144,25 +128,20 @@
         <a href="admin.html" class="secondary-btn">
           ← Kembali ke Dashboard
         </a>
-
       </div>
-
 
       <!-- MY E-SPEC -->
       <section class="status-section" id="myEspec">
 
         <section class="panel my-espec-panel">
 
+          <!-- PANEL HEADER -->
           <div class="panel-top">
-
             <div class="panel-heading">
               <div class="panel-heading-icon">▤</div>
-
               <div>
                 <h2>Approval Status</h2>
-                <p>
-                  Pantau hasil proses persetujuan dokumen kamu.
-                </p>
+                <p>Pantau hasil proses persetujuan dokumen kamu.</p>
               </div>
             </div>
 
@@ -170,126 +149,103 @@
               <span class="database-dot"></span>
               Document Status
             </div>
-
           </div>
 
+          <!-- STATUS TABS + SEARCH -->
+          <div class="my-espec-toolbar">
 
-          <!-- STATUS FILTER -->
-          <div class="approval-status-filter"
-               role="group"
-               aria-label="Filter approval status">
+            <div class="approval-status-filter"
+                 role="group"
+                 aria-label="Filter status dokumen">
 
-            <button type="button"
-                    class="approval-status-tab active"
-                    data-my-status="all"
-                    aria-pressed="true">
-              <span>List</span>
-              <span class="status-tab-count"
-                    id="myEspecListCount">0</span>
-            </button>
+              <button type="button"
+                      class="approval-status-tab active"
+                      data-my-status="all"
+                      aria-pressed="true">
+                Semua
+              </button>
 
-            <button type="button"
-                    class="approval-status-tab"
-                    data-my-status="release"
-                    aria-pressed="false">
-              <span>Release</span>
-              <span class="status-tab-count"
-                    id="myEspecReleaseCount">0</span>
-            </button>
+              <button type="button"
+                      class="approval-status-tab"
+                      data-my-status="draft"
+                      aria-pressed="false">
+                Draft
+              </button>
 
-            <button type="button"
-                    class="approval-status-tab"
-                    data-my-status="revision"
-                    aria-pressed="false">
-              <span>Revision</span>
-              <span class="status-tab-count"
-                    id="myEspecRevisionCount">0</span>
-            </button>
+              <button type="button"
+                      class="approval-status-tab waiting-tab"
+                      data-my-status="pending"
+                      aria-pressed="false">
+                Waiting Approval
+              </button>
 
-          </div>
+              <button type="button"
+                      class="approval-status-tab revision-tab"
+                      data-my-status="revision"
+                      aria-pressed="false">
+                Need Revision
+              </button>
 
-
-          <!-- SEARCH AND FILTER -->
-          <div class="table-toolbar">
-
-            <div class="toolbar-title">
-              <strong>Daftar My E-Spec</strong>
-              <small>
-                Dokumen spesifikasi yang telah kamu buat.
-              </small>
+              <button type="button"
+                      class="approval-status-tab released-tab"
+                      data-my-status="released"
+                      aria-pressed="false">
+                Released
+              </button>
             </div>
 
-            <div class="tools">
-
-              <div class="search-box">
-                <span class="search-icon">⌕</span>
-
-                <input
-                  type="search"
-                  id="myEspecSearch"
-                  placeholder="Cari nomor dokumen..."
-                >
-              </div>
-
-              <div class="filter-box">
-                <select id="myEspecTypeFilter">
-                  <option value="all">Semua jenis</option>
-                  <option value="Barang">Barang</option>
-                  <option value="Jasa">Jasa</option>
-                </select>
-              </div>
-
+            <div class="my-espec-search">
+              <span class="search-icon">⌕</span>
+              <input
+                type="search"
+                id="myEspecSearch"
+                placeholder="Cari No. Dokumen / Nama..."
+                autocomplete="off"
+              >
             </div>
           </div>
-
 
           <!-- TABLE -->
-          <div class="table-wrap">
-
-            <table>
+          <div class="table-wrap my-espec-table-wrap">
+            <table class="my-espec-table">
               <thead>
                 <tr>
-                  <th>NO. DOKUMEN</th>
-                  <th>JENIS</th>
-                  <th>NAMA SPESIFIKASI</th>
-                  <th>TANGGAL</th>
-                  <th>APPROVAL STATUS</th>
-                  <th>AKSI</th>
+                  <th>NO. DOKUMEN &amp; VER</th>
+                  <th>NAMA MATERIAL / JASA</th>
+                  <th>STATUS</th>
+                  <th>PROGRESS APPROVER / CATATAN REVISI</th>
+                  <th class="action-column">AKSI</th>
                 </tr>
               </thead>
 
-              <tbody id="myEspecRows"></tbody>
+              <tbody id="myEspecRows">
+                <!-- Diisi oleh approval.js -->
+              </tbody>
             </table>
-
           </div>
 
-
           <!-- EMPTY STATE -->
-          <div class="empty-state"
+          <div class="empty-state my-espec-empty"
                id="myEspecEmptyState">
 
             <div class="empty-illustration">
               <span>▤</span>
             </div>
 
-            <h3>Belum ada dokumen E-Spec</h3>
+            <h3>Belum ada dokumen E-Spec yang dibuat</h3>
 
             <p>
-              Dokumen spesifikasi yang kamu buat akan
-              ditampilkan di bagian ini.
+              Klik tombol <strong>Create Specification Form</strong>
+              untuk membuat pengajuan spesifikasi baru.
             </p>
 
-            <a href="pilih-spesifikasi.html"
-               class="primary-btn">
-              ＋ Buat Spesifikasi
+            <a href="pilih-spesifikasi.html" class="primary-btn">
+              ＋ Create Specification Form
             </a>
-
           </div>
 
-
           <!-- FOOTER -->
-          <div class="panel-footer">
-
+          <div class="panel-footer my-espec-footer">
             <span id="myEspecResultCount">
               Menampilkan 0 dokumen
             </span>
@@ -298,14 +254,12 @@
               <span class="footer-check">✓</span>
               My E-Spec Repository
             </span>
-
           </div>
 
         </section>
       </section>
 
-
-      <!-- FOOTER -->
+      <!-- PAGE FOOTER -->
       <footer class="page-footer">
         <span>© 2026 E-Spec Workspace</span>
         <span>Document Management System</span>
@@ -313,15 +267,11 @@
 
     </section>
   </main>
-
 </div>
-
 
 <!-- TOAST -->
 <div id="toast" class="toast"></div>
 
-
-<!-- SCRIPT -->
 <script src="approval.js"></script>
 
 <script>
@@ -333,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   statusButton.addEventListener("click", () => {
     const isOpen = statusGroup.classList.toggle("open");
-    statusButton.setAttribute("aria-expanded", isOpen);
+    statusButton.setAttribute("aria-expanded", String(isOpen));
   });
 });
 </script>
