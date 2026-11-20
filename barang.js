@@ -163,11 +163,12 @@
     }
   }
 
+
   // =====================================================
   // MATERIAL GROUP MATRIX — GENERAL SPECIFICATION
-  // Mengikuti tabel Excel
+  // 9 ATRIBUT SESUAI EXCEL
   //
-  // * = Wajib diisi
+  // * = Wajib
   // O = Opsional
   // "" = Tidak ditampilkan
   // =====================================================
@@ -234,6 +235,10 @@
     }
   };
 
+  // =====================================================
+  // GENERAL SPECIFICATION FIELDS
+  // =====================================================
+
   const generalMatrixFields = {
     materialDescription: {
       wrapper: $('[name="materialDescription"]', questionnaire)?.closest(".q-field"),
@@ -281,7 +286,10 @@
     }
   };
 
-  // Simpan kondisi awal wrapper dan input.
+  // =====================================================
+  // SIMPAN KONDISI AWAL FIELD
+  // =====================================================
+
   const generalMatrixOriginalState = {};
 
   Object.entries(generalMatrixFields).forEach(([key, field]) => {
@@ -294,7 +302,24 @@
     };
   });
 
-  // Mengambil status Material Group untuk satu field.
+  // =====================================================
+  // SHOW HIDDEN ATTRIBUTE ELEMENTS
+  // =====================================================
+
+  const showHiddenToggle = $(
+    ".show-hidden-toggle input[type='checkbox']",
+    questionnaire
+  ) || $("#showHiddenAttribute", questionnaire);
+
+  const showHiddenCounter = $(
+    ".show-hidden-info small",
+    questionnaire
+  );
+
+  // =====================================================
+  // GET MATRIX STATUS
+  // =====================================================
+
   function getCurrentMatrixStatus(fieldName) {
     const group = materialGroupSelect?.value || "";
 
@@ -305,69 +330,95 @@
     return MATERIAL_GROUP_MATRIX[group]?.[fieldName] || "";
   }
 
-  // Mengatur tampilan dan required setiap field.
-  function setGeneralMatrixField(key, status) {
-    const field = generalMatrixFields[key];
+  // =====================================================
+  // UPDATE SHOW HIDDEN COUNTER
+  // =====================================================
 
-    if (!field?.wrapper || !field?.input) return;
+  function updateShowHiddenCounter(hiddenCount = 0) {
+    if (!showHiddenCounter) return;
 
-    const wrapper = field.wrapper;
-    const input = field.input;
-
-    // Field tidak berlaku untuk Material Group tersebut.
-    if (status === "") {
-      wrapper.hidden = true;
-
-      // Jangan disable input.
-      // Nilai yang sudah diisi tetap dipertahankan.
-      input.required = false;
-
-      return;
-    }
-
-    // Field berlaku.
-    wrapper.hidden = false;
-
-    // Wajib hanya jika status "*".
-    input.required = status === "*";
+    showHiddenCounter.textContent =
+      `${hiddenCount} dari 9 atribut tersembunyi`;
   }
 
-  // Mengembalikan kondisi awal ketika memilih Others
-  // atau ketika Material Group belum dipilih.
+  // =====================================================
+  // RESTORE ORIGINAL FIELD
+  // =====================================================
+
   function restoreGeneralMatrixField(key) {
     const field = generalMatrixFields[key];
     const original = generalMatrixOriginalState[key];
 
-    if (!field?.wrapper || !field?.input || !original) return;
+    if (!field?.wrapper || !field.input || !original) return;
 
     field.wrapper.hidden = original.hidden;
     field.input.disabled = original.disabled;
     field.input.required = original.required;
   }
 
+  // =====================================================
+  // UPDATE MATERIAL GROUP MATRIX
+  // =====================================================
+
   function updateMaterialGroupMatrix() {
     if (!materialGroupSelect) return;
 
     const group = materialGroupSelect.value;
 
-    // Others atau belum memilih Material Group:
-    // kembalikan tampilan field ke kondisi awal.
+    // Others atau belum memilih Material Group
     if (!MATERIAL_GROUP_MATRIX[group]) {
       Object.keys(generalMatrixFields).forEach(
         restoreGeneralMatrixField
       );
 
+      updateShowHiddenCounter(0);
+
       return;
     }
 
     const rules = MATERIAL_GROUP_MATRIX[group];
+    const showHidden = Boolean(showHiddenToggle?.checked);
 
-    Object.entries(generalMatrixFields).forEach(([key]) => {
+    let hiddenCount = 0;
+
+    Object.entries(generalMatrixFields).forEach(([key, field]) => {
+      if (!field.wrapper || !field.input) return;
+
       const status = rules[key] || "";
 
-      setGeneralMatrixField(key, status);
+      // FIELD TIDAK BERLAKU
+      if (status === "") {
+        hiddenCount++;
+
+        field.wrapper.hidden = !showHidden;
+
+        // Field tambahan yang ditampilkan melalui toggle
+        // tetap opsional.
+        field.input.required = false;
+
+        // Jangan disable dan jangan hapus nilai.
+        return;
+      }
+
+      // FIELD BERLAKU
+      field.wrapper.hidden = false;
+
+      // Wajib hanya untuk status *
+      // Field Dimension dan Pack Size memakai hidden final input,
+      // sehingga validasinya ditangani secara terpisah.
+      if (key !== "dimension" && key !== "packSize") {
+        field.input.required = status === "*";
+      } else {
+        field.input.required = false;
+      }
     });
+
+    updateShowHiddenCounter(hiddenCount);
   }
+
+  // =====================================================
+  // MATERIAL GROUP EVENTS
+  // =====================================================
 
   materialGroupSelect?.addEventListener("change", () => {
     updateMaterialGroupOther();
@@ -381,6 +432,18 @@
     saveDraft();
     transferToPrint();
   });
+
+  // =====================================================
+  // SHOW HIDDEN ATTRIBUTE EVENT
+  // =====================================================
+
+  showHiddenToggle?.addEventListener("change", () => {
+    updateMaterialGroupMatrix();
+
+    saveDraft();
+    transferToPrint();
+  });
+
 
   // =====================================================
   // UTILITIES
