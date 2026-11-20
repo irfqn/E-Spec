@@ -143,6 +143,43 @@ const MECHANICAL_PARAMETERS = [
   let loadingDocument = false;
   let saving = false;
 
+
+// =====================================================
+// MATERIAL GROUP — OTHERS
+// =====================================================
+
+const materialGroupSelect = $("#materialGroup", questionnaire);
+const materialGroupOtherInput = $("#materialGroupOther", questionnaire);
+
+function updateMaterialGroupOther(clearValue = true) {
+  if (!materialGroupSelect || !materialGroupOtherInput) return;
+
+  const isOthers = materialGroupSelect.value === "Others";
+
+  materialGroupOtherInput.hidden = !isOthers;
+  materialGroupOtherInput.disabled = !isOthers;
+  materialGroupOtherInput.required = isOthers;
+
+  if (!isOthers && clearValue) {
+    materialGroupOtherInput.value = "";
+  }
+}
+
+materialGroupSelect?.addEventListener("change", () => {
+  updateMaterialGroupOther();
+  saveDraft();
+  transferToPrint();
+});
+
+materialGroupOtherInput?.addEventListener("input", () => {
+  saveDraft();
+  transferToPrint();
+});
+
+// Kondisi awal
+updateMaterialGroupOther();
+
+
   // =====================================================
   // UTILITIES
   // =====================================================
@@ -1670,6 +1707,7 @@ function restoreOldMechanicalAttributes(data) {
     }
 
     updateReason();
+    updateMaterialGroupOther(false);
     updateUomOther();
     updateElectricalOthersInAllRows();
     updateCategory();
@@ -1804,6 +1842,7 @@ function restoreOldMechanicalAttributes(data) {
   function validateForm() {
     updateReason();
     updateCategory();
+    updateMaterialGroupOther();
 
     if (!questionnaire.reportValidity()) return false;
 
@@ -1907,6 +1946,19 @@ function restoreOldMechanicalAttributes(data) {
 
       target.value = value ?? "";
     });
+
+    // MATERIAL GROUP — OTHERS KE PDF
+const materialGroupPrint = $(
+  '[name="materialGroup"]',
+  printForm
+);
+
+if (materialGroupPrint) {
+  materialGroupPrint.value =
+    data.materialGroup === "Others"
+      ? (data.materialGroupOther || "Others")
+      : (data.materialGroup || "");
+}
 
     const categoryField = $(
       '[name="materialCategory"]',
@@ -2094,6 +2146,7 @@ function restoreOldMechanicalAttributes(data) {
     if (!confirmed) return;
 
     questionnaire.reset();
+    updateMaterialGroupOther();
 
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(OLD_STORAGE_KEY);
