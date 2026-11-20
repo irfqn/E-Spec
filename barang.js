@@ -2527,10 +2527,10 @@
   // BUTTON EVENTS — TECHNICAL & UNIQUE
   // =====================================================
 
-  $("#addTechnicalBtn")?.addEventListener("click", () => {
-    createCustomTechnicalRow();
-    saveDraft();
-  });
+$("#addTechnicalBtn")?.addEventListener("click", () => {
+  createCustomTechnicalRow();
+  saveDraft();
+});
 
   $("#addUniqueBtn")?.addEventListener("click", () => {
     createCustomUniqueRow();
