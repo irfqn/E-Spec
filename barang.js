@@ -164,13 +164,13 @@
   }
 
 
+
   // =====================================================
-  // MATERIAL GROUP MATRIX — GENERAL SPECIFICATION
-  // 9 ATRIBUT SESUAI EXCEL
+  // MATERIAL GROUP MATRIX — FULL SPECIFICATION
   //
-  // * = Wajib
-  // O = Opsional
-  // "" = Tidak ditampilkan
+  // * = Mandatory
+  // O = Optional
+  // "" = Hidden
   // =====================================================
 
   const MATERIAL_GROUP_MATRIX = {
@@ -183,7 +183,31 @@
       brand: "*",
       catalogue: "O",
       uom: "*",
-      packSize: "O"
+      packSize: "O",
+
+      voltage: "",
+      current: "",
+      power: "",
+      resistance: "",
+      frequency: "",
+      capacitance: "",
+      phase: "",
+      temperature: "",
+
+      material: "O",
+      capacity: "",
+      connectionType: "",
+      pressure: "",
+      flowrate: "",
+      speed: "",
+      tolerance: "",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
     },
 
     "ELECTRIC": {
@@ -195,7 +219,31 @@
       brand: "*",
       catalogue: "O",
       uom: "*",
-      packSize: "O"
+      packSize: "O",
+
+      voltage: "*",
+      current: "*",
+      power: "*",
+      resistance: "O",
+      frequency: "O",
+      capacitance: "O",
+      phase: "O",
+      temperature: "O",
+
+      material: "",
+      capacity: "",
+      connectionType: "",
+      pressure: "",
+      flowrate: "",
+      speed: "",
+      tolerance: "",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
     },
 
     "PIPE": {
@@ -207,7 +255,31 @@
       brand: "O",
       catalogue: "O",
       uom: "*",
-      packSize: "O"
+      packSize: "O",
+
+      voltage: "",
+      current: "",
+      power: "",
+      resistance: "",
+      frequency: "",
+      capacitance: "",
+      phase: "",
+      temperature: "",
+
+      material: "*",
+      capacity: "",
+      connectionType: "O",
+      pressure: "O",
+      flowrate: "",
+      speed: "",
+      tolerance: "O",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
     },
 
     "EQUIPMENT": {
@@ -219,7 +291,31 @@
       brand: "O",
       catalogue: "O",
       uom: "*",
-      packSize: "O"
+      packSize: "O",
+
+      voltage: "",
+      current: "",
+      power: "",
+      resistance: "",
+      frequency: "",
+      capacitance: "",
+      phase: "",
+      temperature: "O",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "",
+      pressure: "",
+      flowrate: "",
+      speed: "",
+      tolerance: "O",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
     },
 
     "BARANG UM": {
@@ -231,9 +327,34 @@
       brand: "O",
       catalogue: "O",
       uom: "*",
-      packSize: "O"
+      packSize: "O",
+
+      voltage: "",
+      current: "",
+      power: "",
+      resistance: "",
+      frequency: "",
+      capacitance: "",
+      phase: "",
+      temperature: "",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "",
+      pressure: "",
+      flowrate: "",
+      speed: "",
+      tolerance: "O",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
     }
   };
+
 
   // =====================================================
   // GENERAL SPECIFICATION FIELDS
@@ -286,49 +407,161 @@
     }
   };
 
+
   // =====================================================
-  // SIMPAN KONDISI AWAL FIELD
+  // TECHNICAL SPECIFICATION FIELDS
   // =====================================================
 
-  const generalMatrixOriginalState = {};
+  const technicalMatrixFields = {
 
-  Object.entries(generalMatrixFields).forEach(([key, field]) => {
-    if (!field.wrapper || !field.input) return;
+    // ELECTRICAL
+    voltage: {
+      wrapper: $('[data-electric-row="Voltage"]', questionnaire)
+    },
 
-    generalMatrixOriginalState[key] = {
+    current: {
+      wrapper: $('[data-electric-row="Current"]', questionnaire)
+    },
+
+    power: {
+      wrapper: $('[data-electric-row="Power"]', questionnaire)
+    },
+
+    resistance: {
+      wrapper: $('[data-electric-row="Resistance"]', questionnaire)
+    },
+
+    frequency: {
+      wrapper: $('[data-electric-row="Frequency"]', questionnaire)
+    },
+
+    capacitance: {
+      wrapper: $('[data-electric-row="Capacitance"]', questionnaire)
+    },
+
+    phase: {
+      wrapper: $('[data-electric-row="Phase"]', questionnaire)
+    },
+
+    temperature: {
+      wrapper: $('[data-electric-row="Temperature"]', questionnaire)
+    },
+
+    // MECHANICAL — MATERIAL
+    material: {
+      wrapper: $('[data-tech-label="Material"]', questionnaire)?.closest(".spec-field")
+    },
+
+    // MECHANICAL — CAPACITY
+    capacity: {
+      wrapper: $('[data-mechanical-row="Capacity"]', questionnaire)
+    },
+
+    // MECHANICAL — CONNECTION TYPE
+    connectionType: {
+      wrapper: $('[data-tech-label="Connection Type"]', questionnaire)?.closest(".spec-field")
+    },
+
+    pressure: {
+      wrapper: $('[data-mechanical-row="Pressure"]', questionnaire)
+    },
+
+    flowrate: {
+      wrapper: $('[data-mechanical-row="Flowrate"]', questionnaire)
+    },
+
+    speed: {
+      wrapper: $('[data-mechanical-row="Speed"]', questionnaire)
+    },
+
+    tolerance: {
+      wrapper: $('[data-mechanical-row="Tolerance"]', questionnaire)
+    },
+
+    // LIQUID
+    concentration: {
+      wrapper: $("#concentration", questionnaire)?.closest(".field")
+    },
+
+    viscosity: {
+      wrapper: $("#viscosity", questionnaire)?.closest(".field")
+    },
+
+    // TECHNICAL OTHERS
+    technicalOthers: {
+      wrapper: $("#dynamicCustomTechnicalContainer", questionnaire)
+        ?.closest(".q-technical-group")
+    }
+  };
+
+
+  // =====================================================
+  // UNIQUE SPECIFICATION FIELDS
+  // =====================================================
+
+  const uniqueMatrixFields = {
+    accessories: {
+      wrapper: $(".unique-accessories-field", questionnaire)
+    },
+
+    uniqueOthers: {
+      wrapper: $("#dynamicCustomUniqueContainer", questionnaire)
+    }
+  };
+
+
+  // =====================================================
+  // COMBINE ALL MATRIX FIELDS
+  // =====================================================
+
+  const allMatrixFields = {
+    ...generalMatrixFields,
+    ...technicalMatrixFields,
+    ...uniqueMatrixFields
+  };
+
+
+  // =====================================================
+  // SAVE ORIGINAL FIELD STATES
+  // =====================================================
+
+  const matrixOriginalStates = new Map();
+
+  Object.entries(allMatrixFields).forEach(([key, field]) => {
+    if (!field.wrapper) return;
+
+    matrixOriginalStates.set(key, {
       hidden: field.wrapper.hidden,
-      required: field.input.required,
-      disabled: field.input.disabled
-    };
+      required: field.input?.required ?? false,
+      disabled: field.input?.disabled ?? false
+    });
   });
+
 
   // =====================================================
   // SHOW HIDDEN ATTRIBUTE ELEMENTS
   // =====================================================
 
-  const showHiddenToggle = $(
-    ".show-hidden-toggle input[type='checkbox']",
-    questionnaire
-  ) || $("#showHiddenAttribute", questionnaire);
+  const showHiddenToggle =
+    $(".show-hidden-toggle input[type='checkbox']", document) ||
+    $("#showHiddenAttribute", document);
 
-  const showHiddenCounter = $(
-    ".show-hidden-info small",
-    questionnaire
-  );
+  const showHiddenCounter =
+    $(".show-hidden-info small", document);
+
 
   // =====================================================
-  // GET MATRIX STATUS
+  // GET CURRENT MATRIX STATUS
   // =====================================================
 
   function getCurrentMatrixStatus(fieldName) {
     const group = materialGroupSelect?.value || "";
 
-    if (group === "Others") {
-      return "LEGACY";
-    }
+    if (group === "Others") return "LEGACY";
 
     return MATERIAL_GROUP_MATRIX[group]?.[fieldName] || "";
   }
+
 
   // =====================================================
   // UPDATE SHOW HIDDEN COUNTER
@@ -338,23 +571,69 @@
     if (!showHiddenCounter) return;
 
     showHiddenCounter.textContent =
-      `${hiddenCount} dari 9 atribut tersembunyi`;
+      `${hiddenCount} atribut tersembunyi`;
   }
 
+
   // =====================================================
-  // RESTORE ORIGINAL FIELD
+  // RESTORE ORIGINAL MATRIX FIELD
   // =====================================================
 
-  function restoreGeneralMatrixField(key) {
-    const field = generalMatrixFields[key];
-    const original = generalMatrixOriginalState[key];
+  function restoreMatrixField(key) {
+    const field = allMatrixFields[key];
+    const original = matrixOriginalStates.get(key);
 
-    if (!field?.wrapper || !field.input || !original) return;
+    if (!field?.wrapper || !original) return;
 
     field.wrapper.hidden = original.hidden;
-    field.input.disabled = original.disabled;
-    field.input.required = original.required;
+
+    if (field.input) {
+      field.input.required = original.required;
+      field.input.disabled = original.disabled;
+    }
+
+    field.wrapper.removeAttribute("data-matrix-status");
+    field.wrapper.removeAttribute("data-matrix-required");
   }
+
+
+  // =====================================================
+  // UPDATE CARD VISIBILITY
+  // =====================================================
+
+  function updateTechnicalCardVisibility() {
+    const electricCard = $(".electric-spec-card", questionnaire);
+    const mechanicalCard = $(".mechanical-spec-card", questionnaire);
+    const liquidCard = $(".liquid-spec-card", questionnaire);
+
+    if (electricCard) {
+      const rows = $$("[data-electric-row]", electricCard);
+
+      electricCard.hidden =
+        rows.length > 0 && rows.every(row => row.hidden);
+    }
+
+    if (mechanicalCard) {
+      const fields = [
+        ...$$(".mechanical-basic-grid .spec-field", mechanicalCard),
+        ...$$("[data-mechanical-row]", mechanicalCard)
+      ];
+
+      mechanicalCard.hidden =
+        fields.length > 0 && fields.every(field => field.hidden);
+    }
+
+    if (liquidCard) {
+      const fields = [
+        $("#concentration", liquidCard)?.closest(".field"),
+        $("#viscosity", liquidCard)?.closest(".field")
+      ].filter(Boolean);
+
+      liquidCard.hidden =
+        fields.length > 0 && fields.every(field => field.hidden);
+    }
+  }
+
 
   // =====================================================
   // UPDATE MATERIAL GROUP MATRIX
@@ -365,12 +644,12 @@
 
     const group = materialGroupSelect.value;
 
-    // Others atau belum memilih Material Group
+    // Others atau belum memilih Material Group:
+    // Kembalikan seluruh field ke kondisi awal.
     if (!MATERIAL_GROUP_MATRIX[group]) {
-      Object.keys(generalMatrixFields).forEach(
-        restoreGeneralMatrixField
-      );
+      Object.keys(allMatrixFields).forEach(restoreMatrixField);
 
+      updateTechnicalCardVisibility();
       updateShowHiddenCounter(0);
 
       return;
@@ -381,40 +660,54 @@
 
     let hiddenCount = 0;
 
-    Object.entries(generalMatrixFields).forEach(([key, field]) => {
-      if (!field.wrapper || !field.input) return;
+    Object.entries(allMatrixFields).forEach(([key, field]) => {
+      if (!field.wrapper) return;
 
       const status = rules[key] || "";
 
-      // FIELD TIDAK BERLAKU
+      field.wrapper.dataset.matrixStatus = status;
+
       if (status === "") {
         hiddenCount++;
 
+        // Blank: hidden, kecuali toggle sedang aktif.
         field.wrapper.hidden = !showHidden;
 
-        // Field tambahan yang ditampilkan melalui toggle
-        // tetap opsional.
-        field.input.required = false;
+        // Field yang muncul melalui toggle bersifat opsional.
+        field.wrapper.removeAttribute("data-matrix-required");
+
+        if (field.input) {
+          field.input.required = false;
+        }
 
         // Jangan disable dan jangan hapus nilai.
         return;
       }
 
-      // FIELD BERLAKU
+      // * atau O: tampil.
       field.wrapper.hidden = false;
 
-      // Wajib hanya untuk status *
-      // Field Dimension dan Pack Size memakai hidden final input,
-      // sehingga validasinya ditangani secara terpisah.
-      if (key !== "dimension" && key !== "packSize") {
-        field.input.required = status === "*";
+      if (status === "*") {
+        field.wrapper.dataset.matrixRequired = "true";
       } else {
-        field.input.required = false;
+        field.wrapper.removeAttribute("data-matrix-required");
+      }
+
+      // Required pada General Specification.
+      // Dimension dan Pack Size tetap memakai validasi khusus.
+      if (field.input) {
+        if (key === "dimension" || key === "packSize") {
+          field.input.required = false;
+        } else {
+          field.input.required = status === "*";
+        }
       }
     });
 
+    updateTechnicalCardVisibility();
     updateShowHiddenCounter(hiddenCount);
   }
+
 
   // =====================================================
   // MATERIAL GROUP EVENTS
@@ -433,6 +726,7 @@
     transferToPrint();
   });
 
+
   // =====================================================
   // SHOW HIDDEN ATTRIBUTE EVENT
   // =====================================================
@@ -443,6 +737,7 @@
     saveDraft();
     transferToPrint();
   });
+
 
 
   // =====================================================
@@ -1604,89 +1899,6 @@
     return data;
   }
 
-  // =====================================================
-  // DYNAMIC TECHNICAL ROWS
-  // =====================================================
-
-  function createCustomTechnicalRow(item = {}) {
-    if (!technicalContainer) return;
-
-    const row = document.createElement("div");
-    row.className = "custom-tech-row q-grid";
-
-    row.innerHTML = `
-      <label class="q-field">
-        Attribute Name
-        <input
-          type="text"
-          data-custom-tech-name
-          placeholder="Enter attribute name"
-        >
-      </label>
-
-      <label class="q-field">
-        Attribute Detail
-        <input
-          type="text"
-          data-custom-tech-value
-          placeholder="Enter attribute detail"
-        >
-      </label>
-
-      <button type="button" class="q-remove-button">
-        Hapus
-      </button>
-    `;
-
-    $("[data-custom-tech-name]", row).value =
-      item.label || item.name || "";
-
-    $("[data-custom-tech-value]", row).value =
-      item.value || item.detail || "";
-
-    technicalContainer.appendChild(row);
-  }
-
-  // =====================================================
-  // DYNAMIC UNIQUE ROWS
-  // =====================================================
-
-  function createCustomUniqueRow(item = {}) {
-    if (!uniqueContainer) return;
-
-    const index = Date.now() + Math.floor(Math.random() * 1000);
-
-    const row = document.createElement("div");
-    row.className = "q-grid custom-unique-row";
-
-    const nameLabel = document.createElement("label");
-    nameLabel.className = "q-field";
-    nameLabel.textContent = "Attribute Name";
-
-    const nameInput = document.createElement("input");
-    nameInput.type = "text";
-    nameInput.name = `customUniqueName${index}`;
-    nameInput.value = item.name || "";
-    nameLabel.appendChild(nameInput);
-
-    const detailLabel = document.createElement("label");
-    detailLabel.className = "q-field";
-    detailLabel.textContent = "Atribute Detail";
-
-    const detailInput = document.createElement("input");
-    detailInput.type = "text";
-    detailInput.name = `customUniqueDetail${index}`;
-    detailInput.value = item.detail || "";
-    detailLabel.appendChild(detailInput);
-
-    const removeButton = document.createElement("button");
-    removeButton.type = "button";
-    removeButton.className = "q-remove-button";
-    removeButton.textContent = "Hapus";
-
-    row.append(nameLabel, detailLabel, removeButton);
-    uniqueContainer.appendChild(row);
-  }
 
   // =====================================================
   // RESTORE FIELD VALUE
