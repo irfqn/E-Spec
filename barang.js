@@ -650,63 +650,61 @@ function updateGeneralRequiredStar(key, field, status) {
 
   let target = null;
 
-  // DIMENSION
   if (key === "dimension") {
     target = $(".dimension-title", field.wrapper);
-  }
-
-  // UOM
-  else if (key === "uom") {
+  } else if (key === "uom") {
     target = $("label", field.wrapper);
-  }
-
-  // PACK SIZE
-  else if (key === "packSize") {
+  } else if (key === "packSize") {
     target = $(".pack-size-heading strong", field.wrapper);
-  }
-
-  // GENERAL TEXT FIELDS
-  else {
+  } else {
     target = field.wrapper;
   }
 
   if (!target) return;
 
-  // Hapus tanda bintang dinamis sebelumnya.
-  target.querySelectorAll(".matrix-required-star")
-    .forEach(star => star.remove());
+  // Jika sudah ada tanda bintang bawaan HTML,
+  // cukup atur tampil atau sembunyinya.
+  const originalStar = target.querySelector(".required-star");
 
-  // Gunakan tanda bintang yang sudah tersedia jika ada.
-  let star = target.querySelector(".required-star");
-
-  if (star) {
-    star.hidden = status !== "*";
+  if (originalStar) {
+    originalStar.hidden = status !== "*";
     return;
   }
 
-  // Cari teks label utama.
-  const textNode = Array.from(target.childNodes).find(node =>
-    node.nodeType === Node.TEXT_NODE &&
-    node.textContent.trim() !== ""
+  // Cari pembungkus teks label yang sudah dibuat sebelumnya.
+  let labelText = target.querySelector(
+    ":scope > .matrix-label-text"
   );
 
-  if (!textNode) return;
+  // Jika belum ada, bungkus teks label.
+  if (!labelText) {
+    const textNode = Array.from(target.childNodes).find(node =>
+      node.nodeType === Node.TEXT_NODE &&
+      node.textContent.trim() !== ""
+    );
 
-  // Bungkus teks label agar bintang tetap sejajar.
-  const labelText = document.createElement("span");
-  labelText.className = "matrix-label-text";
-  labelText.style.display = "inline";
+    if (!textNode) return;
 
-  target.insertBefore(labelText, textNode);
-  labelText.appendChild(textNode);
+    labelText = document.createElement("span");
+    labelText.className = "matrix-label-text";
 
-  // Buat tanda bintang.
-  star = document.createElement("span");
-  star.className = "matrix-required-star";
-  star.textContent = "*";
-  star.hidden = status !== "*";
+    target.insertBefore(labelText, textNode);
+    labelText.appendChild(textNode);
+  }
 
-  labelText.appendChild(star);
+  // Hapus bintang dinamis sebelumnya.
+  labelText.querySelectorAll(".matrix-required-star")
+    .forEach(star => star.remove());
+
+  // Buat bintang baru hanya jika wajib.
+  if (status === "*") {
+    const star = document.createElement("span");
+
+    star.className = "matrix-required-star";
+    star.textContent = "*";
+
+    labelText.appendChild(star);
+  }
 }
 
   // =====================================================

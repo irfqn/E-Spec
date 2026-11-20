@@ -4959,7 +4959,3 @@ fieldset.q-field {
   margin-left: 4px;
   vertical-align: baseline;
 }
-
-.matrix-required-star[hidden] {
-  display: none !important;
-}
