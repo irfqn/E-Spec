@@ -303,7 +303,7 @@
       phase: "",
       temperature: "O",
 
-      material: "O",
+      material: "*",
       capacity: "O",
       connectionType: "",
       pressure: "",
