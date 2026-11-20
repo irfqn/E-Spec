@@ -4960,12 +4960,3 @@ fieldset.q-field {
   vertical-align: baseline;
 }
 
-/* REQUIRED STAR — TECHNICAL SPECIFICATION */
-.matrix-required-star {
-  display: inline !important;
-  color: #dc2626 !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  margin-left: 4px !important;
-  vertical-align: baseline;
-}
