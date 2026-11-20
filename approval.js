@@ -309,7 +309,7 @@
 
           if (description) {
             description.innerHTML =
-              'Klik tombol <strong>Create Specification Form</strong> ' +
+              'Klik tombol <strong>+ Buat Spesifikasi</strong> ' +
               'untuk membuat pengajuan spesifikasi baru.';
           }
         } else {
