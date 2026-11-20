@@ -641,7 +641,59 @@
     }
   }
 
+// =====================================================
+// UPDATE GENERAL SPECIFICATION REQUIRED STAR
+// =====================================================
 
+function updateGeneralRequiredStar(key, field, status) {
+  if (!field?.wrapper) return;
+
+  // Cari elemen tempat tanda bintang ditampilkan.
+  let target = null;
+  let insertBefore = null;
+
+  if (key === "dimension") {
+    target = $(".dimension-title", field.wrapper);
+  }
+
+  else if (key === "uom") {
+    target = $("label", field.wrapper);
+  }
+
+  else if (key === "packSize") {
+    target = $(".pack-size-heading strong", field.wrapper);
+  }
+
+  else {
+    target = field.wrapper;
+
+    insertBefore =
+      $(".field-example", field.wrapper) ||
+      $("input, select, textarea", field.wrapper);
+  }
+
+  if (!target) return;
+
+  // Periksa tanda bintang yang sudah tersedia.
+  let star = target.querySelector(
+    ".matrix-required-star, .required-star"
+  );
+
+  // Jika belum ada, buat tanda bintang baru.
+  if (!star) {
+    star = document.createElement("span");
+    star.className = "matrix-required-star";
+
+    if (insertBefore) {
+      target.insertBefore(star, insertBefore);
+    } else {
+      target.appendChild(star);
+    }
+  }
+
+  star.textContent = "*";
+  star.hidden = status !== "*";
+}
 
   // =====================================================
   // UPDATE MATERIAL GROUP MATRIX
@@ -672,6 +724,11 @@
       if (!field.wrapper) return;
 
       const status = rules[key] || "";
+
+      // Update tanda bintang General Specification.
+if (generalMatrixFields[key]) {
+  updateGeneralRequiredStar(key, field, status);
+}
 
 field.wrapper.dataset.matrixStatus = status;
 

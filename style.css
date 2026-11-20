@@ -4944,3 +4944,18 @@ fieldset.q-field {
   margin-top: 3px;
   margin-bottom: 6px;
 }
+
+/* GENERAL SPECIFICATION - REQUIRED STAR */
+
+.matrix-required-star {
+  display: inline-block;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 700;
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
+.matrix-required-star[hidden] {
+  display: none !important;
+}
