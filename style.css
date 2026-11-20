@@ -4960,3 +4960,9 @@ fieldset.q-field {
   vertical-align: baseline;
 }
 
+.matrix-required-star {
+  color: #dc2626 !important;
+  font-weight: 700 !important;
+  display: inline !important;
+  margin-left: 4px;
+}
