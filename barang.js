@@ -165,8 +165,225 @@ function updateMaterialGroupOther(clearValue = true) {
   }
 }
 
+// =====================================================
+// MATERIAL GROUP — MATRIX: GENERAL SPECIFICATION
+// =====================================================
+
+const MATERIAL_GROUP_MATRIX = {
+  BEARING: {
+    materialDescription: "*",
+    materialCode: "O",
+    partNumber: "*",
+    variant: "*",
+    dimension: "*",
+    brand: "*",
+    catalogue: "O",
+    uom: "*",
+    packSize: "O"
+  },
+
+  ELECTRIC: {
+    materialDescription: "*",
+    materialCode: "O",
+    partNumber: "*",
+    variant: "*",
+    dimension: "O",
+    brand: "*",
+    catalogue: "O",
+    uom: "*",
+    packSize: "O"
+  },
+
+  PIPE: {
+    materialDescription: "*",
+    materialCode: "O",
+    partNumber: "O",
+    variant: "*",
+    dimension: "*",
+    brand: "O",
+    catalogue: "O",
+    uom: "*",
+    packSize: "O"
+  },
+
+  EQUIPMENT: {
+    materialDescription: "*",
+    materialCode: "O",
+    partNumber: "*",
+    variant: "*",
+    dimension: "*",
+    brand: "O",
+    catalogue: "O",
+    uom: "*",
+    packSize: "O"
+  },
+
+  "BARANG UM": {
+    materialDescription: "*",
+    materialCode: "O",
+    partNumber: "*",
+    variant: "*",
+    dimension: "O",
+    brand: "O",
+    catalogue: "O",
+    uom: "*",
+    packSize: "O"
+  }
+};
+
+const matrixOriginalStates = new WeakMap();
+
+function getMatrixFieldDefinitions() {
+  const definitions = {};
+
+  [
+    "materialDescription",
+    "materialCode",
+    "partNumber",
+    "variant",
+    "brand",
+    "catalogue"
+  ].forEach(name => {
+    const field = $(`[name="${name}"]`, questionnaire);
+
+    if (!field) return;
+
+    definitions[name] = {
+      wrapper: field.closest(".q-field") || field.parentElement,
+      controls: [field],
+      requiredField: field
+    };
+  });
+
+  const uomField = $("#uomSelect", questionnaire);
+
+  if (uomField) {
+    definitions.uom = {
+      wrapper: uomField.closest(".q-field") || uomField.parentElement,
+      controls: [uomField, $("#uomOther", questionnaire)].filter(Boolean),
+      requiredField: uomField
+    };
+  }
+
+  const dimensionWrapper = $(".dimension-field", questionnaire);
+
+  if (dimensionWrapper) {
+    definitions.dimension = {
+      wrapper: dimensionWrapper,
+      controls: [
+        ...dimensionWrapper.querySelectorAll(
+          "input, select, button"
+        ),
+        $("#dimensionFinal", questionnaire)
+      ].filter(Boolean)
+    };
+  }
+
+  const packWrapper = $(".pack-size-field", questionnaire);
+
+  if (packWrapper) {
+    definitions.packSize = {
+      wrapper: packWrapper,
+      controls: [
+        ...packWrapper.querySelectorAll(
+          "input, select, button"
+        ),
+        $("#packSizeFinal", questionnaire)
+      ].filter(Boolean)
+    };
+  }
+
+  return definitions;
+}
+
+function rememberMatrixOriginalState(element) {
+  if (!element || matrixOriginalStates.has(element)) return;
+
+  matrixOriginalStates.set(element, {
+    disabled: element.disabled,
+    required: element.required
+  });
+}
+
+function restoreMatrixOriginalState(element) {
+  if (!element) return;
+
+  const original = matrixOriginalStates.get(element);
+
+  if (!original) return;
+
+  element.disabled = original.disabled;
+  element.required = original.required;
+}
+
+function getCurrentMatrixStatus(fieldName) {
+  const group = materialGroupSelect?.value || "";
+
+  if (group === "Others") return "LEGACY";
+
+  return MATERIAL_GROUP_MATRIX[group]?.[fieldName] || "";
+}
+
+function updateMaterialGroupMatrix() {
+  if (!materialGroupSelect) return;
+
+  const group = materialGroupSelect.value;
+  const isLegacy = group === "Others";
+
+  const definitions = getMatrixFieldDefinitions();
+
+  Object.entries(definitions).forEach(([fieldName, config]) => {
+    const { wrapper, controls, requiredField } = config;
+
+    if (!wrapper) return;
+
+    if (!matrixOriginalStates.has(wrapper)) {
+      matrixOriginalStates.set(wrapper, {
+        hidden: wrapper.hidden
+      });
+    }
+
+    controls.forEach(rememberMatrixOriginalState);
+
+    const originalWrapper = matrixOriginalStates.get(wrapper);
+
+    if (isLegacy) {
+      wrapper.hidden = originalWrapper.hidden;
+
+      controls.forEach(restoreMatrixOriginalState);
+
+      return;
+    }
+
+    const status =
+      MATERIAL_GROUP_MATRIX[group]?.[fieldName] || "";
+
+    const isApplicable = status === "*" || status === "O";
+
+    wrapper.hidden = !isApplicable;
+
+    controls.forEach(control => {
+      const original = matrixOriginalStates.get(control);
+
+      if (!original) return;
+
+      control.disabled = isApplicable
+        ? original.disabled
+        : true;
+
+      if (control === requiredField) {
+        control.required = status === "*";
+      } else if (!isApplicable) {
+        control.required = false;
+      }
+    });
+  });
+}
+
 materialGroupSelect?.addEventListener("change", () => {
   updateMaterialGroupOther();
+  updateMaterialGroupMatrix();
+
   saveDraft();
   transferToPrint();
 });
@@ -178,6 +395,7 @@ materialGroupOtherInput?.addEventListener("input", () => {
 
 // Kondisi awal
 updateMaterialGroupOther();
+updateMaterialGroupMatrix();
 
 
   // =====================================================
@@ -1275,6 +1493,7 @@ function initializeMechanicalUomOptions() {
   function getFormData() {
     updateReason();
     updateCategory();
+    updateMaterialGroupMatrix();
     updateDimension();
     updatePackSize();
     updateAllElectricalOthers();
@@ -1334,7 +1553,10 @@ function initializeMechanicalUomOptions() {
     data.technicalAttributes = technicalAttributes;
     data.mechanicalAttributes = mechanicalAttributes;
     data.uniqueAttributes = uniqueAttributes;
-    data.dimensionItems = collectDimensionItems();
+    data.dimensionItems =
+  getCurrentMatrixStatus("dimension") === ""
+    ? []
+    : collectDimensionItems();
     data.requiredDocuments = collectRequiredDocuments();
     data.drawingImage = drawingImage;
     data.specType = "Barang";
@@ -1708,6 +1930,7 @@ function restoreOldMechanicalAttributes(data) {
 
     updateReason();
     updateMaterialGroupOther(false);
+    updateMaterialGroupMatrix();
     updateUomOther();
     updateElectricalOthersInAllRows();
     updateCategory();
@@ -1845,6 +2068,18 @@ function restoreOldMechanicalAttributes(data) {
     updateMaterialGroupOther();
 
     if (!questionnaire.reportValidity()) return false;
+
+    // VALIDASI DIMENSION
+if (
+  getCurrentMatrixStatus("dimension") === "*" &&
+  collectDimensionItems().length === 0
+) {
+  alert("Dimension wajib diisi untuk Material Group ini.");
+
+  $(".dimension-type", dimensionContainer)?.focus();
+
+  return false;
+}
 
     const categories = getSelectedCategories();
 
@@ -2351,6 +2586,8 @@ if (materialGroupPrint) {
     normalizeMaterialCategory();
 
     updateReason();
+    updateMaterialGroupOther(false);
+    updateMaterialGroupMatrix();
     updateUomOther();
     updateAllElectricalOthers();
     updateCategory();
