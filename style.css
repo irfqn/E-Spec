@@ -4924,3 +4924,9 @@ fieldset.q-field {
     height: 38px;
   }
 }
+
+.matrix-required-mark {
+  display: inline;
+  color: #ef4444;
+  font-weight: 700;
+}
