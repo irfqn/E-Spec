@@ -4648,3 +4648,28 @@ fieldset.q-field {
     justify-self: end;
   }
 }
+
+/* =====================================================
+   MATERIAL GROUP MATRIX — DISABLED FIELD
+===================================================== */
+
+.matrix-disabled {
+  opacity: 0.5;
+  background-color: #eeeeee !important;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.matrix-disabled input,
+.matrix-disabled select,
+.matrix-disabled textarea,
+.matrix-disabled button {
+  background-color: #e5e5e5 !important;
+  color: #888888 !important;
+  cursor: not-allowed !important;
+}
+
+.matrix-disabled label,
+.matrix-disabled span {
+  color: #888888;
+}

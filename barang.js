@@ -360,7 +360,8 @@ function updateMaterialGroupMatrix() {
 
     const isApplicable = status === "*" || status === "O";
 
-    wrapper.hidden = !isApplicable;
+    wrapper.hidden = false;
+wrapper.classList.toggle("matrix-disabled", !isApplicable);
 
     controls.forEach(control => {
       const original = matrixOriginalStates.get(control);
