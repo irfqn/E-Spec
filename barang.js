@@ -2531,6 +2531,90 @@
     saveDraft();
   });
 
+
+  // =====================================================
+  // CREATE CUSTOM TECHNICAL ATTRIBUTE
+  // =====================================================
+
+  function createCustomTechnicalRow(item = {}) {
+    if (!technicalContainer) return;
+
+    const row = document.createElement("div");
+    row.className = "custom-tech-row q-grid";
+
+    // ATTRIBUTE NAME
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = "customTechnicalName[]";
+    nameInput.dataset.customTechName = "";
+    nameInput.placeholder = "Masukkan nama atribut";
+    nameInput.value = item.label || "";
+
+    // ATTRIBUTE VALUE
+    const valueInput = document.createElement("input");
+    valueInput.type = "text";
+    valueInput.name = "customTechnicalValue[]";
+    valueInput.dataset.customTechValue = "";
+    valueInput.placeholder = "Masukkan nilai atribut";
+    valueInput.value = item.value || "";
+
+    // REMOVE BUTTON
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "q-remove-button";
+    removeButton.textContent = "×";
+    removeButton.title = "Hapus atribut";
+
+    row.append(
+      nameInput,
+      valueInput,
+      removeButton
+    );
+
+    technicalContainer.appendChild(row);
+  }
+
+
+  // =====================================================
+  // CREATE CUSTOM UNIQUE ATTRIBUTE
+  // =====================================================
+
+  function createCustomUniqueRow(item = {}) {
+    if (!uniqueContainer) return;
+
+    const row = document.createElement("div");
+    row.className = "custom-unique-row q-grid";
+
+    // ATTRIBUTE NAME
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = "customUniqueName[]";
+    nameInput.placeholder = "Masukkan nama atribut";
+    nameInput.value = item.name || "";
+
+    // ATTRIBUTE DETAIL
+    const detailInput = document.createElement("input");
+    detailInput.type = "text";
+    detailInput.name = "customUniqueDetail[]";
+    detailInput.placeholder = "Masukkan detail atribut";
+    detailInput.value = item.detail || "";
+
+    // REMOVE BUTTON
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "q-remove-button";
+    removeButton.textContent = "×";
+    removeButton.title = "Hapus atribut";
+
+    row.append(
+      nameInput,
+      detailInput,
+      removeButton
+    );
+
+    uniqueContainer.appendChild(row);
+  }
+
   // =====================================================
   // BUTTON EVENTS — TECHNICAL & UNIQUE
   // =====================================================
