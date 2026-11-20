@@ -648,51 +648,65 @@
 function updateGeneralRequiredStar(key, field, status) {
   if (!field?.wrapper) return;
 
-  // Cari elemen tempat tanda bintang ditampilkan.
   let target = null;
-  let insertBefore = null;
 
+  // DIMENSION
   if (key === "dimension") {
     target = $(".dimension-title", field.wrapper);
   }
 
+  // UOM
   else if (key === "uom") {
     target = $("label", field.wrapper);
   }
 
+  // PACK SIZE
   else if (key === "packSize") {
     target = $(".pack-size-heading strong", field.wrapper);
   }
 
+  // GENERAL TEXT FIELDS
   else {
     target = field.wrapper;
-
-    insertBefore =
-      $(".field-example", field.wrapper) ||
-      $("input, select, textarea", field.wrapper);
   }
 
   if (!target) return;
 
-  // Periksa tanda bintang yang sudah tersedia.
-  let star = target.querySelector(
-    ".matrix-required-star, .required-star"
-  );
+  // Hapus tanda bintang dinamis sebelumnya.
+  target.querySelectorAll(".matrix-required-star")
+    .forEach(star => star.remove());
 
-  // Jika belum ada, buat tanda bintang baru.
-  if (!star) {
-    star = document.createElement("span");
-    star.className = "matrix-required-star";
+  // Gunakan tanda bintang yang sudah tersedia jika ada.
+  let star = target.querySelector(".required-star");
 
-    if (insertBefore) {
-      target.insertBefore(star, insertBefore);
-    } else {
-      target.appendChild(star);
-    }
+  if (star) {
+    star.hidden = status !== "*";
+    return;
   }
 
+  // Cari teks label utama.
+  const textNode = Array.from(target.childNodes).find(node =>
+    node.nodeType === Node.TEXT_NODE &&
+    node.textContent.trim() !== ""
+  );
+
+  if (!textNode) return;
+
+  // Bungkus teks label agar bintang tetap sejajar.
+  const labelText = document.createElement("span");
+  labelText.className = "matrix-label-text";
+  labelText.style.display = "inline";
+
+  target.insertBefore(labelText, textNode);
+  labelText.appendChild(textNode);
+
+  // Buat tanda bintang.
+  star = document.createElement("span");
+  star.className = "matrix-required-star";
   star.textContent = "*";
   star.hidden = status !== "*";
+
+  labelText.appendChild(star);
 }
 
   // =====================================================

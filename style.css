@@ -4947,13 +4947,17 @@ fieldset.q-field {
 
 /* GENERAL SPECIFICATION - REQUIRED STAR */
 
+.matrix-label-text {
+  display: inline;
+}
+
 .matrix-required-star {
-  display: inline-block;
+  display: inline;
   color: #dc2626;
   font-size: 13px;
   font-weight: 700;
-  margin-left: 3px;
-  vertical-align: middle;
+  margin-left: 4px;
+  vertical-align: baseline;
 }
 
 .matrix-required-star[hidden] {
