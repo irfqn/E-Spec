@@ -516,6 +516,55 @@
     }
   };
 
+    // =====================================================
+// TECHNICAL SPECIFICATION — REQUIRED STAR
+// =====================================================
+
+function updateTechnicalRequiredStar() {
+  Object.entries(technicalMatrixFields).forEach(([key, field]) => {
+    const wrapper = field.wrapper;
+
+    if (!wrapper) return;
+
+    const status = getCurrentMatrixStatus(key);
+
+    // Cari elemen judul parameter
+    let label = null;
+
+    if (key === "voltage" || key === "current" ||
+        key === "power" || key === "resistance" ||
+        key === "frequency" || key === "capacitance" ||
+        key === "phase" || key === "temperature") {
+
+      label = wrapper.querySelector(".electric-parameter strong");
+
+    } else if (key === "material" || key === "connectionType") {
+
+      label = wrapper.querySelector("span");
+
+    } else {
+      label = wrapper.querySelector(
+        ".mechanical-parameter-heading strong"
+      );
+    }
+
+    if (!label) return;
+
+    // Hapus tanda bintang sebelumnya
+    label.querySelector(".matrix-required-star")?.remove();
+
+    // Tambahkan tanda bintang hanya jika wajib
+    if (status === "*") {
+      const star = document.createElement("span");
+
+      star.className = "matrix-required-star";
+      star.textContent = "*";
+      star.setAttribute("aria-label", "Wajib diisi");
+
+      label.appendChild(star);
+    }
+  });
+}
 
   // =====================================================
   // COMBINE ALL MATRIX FIELDS
@@ -718,14 +767,15 @@ function updateGeneralRequiredStar(key, field, status) {
 
     // Others atau belum memilih Material Group:
     // Kembalikan seluruh field ke kondisi awal.
-    if (!MATERIAL_GROUP_MATRIX[group]) {
-      Object.keys(allMatrixFields).forEach(restoreMatrixField);
+if (!MATERIAL_GROUP_MATRIX[group]) {
+  Object.keys(allMatrixFields).forEach(restoreMatrixField);
 
-      updateTechnicalCardVisibility();
-      updateShowHiddenCounter(0);
+  updateTechnicalCardVisibility();
+  updateTechnicalRequiredStar();
+  updateShowHiddenCounter(0);
 
-      return;
-    }
+  return;
+}
 
     const rules = MATERIAL_GROUP_MATRIX[group];
     const showHidden = Boolean(showHiddenToggle?.checked);
@@ -782,7 +832,8 @@ field.wrapper.dataset.matrixStatus = status;
     });
 
     updateTechnicalCardVisibility();
-    updateShowHiddenCounter(hiddenCount);
+updateTechnicalRequiredStar();
+updateShowHiddenCounter(hiddenCount);
   }
 
 
