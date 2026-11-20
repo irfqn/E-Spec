@@ -641,33 +641,7 @@
     }
   }
 
-  // =====================================================
-// UPDATE REQUIRED STAR ON LABEL
-// =====================================================
 
-function updateMatrixRequiredMark(wrapper, status) {
-  if (!wrapper) return;
-
-  // Hapus tanda bintang sebelumnya
-  wrapper.querySelectorAll(".matrix-required-mark").forEach(mark => {
-    mark.remove();
-  });
-
-  // Hanya status * yang menampilkan tanda bintang
-  if (status !== "*") return;
-
-  const label = wrapper.querySelector(
-    "label, .q-label, .field-label, .spec-label, [data-tech-label]"
-  );
-
-  if (!label) return;
-
-  const mark = document.createElement("span");
-  mark.className = "matrix-required-mark";
-  mark.textContent = " *";
-
-  label.appendChild(mark);
-}
 
   // =====================================================
   // UPDATE MATERIAL GROUP MATRIX
@@ -700,9 +674,6 @@ function updateMatrixRequiredMark(wrapper, status) {
       const status = rules[key] || "";
 
 field.wrapper.dataset.matrixStatus = status;
-
-// Update tanda wajib pada label
-updateMatrixRequiredMark(field.wrapper, status);
 
       if (status === "") {
         hiddenCount++;
