@@ -516,33 +516,36 @@
     }
   };
 
-    // =====================================================
+// =====================================================
 // TECHNICAL SPECIFICATION — REQUIRED STAR
 // =====================================================
 
 function updateTechnicalRequiredStar() {
   Object.entries(technicalMatrixFields).forEach(([key, field]) => {
     const wrapper = field.wrapper;
-
     if (!wrapper) return;
 
     const status = getCurrentMatrixStatus(key);
 
-    // Cari elemen judul parameter
     let label = null;
 
-    if (key === "voltage" || key === "current" ||
-        key === "power" || key === "resistance" ||
-        key === "frequency" || key === "capacitance" ||
-        key === "phase" || key === "temperature") {
-
+    // ELECTRICAL
+    if (
+      ["voltage", "current", "power", "resistance",
+       "frequency", "capacitance", "phase", "temperature"].includes(key)
+    ) {
       label = wrapper.querySelector(".electric-parameter strong");
+    }
 
-    } else if (key === "material" || key === "connectionType") {
-
+    // MATERIAL & CONNECTION TYPE
+    else if (key === "material" || key === "connectionType") {
       label = wrapper.querySelector("span");
+    }
 
-    } else {
+    // MECHANICAL
+    else if (
+      ["capacity", "pressure", "flowrate", "speed", "tolerance"].includes(key)
+    ) {
       label = wrapper.querySelector(
         ".mechanical-parameter-heading strong"
       );
@@ -550,10 +553,12 @@ function updateTechnicalRequiredStar() {
 
     if (!label) return;
 
-    // Hapus tanda bintang sebelumnya
-    label.querySelector(".matrix-required-star")?.remove();
+    // Hapus tanda bintang lama
+    label.querySelectorAll(".matrix-required-star").forEach(star => {
+      star.remove();
+    });
 
-    // Tambahkan tanda bintang hanya jika wajib
+    // Tambahkan tanda bintang jika wajib
     if (status === "*") {
       const star = document.createElement("span");
 
