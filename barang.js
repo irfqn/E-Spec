@@ -165,6 +165,7 @@
 
 
 
+
   // =====================================================
   // MATERIAL GROUP MATRIX — FULL SPECIFICATION
   //
@@ -488,6 +489,8 @@
     },
 
     // TECHNICAL OTHERS
+    // Mencakup heading, tombol Add Custom Attribute,
+    // dan dynamicCustomTechnicalContainer.
     technicalOthers: {
       wrapper: $("#dynamicCustomTechnicalContainer", questionnaire)
         ?.closest(".q-technical-group")
@@ -504,8 +507,12 @@
       wrapper: $(".unique-accessories-field", questionnaire)
     },
 
+    // UNIQUE OTHERS
+    // Mencakup heading, tombol addUniqueBtn,
+    // Accessories, dan dynamicCustomUniqueContainer.
+    // Bagian Unique Specification selalu opsional.
     uniqueOthers: {
-      wrapper: $("#dynamicCustomUniqueContainer", questionnaire)
+      wrapper: $(".unique-specification-section", questionnaire)
     }
   };
 
@@ -737,6 +744,7 @@
     saveDraft();
     transferToPrint();
   });
+
 
 
 
