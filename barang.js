@@ -353,6 +353,126 @@
 
       accessories: "O",
       uniqueOthers: "O"
+    },
+
+    // =====================================================
+    // CAPEX — ASSET UMU
+    // =====================================================
+
+    "ASSET UMU": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "O",
+      variant: "O",
+      dimension: "O",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "O",
+      current: "O",
+      power: "O",
+      resistance: "O",
+      frequency: "O",
+      capacitance: "O",
+      phase: "O",
+      temperature: "O",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "O",
+      pressure: "O",
+      flowrate: "O",
+      speed: "O",
+      tolerance: "O",
+
+      concentration: "O",
+      viscosity: "O",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    // =====================================================
+    // CAPEX — ASSET TEK
+    // =====================================================
+
+    "ASSET TEK": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "O",
+      variant: "O",
+      dimension: "O",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "O",
+      current: "O",
+      power: "O",
+      resistance: "O",
+      frequency: "O",
+      capacitance: "O",
+      phase: "O",
+      temperature: "O",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "O",
+      pressure: "O",
+      flowrate: "O",
+      speed: "O",
+      tolerance: "O",
+
+      concentration: "O",
+      viscosity: "O",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    // =====================================================
+    // CAPEX — ASSET LAB
+    // =====================================================
+
+    "ASSET LAB": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "O",
+      variant: "O",
+      dimension: "O",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "O",
+      current: "O",
+      power: "O",
+      resistance: "O",
+      frequency: "O",
+      capacitance: "O",
+      phase: "O",
+      temperature: "O",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "O",
+      pressure: "O",
+      flowrate: "O",
+      speed: "O",
+      tolerance: "O",
+
+      concentration: "O",
+      viscosity: "O",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
     }
   };
 
