@@ -127,12 +127,24 @@
         </select>
       </label>
 
+
 <label class="q-field">
   Material Group <span class="required-star">*</span>
   <select name="materialGroup" id="materialGroup" required>
     <option value="">-- Pilih Material Category terlebih dahulu --</option>
   </select>
+
+  <input
+    type="text"
+    name="materialGroupOther"
+    id="materialGroupOther"
+    placeholder="Masukkan Material Group lainnya"
+    autocomplete="off"
+    hidden
+    disabled
+  >
 </label>
+
 
 <div class="q-field">
   <span class="field-label">
@@ -205,6 +217,10 @@
       <h2>SPECIFICATION</h2>
     </div>
 
+
+
+
+
     <!-- GENERAL SPECIFICATION -->
     <div class="q-subsection">
       <h3>A. GENERAL SPECIFICATION</h3>
@@ -228,13 +244,19 @@
 
         <label class="q-field">
           Type / Model / Part Number
+          <small class="field-example">
+            Contoh: HOPPER C0268405 atau 6202 (Bearing)
+          </small>
           <input type="text" name="partNumber">
         </label>
 
         <label class="q-field">
-          Varians
-          <input type="text" name="variant">
-        </label>
+  Varians
+  <small class="field-example">
+    Contoh: Warna Abu, Full Drat, Dual Core, ZZ, Square, dll.
+  </small>
+  <input type="text" name="variant">
+</label>
 
 
 
@@ -243,6 +265,10 @@
 <div class="q-field dimension-field">
 
   <span class="dimension-title">Dimension</span>
+
+  <small class="field-example">
+    Contoh: P 30 cm, P 30 cm x L 30 cm, atau P 30 cm x L 30 cm x T 30 cm
+  </small>
 
   <!-- HEADER KOLOM -->
   <div class="dimension-header">
@@ -289,11 +315,11 @@
 <!-- SYMBOL -->
 <select class="dimension-symbol">
   <option value="">-- Pilih Simbol --</option>
+  <option value="/">/</option>
   <option value="x">x</option>
   <option value="~">~</option>
-  <option value="/">/</option>
-  <option value="±">±</option>
   <option value="-">-</option>
+  <option value="±">±</option>
 </select>
 
       <!-- REMOVE -->
@@ -322,12 +348,18 @@
 
 
         <label class="q-field">
-          Brand
-          <input type="text" name="brand">
-        </label>
+  Brand
+  <small class="field-example">
+    Contoh: TOSHIBA, MITSUBISHI, MERCK, dll.
+  </small>
+  <input type="text" name="brand">
+</label>
 
 <label class="q-field">
   Catalogue
+  <small class="field-example">
+    Contoh: 90.1116.1000 atau S/1280/48
+  </small>
   <input
     type="text"
     name="catalogue"
@@ -563,6 +595,28 @@
         tidak perlu ditampilkan pada dokumen spesifikasi.
       </p>
 
+<!-- SHOW HIDDEN ATTRIBUTE -->
+<div class="show-hidden-attribute no-print" id="showHiddenAttributeContainer">
+
+  <div class="show-hidden-info">
+    <strong>Show Hidden Attribute</strong>
+    <small>
+      <span id="hiddenAttributeCount">0</span>
+      dari 13 atribut blank aktif
+    </small>
+  </div>
+
+  <label class="show-hidden-toggle" for="showHiddenAttribute">
+    <input
+      type="checkbox"
+      id="showHiddenAttribute"
+      name="showHiddenAttribute"
+    >
+    <span class="show-hidden-slider"></span>
+  </label>
+
+</div>
+
 
 
 <!-- ELECTRIC -->
@@ -582,9 +636,9 @@
       <span>Parameter</span>
       <span>Data 1</span>
       <span>UoM 1</span>
+      <span>Symbol</span>
       <span>Data 2</span>
       <span>UoM 2</span>
-      <span>Symbol</span>
     </div>
 
     <!-- VOLTAGE -->
@@ -607,6 +661,15 @@
         <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
 
+      <select data-electric-symbol>
+        <option value="" >-- Pilih Simbol --</option>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
       <div class="electric-unit-group">
@@ -619,14 +682,6 @@
         </select>
         <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
-
-      <select data-electric-symbol>
-        <option value="/">/</option>
-        <option value="-">-</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
     </div>
 
     <!-- CURRENT -->
@@ -649,6 +704,15 @@
         <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
 
+      <select data-electric-symbol>
+        <option value="" >-- Pilih Simbol --</option>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
       <div class="electric-unit-group">
@@ -661,14 +725,6 @@
         </select>
         <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
-
-      <select data-electric-symbol>
-        <option value="/">/</option>
-        <option value="-">-</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
     </div>
 
     <!-- POWER -->
@@ -693,6 +749,15 @@
         <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
 
+      <select data-electric-symbol>
+        <option value="" >-- Pilih Simbol --</option>
+        <option value="-">-</option>
+        <option value="/">/</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
       <div class="electric-unit-group">
@@ -707,14 +772,6 @@
         </select>
         <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
-
-      <select data-electric-symbol>
-        <option value="-">-</option>
-        <option value="/">/</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
     </div>
 
     <!-- RESISTANCE -->
@@ -738,6 +795,15 @@
         <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
 
+      <select data-electric-symbol>
+        <option value="" >-- Pilih Simbol --</option>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
       <div class="electric-unit-group">
@@ -751,14 +817,6 @@
         </select>
         <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
-
-      <select data-electric-symbol>
-        <option value="/">/</option>
-        <option value="-">-</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
     </div>
 
     <!-- FREQUENCY -->
@@ -780,6 +838,15 @@
         <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
 
+      <select data-electric-symbol>
+        <option value="" >-- Pilih Simbol --</option>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
       <div class="electric-unit-group">
@@ -791,14 +858,6 @@
         </select>
         <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
-
-      <select data-electric-symbol>
-        <option value="/">/</option>
-        <option value="-">-</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
     </div>
 
     <!-- CAPACITANCE -->
@@ -822,6 +881,15 @@
         <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
 
+      <select data-electric-symbol>
+        <option value="" >-- Pilih Simbol --</option>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="~">~</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
       <div class="electric-unit-group">
@@ -835,14 +903,6 @@
         </select>
         <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
-
-      <select data-electric-symbol>
-        <option value="/">/</option>
-        <option value="-">-</option>
-        <option value="~">~</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
     </div>
 
     <!-- PHASE -->
@@ -859,19 +919,20 @@
         <option value="Phase">Phase</option>
       </select>
 
-      <input type="text" data-electric-value="2" placeholder="Data 2">
-
-      <select data-electric-unit="2">
-        <option value="">-- Pilih UoM --</option>
-        <option value="Phase">Phase</option>
-      </select>
-
       <select data-electric-symbol>
+        <option value="" >-- Pilih Simbol --</option>
         <option value="/">/</option>
         <option value="-">-</option>
         <option value="~">~</option>
         <option value="x">x</option>
         <option value="±">±</option>
+      </select>
+
+      <input type="text" data-electric-value="2" placeholder="Data 2">
+
+      <select data-electric-unit="2">
+        <option value="">-- Pilih UoM --</option>
+        <option value="Phase">Phase</option>
       </select>
     </div>
 
@@ -895,6 +956,15 @@
         <input type="text" data-electric-other="1" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
 
+      <select data-electric-symbol>
+        <option value="" >-- Pilih Simbol --</option>
+        <option value="~">~</option>
+        <option value="/">/</option>
+        <option value="-">-</option>
+        <option value="x">x</option>
+        <option value="±">±</option>
+      </select>
+
       <input type="text" data-electric-value="2" placeholder="Data 2">
 
       <div class="electric-unit-group">
@@ -907,18 +977,12 @@
         </select>
         <input type="text" data-electric-other="2" placeholder="Masukkan UoM lain" hidden disabled>
       </div>
-
-      <select data-electric-symbol>
-        <option value="~">~</option>
-        <option value="/">/</option>
-        <option value="-">-</option>
-        <option value="x">x</option>
-        <option value="±">±</option>
-      </select>
     </div>
 
   </div>
 </div>
+
+
 
 
 
@@ -974,11 +1038,7 @@
 
         <label class="mechanical-field">
           <span>Data 1</span>
-          <input
-            type="text"
-            data-mechanical-value="1"
-            placeholder="Masukkan nilai"
-          >
+          <input type="text" data-mechanical-value="1" placeholder="Masukkan nilai">
         </label>
 
         <div class="mechanical-field">
@@ -987,35 +1047,7 @@
             <option value="">-- Pilih UoM --</option>
             <option value="Others">Others</option>
           </select>
-          <input
-            type="text"
-            data-mechanical-unit-other="1"
-            placeholder="Masukkan UoM lainnya"
-            hidden
-          >
-        </div>
-
-        <label class="mechanical-field">
-          <span>Data 2</span>
-          <input
-            type="text"
-            data-mechanical-value="2"
-            placeholder="Masukkan nilai"
-          >
-        </label>
-
-        <div class="mechanical-field">
-          <label>UoM 2</label>
-          <select data-mechanical-unit="2">
-            <option value="">-- Pilih UoM --</option>
-            <option value="Others">Others</option>
-          </select>
-          <input
-            type="text"
-            data-mechanical-unit-other="2"
-            placeholder="Masukkan UoM lainnya"
-            hidden
-          >
+          <input type="text" data-mechanical-unit-other="1" placeholder="Masukkan UoM lainnya" hidden>
         </div>
 
         <div class="mechanical-field">
@@ -1030,12 +1062,21 @@
             <option value="-">-</option>
             <option value="Others">Others</option>
           </select>
-          <input
-            type="text"
-            data-mechanical-symbol-other
-            placeholder="Masukkan symbol lainnya"
-            hidden
-          >
+          <input type="text" data-mechanical-symbol-other placeholder="Masukkan symbol lainnya" hidden>
+        </div>
+
+        <label class="mechanical-field">
+          <span>Data 2</span>
+          <input type="text" data-mechanical-value="2" placeholder="Masukkan nilai">
+        </label>
+
+        <div class="mechanical-field">
+          <label>UoM 2</label>
+          <select data-mechanical-unit="2">
+            <option value="">-- Pilih UoM --</option>
+            <option value="Others">Others</option>
+          </select>
+          <input type="text" data-mechanical-unit-other="2" placeholder="Masukkan UoM lainnya" hidden>
         </div>
 
       </div>
@@ -1064,20 +1105,6 @@
           <input type="text" data-mechanical-unit-other="1" placeholder="Masukkan UoM lainnya" hidden>
         </div>
 
-        <label class="mechanical-field">
-          <span>Data 2</span>
-          <input type="text" data-mechanical-value="2" placeholder="Masukkan nilai">
-        </label>
-
-        <div class="mechanical-field">
-          <label>UoM 2</label>
-          <select data-mechanical-unit="2">
-            <option value="">-- Pilih UoM --</option>
-            <option value="Others">Others</option>
-          </select>
-          <input type="text" data-mechanical-unit-other="2" placeholder="Masukkan UoM lainnya" hidden>
-        </div>
-
         <div class="mechanical-field">
           <label>Symbol</label>
           <select data-mechanical-symbol>
@@ -1091,6 +1118,20 @@
             <option value="Others">Others</option>
           </select>
           <input type="text" data-mechanical-symbol-other placeholder="Masukkan symbol lainnya" hidden>
+        </div>
+
+        <label class="mechanical-field">
+          <span>Data 2</span>
+          <input type="text" data-mechanical-value="2" placeholder="Masukkan nilai">
+        </label>
+
+        <div class="mechanical-field">
+          <label>UoM 2</label>
+          <select data-mechanical-unit="2">
+            <option value="">-- Pilih UoM --</option>
+            <option value="Others">Others</option>
+          </select>
+          <input type="text" data-mechanical-unit-other="2" placeholder="Masukkan UoM lainnya" hidden>
         </div>
 
       </div>
@@ -1119,6 +1160,21 @@
           <input type="text" data-mechanical-unit-other="1" placeholder="Masukkan UoM lainnya" hidden>
         </div>
 
+        <div class="mechanical-field">
+          <label>Symbol</label>
+          <select data-mechanical-symbol>
+            <option value="">-- Pilih Symbol --</option>
+            <option value="x">x</option>
+            <option value="--">--</option>
+            <option value="~">~</option>
+            <option value="/">/</option>
+            <option value="±">±</option>
+            <option value="-">-</option>
+            <option value="Others">Others</option>
+          </select>
+          <input type="text" data-mechanical-symbol-other placeholder="Masukkan symbol lainnya" hidden>
+        </div>
+
         <label class="mechanical-field">
           <span>Data 2</span>
           <input type="text" data-mechanical-value="2" placeholder="Masukkan nilai">
@@ -1131,6 +1187,31 @@
             <option value="Others">Others</option>
           </select>
           <input type="text" data-mechanical-unit-other="2" placeholder="Masukkan UoM lainnya" hidden>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SPEED -->
+    <div class="mechanical-parameter" data-mechanical-row="Speed">
+      <div class="mechanical-parameter-heading">
+        <strong>Speed</strong>
+      </div>
+
+      <div class="mechanical-parameter-grid">
+
+        <label class="mechanical-field">
+          <span>Data 1</span>
+          <input type="text" data-mechanical-value="1" placeholder="Masukkan nilai">
+        </label>
+
+        <div class="mechanical-field">
+          <label>UoM 1</label>
+          <select data-mechanical-unit="1">
+            <option value="">-- Pilih UoM --</option>
+            <option value="Others">Others</option>
+          </select>
+          <input type="text" data-mechanical-unit-other="1" placeholder="Masukkan UoM lainnya" hidden>
         </div>
 
         <div class="mechanical-field">
@@ -1148,113 +1229,80 @@
           <input type="text" data-mechanical-symbol-other placeholder="Masukkan symbol lainnya" hidden>
         </div>
 
+        <label class="mechanical-field">
+          <span>Data 2</span>
+          <input type="text" data-mechanical-value="2" placeholder="Masukkan nilai">
+        </label>
+
+        <div class="mechanical-field">
+          <label>UoM 2</label>
+          <select data-mechanical-unit="2">
+            <option value="">-- Pilih UoM --</option>
+            <option value="Others">Others</option>
+          </select>
+          <input type="text" data-mechanical-unit-other="2" placeholder="Masukkan UoM lainnya" hidden>
+        </div>
+
       </div>
     </div>
 
+    <!-- TOLERANCE -->
+    <div class="mechanical-parameter" data-mechanical-row="Tolerance">
+      <div class="mechanical-parameter-heading">
+        <strong>Tolerance</strong>
+      </div>
 
-<!-- SPEED -->
-<div class="mechanical-parameter" data-mechanical-row="Speed">
-  <div class="mechanical-parameter-heading">
-    <strong>Speed</strong>
-  </div>
+      <div class="mechanical-parameter-grid">
 
-  <div class="mechanical-parameter-grid">
-    <label class="mechanical-field">
-      <span>Data 1</span>
-      <input type="text" data-mechanical-value="1" placeholder="Masukkan nilai">
-    </label>
+        <label class="mechanical-field">
+          <span>Data 1</span>
+          <input type="text" data-mechanical-value="1" placeholder="Masukkan nilai">
+        </label>
 
-    <div class="mechanical-field">
-      <label>UoM 1</label>
-      <select data-mechanical-unit="1">
-        <option value="">-- Pilih UoM --</option>
-        <option value="Others">Others</option>
-      </select>
-      <input type="text" data-mechanical-unit-other="1" placeholder="Masukkan UoM lainnya" hidden>
+        <div class="mechanical-field">
+          <label>UoM 1</label>
+          <select data-mechanical-unit="1">
+            <option value="">-- Pilih UoM --</option>
+            <option value="Others">Others</option>
+          </select>
+          <input type="text" data-mechanical-unit-other="1" placeholder="Masukkan UoM lainnya" hidden>
+        </div>
+
+        <div class="mechanical-field">
+          <label>Symbol</label>
+          <select data-mechanical-symbol>
+            <option value="">-- Pilih Symbol --</option>
+            <option value="x">x</option>
+            <option value="--">--</option>
+            <option value="~">~</option>
+            <option value="/">/</option>
+            <option value="±">±</option>
+            <option value="-">-</option>
+            <option value="Others">Others</option>
+          </select>
+          <input type="text" data-mechanical-symbol-other placeholder="Masukkan symbol lainnya" hidden>
+        </div>
+
+        <label class="mechanical-field">
+          <span>Data 2</span>
+          <input type="text" data-mechanical-value="2" placeholder="Masukkan nilai">
+        </label>
+
+        <div class="mechanical-field">
+          <label>UoM 2</label>
+          <select data-mechanical-unit="2">
+            <option value="">-- Pilih UoM --</option>
+            <option value="Others">Others</option>
+          </select>
+          <input type="text" data-mechanical-unit-other="2" placeholder="Masukkan UoM lainnya" hidden>
+        </div>
+
+      </div>
     </div>
 
-    <label class="mechanical-field">
-      <span>Data 2</span>
-      <input type="text" data-mechanical-value="2" placeholder="Masukkan nilai">
-    </label>
-
-    <div class="mechanical-field">
-      <label>UoM 2</label>
-      <select data-mechanical-unit="2">
-        <option value="">-- Pilih UoM --</option>
-        <option value="Others">Others</option>
-      </select>
-      <input type="text" data-mechanical-unit-other="2" placeholder="Masukkan UoM lainnya" hidden>
-    </div>
-
-    <div class="mechanical-field">
-      <label>Symbol</label>
-      <select data-mechanical-symbol>
-        <option value="">-- Pilih Symbol --</option>
-        <option value="x">x</option>
-        <option value="--">--</option>
-        <option value="~">~</option>
-        <option value="/">/</option>
-        <option value="±">±</option>
-        <option value="-">-</option>
-        <option value="Others">Others</option>
-      </select>
-      <input type="text" data-mechanical-symbol-other placeholder="Masukkan symbol lainnya" hidden>
-    </div>
-  </div>
-</div>
-
-<!-- TOLERANCE -->
-<div class="mechanical-parameter" data-mechanical-row="Tolerance">
-  <div class="mechanical-parameter-heading">
-    <strong>Tolerance</strong>
-  </div>
-
-  <div class="mechanical-parameter-grid">
-    <label class="mechanical-field">
-      <span>Data 1</span>
-      <input type="text" data-mechanical-value="1" placeholder="Masukkan nilai">
-    </label>
-
-    <div class="mechanical-field">
-      <label>UoM 1</label>
-      <select data-mechanical-unit="1">
-        <option value="">-- Pilih UoM --</option>
-        <option value="Others">Others</option>
-      </select>
-      <input type="text" data-mechanical-unit-other="1" placeholder="Masukkan UoM lainnya" hidden>
-    </div>
-
-    <label class="mechanical-field">
-      <span>Data 2</span>
-      <input type="text" data-mechanical-value="2" placeholder="Masukkan nilai">
-    </label>
-
-    <div class="mechanical-field">
-      <label>UoM 2</label>
-      <select data-mechanical-unit="2">
-        <option value="">-- Pilih UoM --</option>
-        <option value="Others">Others</option>
-      </select>
-      <input type="text" data-mechanical-unit-other="2" placeholder="Masukkan UoM lainnya" hidden>
-    </div>
-
-    <div class="mechanical-field">
-      <label>Symbol</label>
-      <select data-mechanical-symbol>
-        <option value="">-- Pilih Symbol --</option>
-        <option value="x">x</option>
-        <option value="--">--</option>
-        <option value="~">~</option>
-        <option value="/">/</option>
-        <option value="±">±</option>
-        <option value="-">-</option>
-        <option value="Others">Others</option>
-      </select>
-      <input type="text" data-mechanical-symbol-other placeholder="Masukkan symbol lainnya" hidden>
-    </div>
   </div>
 </div>
+
 
 
 
@@ -1312,7 +1360,7 @@
           <h4>OTHER / CUSTOM ATTRIBUTE</h4>
 
           <button type="button" class="q-add-button" id="addTechnicalBtn">
-            + Tambah Atribut
+            + Add Custom Attribute
           </button>
         </div>
 
@@ -1346,7 +1394,7 @@
       class="q-add-button"
       id="addUniqueBtn"
     >
-      + Tambah Unique Attribute
+      + Add Custom Attribute
     </button>
   </div>
 
@@ -1450,7 +1498,7 @@
       id="addRequiredDocumentBtn"
       class="q-add-button"
     >
-      + Tambah Dokumen
+      + Add Custom Attribute
     </button>
   </div>
 
@@ -1491,7 +1539,7 @@
 <div class="questionnaire-bottom-actions">
 
   <button type="button" id="saveAdminBtn">
-    Save As
+    Save As Draft
   </button>
 
   <button type="button" id="pdfBtn">

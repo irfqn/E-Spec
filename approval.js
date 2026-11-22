@@ -2,23 +2,23 @@
 (() => {
   "use strict";
 
-  // =========================================
+  // =====================================================
   // E-SPEC — MY E-SPEC
-  // =========================================
+  // FRONTEND VERSION (TANPA BACKEND)
+  // =====================================================
 
-  const API_URL = "http://localhost:3000/api/documents";
-  const $ = (selector) => document.querySelector(selector);
+  const $ = (selector, parent = document) =>
+    parent.querySelector(selector);
 
   let documents = [];
-  let loading = false;
   let myEspecStatus = "all";
 
-  // =========================================
+  // =====================================================
   // HELPER
-  // =========================================
+  // =====================================================
 
   function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
@@ -49,162 +49,35 @@
     });
   }
 
-  function showToast(message, type = "success") {
-    const toast = $("#toast");
-
-    if (!toast) {
-      console.log(message);
-      return;
-    }
-
-    toast.textContent = message;
-    toast.className = `toast show ${type}`;
-
-    clearTimeout(showToast.timer);
-
-    showToast.timer = setTimeout(() => {
-      toast.className = "toast";
-    }, 3000);
-  }
-
-  function parseFormData(value) {
-    if (!value) return {};
-
-    if (typeof value === "string") {
-      try {
-        const parsed = JSON.parse(value);
-        return parsed && typeof parsed === "object" ? parsed : {};
-      } catch (error) {
-        console.error("Gagal membaca form_data:", error);
-        return {};
-      }
-    }
-
-    return typeof value === "object" && !Array.isArray(value)
-      ? value
-      : {};
-  }
-
-  function getResponseRows(result) {
-    if (Array.isArray(result)) return result;
-    if (Array.isArray(result?.data)) return result.data;
-    if (Array.isArray(result?.documents)) return result.documents;
-    if (Array.isArray(result?.rows)) return result.rows;
-    if (Array.isArray(result?.data?.documents)) {
-      return result.data.documents;
-    }
-
-    return [];
-  }
-
-  // =========================================
-  // NORMALIZE DOCUMENT
-  // =========================================
-
-  function normalizeDocument(row) {
-    const formData = parseFormData(
-      row.form_data ?? row.formData
-    );
-
-    const specType =
-      row.spec_type ||
-      row.specType ||
-      row.document_type ||
-      formData.specType ||
-      formData.documentType ||
-      formData.jenisDokumen ||
-      formData.formType ||
-      (
-        formData.serviceName ||
-        formData.serviceDescription ||
-        formData.namaJasa ||
-        formData.namaLayanan
-          ? "Jasa"
-          : "Barang"
-      );
-
-    const documentId =
-      row.id ??
-      row.document_id ??
-      row.documentId ??
-      "";
-
-    return {
-      ...formData,
-      ...row,
-
-      id: String(documentId),
-      formData,
-
-      docNo:
-        row.doc_no ||
-        row.docNo ||
-        formData.docNo ||
-        "",
-
-      revision:
-        row.revision ||
-        formData.revision ||
-        "",
-
-      materialCode:
-        row.material_code ||
-        row.materialCode ||
-        formData.materialCode ||
-        "",
-
-      materialDescription:
-        row.material_description ||
-        row.materialDescription ||
-        formData.materialDescription ||
-        formData.serviceName ||
-        formData.serviceTitle ||
-        formData.serviceDescription ||
-        formData.namaJasa ||
-        formData.namaLayanan ||
-        "",
-
-      savedAt:
-        row.created_at ||
-        row.saved_at ||
-        row.savedAt ||
-        formData.createdDate ||
-        "",
-
-      status:
-        row.status ||
-        formData.status ||
-        "Draft",
-
-      specType:
-        normalizeText(specType).includes("jasa")
-          ? "Jasa"
-          : "Barang"
-    };
-  }
+  // =====================================================
+  // DOCUMENT NAME
+  // =====================================================
 
   function getDocumentName(doc) {
+    const data = doc.formData || doc;
+
     return (
       doc.materialDescription ||
-      doc.formData?.materialDescription ||
-      doc.formData?.serviceName ||
-      doc.formData?.serviceDescription ||
-      doc.formData?.namaJasa ||
-      doc.formData?.namaLayanan ||
-      (
-        doc.specType === "Jasa"
-          ? "Tanpa nama jasa"
-          : "Tanpa nama barang"
-      )
+      data.materialDescription ||
+      data.serviceName ||
+      data.serviceDescription ||
+      data.serviceTitle ||
+      data.namaJasa ||
+      data.namaLayanan ||
+      (doc.specType === "Jasa"
+        ? "Tanpa nama jasa"
+        : "Tanpa nama barang")
     );
   }
 
-  // =========================================
+  // =====================================================
   // DOCUMENT STATUS
-  // =========================================
+  // =====================================================
 
   function getApprovalStatus(doc) {
-    const status = normalizeText(doc.status);
+    const status = normalizeText(
+      doc.status || doc.approvalStatus || "Draft"
+    );
 
     if ([
       "approved",
@@ -215,12 +88,13 @@
       "release",
       "released"
     ].includes(status)) {
-      return "approved";
+      return "released";
     }
 
     if ([
       "revision",
       "revisi",
+      "need revision",
       "perlu revisi",
       "returned",
       "dikembalikan"
@@ -233,7 +107,7 @@
       "reject",
       "ditolak"
     ].includes(status)) {
-      return "rejected";
+      return "revision";
     }
 
     if (
@@ -249,35 +123,33 @@
     return "draft";
   }
 
+  // =====================================================
+  // STATUS BADGE
+  // =====================================================
+
   function getApprovalBadge(status) {
     const badges = {
-      pending: `
-        <span class="approval-status pending">
-          Menunggu Approval
+      draft: `
+        <span class="approval-status draft">
+          Draft
         </span>
       `,
 
-      approved: `
-        <span class="approval-status approved">
-          Release
+      pending: `
+        <span class="approval-status pending">
+          Waiting Approval
         </span>
       `,
 
       revision: `
         <span class="approval-status rejected">
-          Revision
+          Need Revision
         </span>
       `,
 
-      rejected: `
-        <span class="approval-status rejected">
-          Rejected
-        </span>
-      `,
-
-      draft: `
-        <span class="approval-status draft">
-          Draft
+      released: `
+        <span class="approval-status approved">
+          Released
         </span>
       `
     };
@@ -285,148 +157,129 @@
     return badges[status] || badges.draft;
   }
 
-  // =========================================
-  // LOAD DOCUMENTS
-  // =========================================
+  // =====================================================
+  // PROGRESS APPROVER / CATATAN REVISI
+  // =====================================================
 
-  async function loadDocuments() {
-    loading = true;
-    renderMyEspec();
+  function getProgressContent(doc, status) {
+    const data = doc.formData || doc;
 
-    try {
-      const response = await fetch(API_URL);
+    const revisionNote =
+      doc.revisionNote ||
+      doc.revision_note ||
+      doc.rejectionReason ||
+      doc.rejection_reason ||
+      data.revisionNote ||
+      data.revision_note ||
+      data.rejectionReason ||
+      "";
 
-      if (!response.ok) {
-        throw new Error(
-          `Gagal mengambil data. HTTP ${response.status}`
-        );
-      }
+    const approvalProgress =
+      doc.approvalProgress ||
+      doc.approval_progress ||
+      data.approvalProgress ||
+      data.approval_progress ||
+      "";
 
-      const result = await response.json();
-
-      documents = getResponseRows(result)
-        .map(normalizeDocument)
-        .filter((doc) => doc.id && doc.id !== "undefined");
-
-      loading = false;
-      renderAll();
-
-    } catch (error) {
-      loading = false;
-
-      console.error("Gagal memuat dokumen:", error);
-
-      renderAll();
-
-      showToast(
-        "Gagal memuat data. Periksa koneksi backend.",
-        "error"
-      );
+    if (status === "draft") {
+      return `
+        <div class="my-espec-progress">
+          Belum diajukan
+          <small>Dokumen masih dalam tahap Draft</small>
+        </div>
+      `;
     }
+
+    if (status === "pending") {
+      return `
+        <div class="my-espec-progress">
+          ${escapeHTML(approvalProgress || "Menunggu approver")}
+          <small>Proses persetujuan sedang berjalan</small>
+        </div>
+      `;
+    }
+
+    if (status === "revision") {
+      return `
+        <div class="my-espec-progress revision-note">
+          ${escapeHTML(revisionNote || "Belum ada catatan revisi")}
+          <small>Dokumen memerlukan perbaikan</small>
+        </div>
+      `;
+    }
+
+    if (status === "released") {
+      return `
+        <div class="my-espec-progress completed-note">
+          Approval selesai
+          <small>Dokumen telah Released</small>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="my-espec-progress">
+        —
+      </div>
+    `;
   }
 
-  // =========================================
-  // STATISTICS
-  // =========================================
-
-  function renderStatistics() {
-    const approved = documents.filter(
-      (doc) => getApprovalStatus(doc) === "approved"
-    ).length;
-
-    const revision = documents.filter((doc) =>
-      ["revision", "rejected"].includes(getApprovalStatus(doc))
-    ).length;
-
-    if ($("#myEspecListCount")) {
-      $("#myEspecListCount").textContent = documents.length;
-    }
-
-    if ($("#myEspecReleaseCount")) {
-      $("#myEspecReleaseCount").textContent = approved;
-    }
-
-    if ($("#myEspecRevisionCount")) {
-      $("#myEspecRevisionCount").textContent = revision;
-    }
-  }
-
-  // =========================================
-  // FILTER MY E-SPEC
-  // =========================================
+  // =====================================================
+  // FILTER DOCUMENTS
+  // =====================================================
 
   function getFilteredMyEspec() {
-    const search = (
+    const search = normalizeText(
       $("#myEspecSearch")?.value || ""
-    ).trim().toLowerCase();
+    );
 
-    const typeFilter =
-      $("#myEspecTypeFilter")?.value || "all";
-
-    return documents.filter((doc) => {
+    return documents.filter(doc => {
       const status = getApprovalStatus(doc);
 
       const matchesStatus =
         myEspecStatus === "all" ||
-        (
-          myEspecStatus === "release" &&
-          status === "approved"
-        ) ||
-        (
-          myEspecStatus === "revision" &&
-          ["revision", "rejected"].includes(status)
-        );
+        (myEspecStatus === "draft" && status === "draft") ||
+        (myEspecStatus === "pending" && status === "pending") ||
+        (myEspecStatus === "revision" && status === "revision") ||
+        (myEspecStatus === "released" && status === "released");
 
-      const matchesType =
-        typeFilter === "all" ||
-        doc.specType === typeFilter;
-
-      const searchable = [
+      const searchable = normalizeText([
         doc.docNo,
+        doc.doc_no,
+        doc.revision,
         getDocumentName(doc),
-        doc.specType,
-        doc.materialCode
-      ].join(" ").toLowerCase();
+        doc.materialCode,
+        doc.material_code
+      ].join(" "));
 
-      return (
-        matchesStatus &&
-        matchesType &&
-        searchable.includes(search)
-      );
+      return matchesStatus && searchable.includes(search);
     });
   }
 
-  // =========================================
-  // RENDER MY E-SPEC
-  // =========================================
+  // =====================================================
+  // RENDER STATUS TABS
+  // =====================================================
+
+  function renderStatusTabs() {
+    document.querySelectorAll("[data-my-status]").forEach(button => {
+      const active = button.dataset.myStatus === myEspecStatus;
+
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  }
+
+  // =====================================================
+  // RENDER TABLE
+  // =====================================================
 
   function renderMyEspec() {
     const rows = $("#myEspecRows");
     const empty = $("#myEspecEmptyState");
-    const table = $(".my-espec-panel .table-wrap");
-    const footer = $(".my-espec-panel .panel-footer");
+    const table = $(".my-espec-table-wrap");
+    const footer = $(".my-espec-footer");
 
     if (!rows) return;
-
-    if (loading) {
-      rows.innerHTML = `
-        <tr>
-          <td colspan="6" class="loading-state">
-            Memuat dokumen...
-          </td>
-        </tr>
-      `;
-
-      if (empty) empty.style.display = "none";
-      if (table) table.style.display = "block";
-      if (footer) footer.style.display = "none";
-
-      if ($("#myEspecResultCount")) {
-        $("#myEspecResultCount").textContent = "Memuat dokumen...";
-      }
-
-      return;
-    }
 
     const filtered = getFilteredMyEspec();
 
@@ -435,7 +288,8 @@
         `Menampilkan ${filtered.length} dokumen`;
     }
 
-    if (!filtered.length) {
+    // EMPTY STATE
+    if (filtered.length === 0) {
       rows.innerHTML = "";
 
       if (table) table.style.display = "none";
@@ -444,45 +298,62 @@
       if (empty) {
         empty.style.display = "block";
 
-        const heading = empty.querySelector("h3");
-        const description = empty.querySelector("p");
+        const heading = $("h3", empty);
+        const description = $("p", empty);
 
-        if (heading) {
-          heading.textContent = documents.length
-            ? "Dokumen tidak ditemukan"
-            : "Belum ada dokumen E-Spec";
-        }
+        if (documents.length === 0) {
+          if (heading) {
+            heading.textContent =
+              "Belum ada dokumen E-Spec yang dibuat";
+          }
 
-        if (description) {
-          description.textContent = documents.length
-            ? "Coba ubah pencarian atau filter status."
-            : "Dokumen spesifikasi yang kamu buat akan ditampilkan di bagian ini.";
+          if (description) {
+            description.innerHTML =
+              'Klik tombol <strong>+ Buat Spesifikasi</strong> ' +
+              'untuk membuat pengajuan spesifikasi baru.';
+          }
+        } else {
+          if (heading) {
+            heading.textContent = "Dokumen tidak ditemukan";
+          }
+
+          if (description) {
+            description.textContent =
+              "Coba ubah kata pencarian atau pilih status lainnya.";
+          }
         }
       }
 
       return;
     }
 
+    // SHOW TABLE
     if (empty) empty.style.display = "none";
     if (table) table.style.display = "block";
     if (footer) footer.style.display = "flex";
 
-    rows.innerHTML = filtered.map((doc) => {
+    rows.innerHTML = filtered.map(doc => {
       const status = getApprovalStatus(doc);
+
+      const docNo =
+        doc.docNo ||
+        doc.doc_no ||
+        "Belum ada nomor";
+
+      const revision =
+        doc.revision || "—";
 
       return `
         <tr>
           <td>
             <span class="doc-number">
-              ${escapeHTML(doc.docNo || "Belum ada nomor")}
+              ${escapeHTML(docNo)}
             </span>
 
             <div class="secondary-text">
-              ${escapeHTML(doc.revision || "—")}
+              Ver. ${escapeHTML(revision)}
             </div>
           </td>
-
-          <td>${escapeHTML(doc.specType)}</td>
 
           <td>
             <span class="document-name">
@@ -490,9 +361,13 @@
             </span>
           </td>
 
-          <td>${escapeHTML(formatDate(doc.savedAt))}</td>
+          <td>
+            ${getApprovalBadge(status)}
+          </td>
 
-          <td>${getApprovalBadge(status)}</td>
+          <td>
+            ${getProgressContent(doc, status)}
+          </td>
 
           <td>
             <button
@@ -507,74 +382,61 @@
     }).join("");
   }
 
-  // =========================================
-  // DETAIL MY E-SPEC
-  // =========================================
+  // =====================================================
+  // DOCUMENT DETAIL
+  // =====================================================
 
   function showDocumentDetail(id) {
     const doc = documents.find(
-      (item) => String(item.id) === String(id)
+      item => String(item.id) === String(id)
     );
 
-    if (!doc) {
-      showToast("Dokumen tidak ditemukan.", "error");
-      return;
-    }
+    if (!doc) return;
+
+    const status = getApprovalStatus(doc);
 
     const detail = [
-      `Nomor Dokumen: ${doc.docNo || "—"}`,
-      `Jenis: ${doc.specType}`,
+      `Nomor Dokumen: ${doc.docNo || doc.doc_no || "—"}`,
+      `Versi: ${doc.revision || "—"}`,
       `Nama Spesifikasi: ${getDocumentName(doc)}`,
-      `Plant: ${doc.plant || "—"}`,
-      `Requestor: ${doc.requestor || "—"}`,
-      `Departemen: ${doc.department || "—"}`,
-      `Tanggal: ${formatDate(doc.savedAt)}`,
-      `Status: ${getApprovalStatus(doc)}`
+      `Jenis: ${doc.specType || "—"}`,
+      `Status: ${status}`,
+      `Tanggal: ${formatDate(doc.savedAt || doc.createdAt || doc.created_at)}`,
+      `Progress / Catatan: ${
+        doc.revisionNote ||
+        doc.revision_note ||
+        doc.approvalProgress ||
+        doc.approval_progress ||
+        "—"
+      }`
     ].join("\n");
 
     alert(detail);
   }
 
-  // =========================================
-  // RENDER ALL
-  // =========================================
-
-  function renderAll() {
-    renderStatistics();
-    renderMyEspec();
-  }
-
-  // =========================================
-  // EVENT LISTENERS
-  // =========================================
+  // =====================================================
+  // EVENTS
+  // =====================================================
 
   function initializeEvents() {
+    // SEARCH
     $("#myEspecSearch")?.addEventListener(
       "input",
       renderMyEspec
     );
 
-    $("#myEspecTypeFilter")?.addEventListener(
-      "change",
-      renderMyEspec
-    );
-
-    document.querySelectorAll("[data-my-status]").forEach((button) => {
+    // STATUS TABS
+    document.querySelectorAll("[data-my-status]").forEach(button => {
       button.addEventListener("click", () => {
         myEspecStatus = button.dataset.myStatus;
 
-        document.querySelectorAll("[data-my-status]").forEach((tab) => {
-          const active = tab === button;
-
-          tab.classList.toggle("active", active);
-          tab.setAttribute("aria-pressed", String(active));
-        });
-
+        renderStatusTabs();
         renderMyEspec();
       });
     });
 
-    $("#myEspecRows")?.addEventListener("click", (event) => {
+    // DETAIL BUTTON
+    $("#myEspecRows")?.addEventListener("click", event => {
       const button = event.target.closest("[data-espec-detail]");
 
       if (!button) return;
@@ -583,13 +445,14 @@
     });
   }
 
-  // =========================================
+  // =====================================================
   // INITIALIZATION
-  // =========================================
+  // =====================================================
 
   document.addEventListener("DOMContentLoaded", () => {
     initializeEvents();
-    loadDocuments();
+    renderStatusTabs();
+    renderMyEspec();
   });
 
 })();

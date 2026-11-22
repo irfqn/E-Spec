@@ -1313,3 +1313,416 @@
 .status-workspace-tabs {
   display: none !important;
 }
+
+
+/* =====================================================
+   MY E-SPEC — TABLE WORKSPACE
+   Tambahan styling khusus halaman approval.html
+   Tema utama E-Spec tetap dipertahankan
+===================================================== */
+
+/* PANEL */
+.my-espec-panel {
+  overflow: hidden;
+  border: 1px solid #e9ebf3;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(39, 42, 90, .045);
+}
+
+/* PANEL HEADER */
+.my-espec-panel > .panel-top {
+  padding: 20px 22px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.my-espec-panel .panel-heading h2 {
+  color: #202b45;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.my-espec-panel .panel-heading p {
+  color: #8791a5;
+  font-size: 10px;
+}
+
+/* TOOLBAR */
+.my-espec-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px 16px;
+  background: #fff;
+}
+
+/* STATUS TABS */
+.my-espec-panel .approval-status-filter {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.my-espec-panel .approval-status-tab {
+  min-height: 32px;
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: #f0f3f8;
+  color: #526079;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.my-espec-panel .approval-status-tab:hover {
+  border-color: #dce3ee;
+  background: #e9edf5;
+  color: #263750;
+}
+
+.my-espec-panel .approval-status-tab.active {
+  border-color: #dce3ee;
+  background: #26384f;
+  color: #fff;
+}
+
+/* WARNA KHUSUS TAB */
+.my-espec-panel .approval-status-tab.waiting-tab:not(.active) {
+  border-color: #f4dfaa;
+  background: #fffaf0;
+  color: #a87920;
+}
+
+.my-espec-panel .approval-status-tab.revision-tab:not(.active) {
+  border-color: #f4d4d8;
+  background: #fff5f5;
+  color: #c65b67;
+}
+
+.my-espec-panel .approval-status-tab.released-tab:not(.active) {
+  border-color: #ccebdd;
+  background: #f2fbf6;
+  color: #16845f;
+}
+
+/* SEARCH */
+.my-espec-search {
+  position: relative;
+  flex: 0 1 290px;
+  min-width: 190px;
+}
+
+.my-espec-search .search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #8795ad;
+  font-size: 17px;
+  pointer-events: none;
+}
+
+.my-espec-search input {
+  width: 100%;
+  height: 34px;
+  padding: 0 12px 0 33px;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #34425a;
+  font-family: inherit;
+  font-size: 11px;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.my-espec-search input::placeholder {
+  color: #9aa5b8;
+}
+
+.my-espec-search input:focus {
+  border-color: #aaa2ed;
+  box-shadow: 0 0 0 3px rgba(101, 88, 232, .08);
+}
+
+/* TABLE WRAPPER */
+.my-espec-panel .my-espec-table-wrap {
+  width: auto;
+  margin: 0 16px;
+  overflow-x: auto;
+}
+
+.my-espec-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+/* TABLE HEADER */
+.my-espec-table thead {
+  background: #f5f7fa;
+}
+
+.my-espec-table th {
+  padding: 13px 15px;
+  border: 0;
+  color: #64738b;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .45px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.my-espec-table th:first-child {
+  min-width: 170px;
+}
+
+.my-espec-table th:nth-child(2) {
+  min-width: 190px;
+}
+
+.my-espec-table th:nth-child(3) {
+  min-width: 120px;
+}
+
+.my-espec-table th:nth-child(4) {
+  min-width: 240px;
+}
+
+.my-espec-table th.action-column {
+  min-width: 75px;
+  text-align: center;
+}
+
+/* TABLE BODY */
+.my-espec-table td {
+  padding: 14px 15px;
+  border-bottom: 1px solid #edf0f5;
+  color: #46516b;
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+.my-espec-table tbody tr {
+  transition: background .2s ease;
+}
+
+.my-espec-table tbody tr:hover {
+  background: #fafbfe;
+}
+
+.my-espec-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.my-espec-table .document-name {
+  display: block;
+  color: #34425a;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* NOMOR DOKUMEN */
+.my-espec-table .doc-number {
+  color: #344e70;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.my-espec-table .secondary-text {
+  margin-top: 4px;
+  color: #929db0;
+  font-size: 9px;
+}
+
+/* STATUS BADGE */
+.my-espec-table .approval-status {
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.my-espec-table .approval-status.pending {
+  background: #fff5df;
+  color: #a87920;
+}
+
+.my-espec-table .approval-status.approved {
+  background: #e9f8ef;
+  color: #16845f;
+}
+
+.my-espec-table .approval-status.rejected {
+  background: #fff0f1;
+  color: #c64e5d;
+}
+
+.my-espec-table .approval-status.draft {
+  background: #eef1f5;
+  color: #68758a;
+}
+
+/* PROGRESS / CATATAN */
+.my-espec-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #526079;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.my-espec-progress small {
+  color: #929db0;
+  font-size: 9px;
+}
+
+.my-espec-progress.revision-note {
+  color: #c45460;
+}
+
+.my-espec-progress.completed-note {
+  color: #16845f;
+}
+
+/* ACTION */
+.my-espec-table .action-column,
+.my-espec-table td:last-child {
+  text-align: center;
+}
+
+.my-espec-table .table-action {
+  min-width: 58px;
+  padding: 7px 11px;
+  border: 1px solid #dce3ee;
+  border-radius: 7px;
+  background: #fff;
+  color: #465b78;
+  font-size: 9px;
+}
+
+.my-espec-table .table-action:hover {
+  border-color: #6558e8;
+  background: #f0eeff;
+  color: #6558e8;
+}
+
+/* EMPTY STATE */
+.my-espec-empty {
+  min-height: 215px;
+  padding: 35px 20px 45px;
+  text-align: center;
+}
+
+.my-espec-empty .empty-illustration {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f0f3f8;
+  color: #8b9bb2;
+  font-size: 17px;
+}
+
+.my-espec-empty h3 {
+  margin: 0 0 8px;
+  color: #34425a;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.my-espec-empty p {
+  max-width: 390px;
+  margin: 0 auto 15px;
+  color: #8b9bb2;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.my-espec-empty p strong {
+  color: #71829d;
+}
+
+.my-espec-empty .primary-btn {
+  display: none;
+}
+
+/* FOOTER */
+.my-espec-panel .my-espec-footer {
+  margin-top: 0;
+  padding: 13px 18px;
+  border-top: 1px solid #edf0f5;
+  color: #8791a5;
+  font-size: 10px;
+}
+
+/* LOADING */
+.my-espec-table .loading-state {
+  height: 100px;
+  color: #8791a5 !important;
+  text-align: center;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .my-espec-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .my-espec-panel .approval-status-filter {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .my-espec-search {
+    width: 100%;
+    max-width: none;
+    flex-basis: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .my-espec-panel > .panel-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .my-espec-toolbar {
+    padding: 12px;
+  }
+
+  .my-espec-panel .my-espec-table-wrap {
+    margin: 0 12px;
+  }
+
+  .my-espec-empty {
+    min-height: 190px;
+    padding: 30px 12px;
+  }
+
+  .my-espec-panel .my-espec-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

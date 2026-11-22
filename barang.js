@@ -1,4 +1,3 @@
-
 (() => {
   "use strict";
 
@@ -87,15 +86,15 @@
   }
 
   const DIMENSION_OPTIONS = ["L", "W", "H", "T", "ID", "OD", "DN"];
-  const DIMENSION_SYMBOLS = ["x", "~", "/", "±", "-"];
+  const DIMENSION_SYMBOLS = ["/", "x", "~", "-", "±"];
 
-const MECHANICAL_PARAMETERS = [
-  "Capacity",
-  "Pressure",
-  "Flowrate",
-  "Speed",
-  "Tolerance"
-];
+  const MECHANICAL_PARAMETERS = [
+    "Capacity",
+    "Pressure",
+    "Flowrate",
+    "Speed",
+    "Tolerance"
+  ];
 
   const MECHANICAL_SYMBOLS = ["x", "--", "~", "/", "±", "-"];
 
@@ -135,6 +134,859 @@ const MECHANICAL_PARAMETERS = [
   let categories = [];
   let departmentRequestId = 0;
   let materialGroupRequestId = 0;
+  let pendingMaterialCategoryValue = "";
+  let pendingMaterialGroupValue = "";
+
+  // =====================================================
+  // MATERIAL GROUP — OTHERS
+  // =====================================================
+
+  const materialGroupOtherInput = $("#materialGroupOther", questionnaire);
+
+  function updateMaterialGroupOther(clearValue = true) {
+    if (!materialGroupSelect || !materialGroupOtherInput) return;
+
+    const isOthers = materialGroupSelect.value === "Others";
+
+    materialGroupOtherInput.hidden = !isOthers;
+    materialGroupOtherInput.disabled = !isOthers;
+    materialGroupOtherInput.required = isOthers;
+
+    if (!isOthers && clearValue) {
+      materialGroupOtherInput.value = "";
+    }
+  }
+
+
+
+
+  // =====================================================
+  // MATERIAL GROUP MATRIX — FULL SPECIFICATION
+  //
+  // * = Mandatory
+  // O = Optional
+  // "" = Hidden
+  // =====================================================
+
+  const MATERIAL_GROUP_MATRIX = {
+    "BEARING": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "*",
+      variant: "*",
+      dimension: "*",
+      brand: "*",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "",
+      current: "",
+      power: "",
+      resistance: "",
+      frequency: "",
+      capacitance: "",
+      phase: "",
+      temperature: "",
+
+      material: "O",
+      capacity: "",
+      connectionType: "",
+      pressure: "",
+      flowrate: "",
+      speed: "",
+      tolerance: "",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    "ELECTRIC": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "*",
+      variant: "*",
+      dimension: "O",
+      brand: "*",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "*",
+      current: "*",
+      power: "*",
+      resistance: "O",
+      frequency: "O",
+      capacitance: "O",
+      phase: "O",
+      temperature: "O",
+
+      material: "",
+      capacity: "",
+      connectionType: "",
+      pressure: "",
+      flowrate: "",
+      speed: "",
+      tolerance: "",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    "PIPE": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "O",
+      variant: "*",
+      dimension: "*",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "",
+      current: "",
+      power: "",
+      resistance: "",
+      frequency: "",
+      capacitance: "",
+      phase: "",
+      temperature: "",
+
+      material: "*",
+      capacity: "",
+      connectionType: "O",
+      pressure: "O",
+      flowrate: "",
+      speed: "",
+      tolerance: "O",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    "EQUIPMENT": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "*",
+      variant: "*",
+      dimension: "*",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "",
+      current: "",
+      power: "",
+      resistance: "",
+      frequency: "",
+      capacitance: "",
+      phase: "",
+      temperature: "O",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "",
+      pressure: "",
+      flowrate: "",
+      speed: "",
+      tolerance: "O",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    "BARANG UM": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "*",
+      variant: "*",
+      dimension: "O",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "",
+      current: "",
+      power: "",
+      resistance: "",
+      frequency: "",
+      capacitance: "",
+      phase: "",
+      temperature: "",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "",
+      pressure: "",
+      flowrate: "",
+      speed: "",
+      tolerance: "O",
+
+      concentration: "",
+      viscosity: "",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    // =====================================================
+    // CAPEX — ASSET UMU
+    // =====================================================
+
+    "ASSET UMU": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "O",
+      variant: "O",
+      dimension: "O",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "O",
+      current: "O",
+      power: "O",
+      resistance: "O",
+      frequency: "O",
+      capacitance: "O",
+      phase: "O",
+      temperature: "O",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "O",
+      pressure: "O",
+      flowrate: "O",
+      speed: "O",
+      tolerance: "O",
+
+      concentration: "O",
+      viscosity: "O",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    // =====================================================
+    // CAPEX — ASSET TEK
+    // =====================================================
+
+    "ASSET TEK": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "O",
+      variant: "O",
+      dimension: "O",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "O",
+      current: "O",
+      power: "O",
+      resistance: "O",
+      frequency: "O",
+      capacitance: "O",
+      phase: "O",
+      temperature: "O",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "O",
+      pressure: "O",
+      flowrate: "O",
+      speed: "O",
+      tolerance: "O",
+
+      concentration: "O",
+      viscosity: "O",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    },
+
+    // =====================================================
+    // CAPEX — ASSET LAB
+    // =====================================================
+
+    "ASSET LAB": {
+      materialDescription: "*",
+      materialCode: "O",
+      partNumber: "O",
+      variant: "O",
+      dimension: "O",
+      brand: "O",
+      catalogue: "O",
+      uom: "*",
+      packSize: "O",
+
+      voltage: "O",
+      current: "O",
+      power: "O",
+      resistance: "O",
+      frequency: "O",
+      capacitance: "O",
+      phase: "O",
+      temperature: "O",
+
+      material: "O",
+      capacity: "O",
+      connectionType: "O",
+      pressure: "O",
+      flowrate: "O",
+      speed: "O",
+      tolerance: "O",
+
+      concentration: "O",
+      viscosity: "O",
+      technicalOthers: "O",
+
+      accessories: "O",
+      uniqueOthers: "O"
+    }
+  };
+
+
+  // =====================================================
+  // GENERAL SPECIFICATION FIELDS
+  // =====================================================
+
+  const generalMatrixFields = {
+    materialDescription: {
+      wrapper: $('[name="materialDescription"]', questionnaire)?.closest(".q-field"),
+      input: $('[name="materialDescription"]', questionnaire)
+    },
+
+    materialCode: {
+      wrapper: $('[name="materialCode"]', questionnaire)?.closest(".q-field"),
+      input: $('[name="materialCode"]', questionnaire)
+    },
+
+    partNumber: {
+      wrapper: $('[name="partNumber"]', questionnaire)?.closest(".q-field"),
+      input: $('[name="partNumber"]', questionnaire)
+    },
+
+    variant: {
+      wrapper: $('[name="variant"]', questionnaire)?.closest(".q-field"),
+      input: $('[name="variant"]', questionnaire)
+    },
+
+    dimension: {
+      wrapper: $(".dimension-field", questionnaire),
+      input: $("#dimensionFinal", questionnaire)
+    },
+
+    brand: {
+      wrapper: $('[name="brand"]', questionnaire)?.closest(".q-field"),
+      input: $('[name="brand"]', questionnaire)
+    },
+
+    catalogue: {
+      wrapper: $('[name="catalogue"]', questionnaire)?.closest(".q-field"),
+      input: $('[name="catalogue"]', questionnaire)
+    },
+
+    uom: {
+      wrapper: $(".uom-field", questionnaire),
+      input: $("#uomSelect", questionnaire)
+    },
+
+    packSize: {
+      wrapper: $(".pack-size-field", questionnaire),
+      input: $("#packSizeFinal", questionnaire)
+    }
+  };
+
+
+  // =====================================================
+  // TECHNICAL SPECIFICATION FIELDS
+  // =====================================================
+
+  const technicalMatrixFields = {
+
+    // ELECTRICAL
+    voltage: {
+      wrapper: $('[data-electric-row="Voltage"]', questionnaire)
+    },
+
+    current: {
+      wrapper: $('[data-electric-row="Current"]', questionnaire)
+    },
+
+    power: {
+      wrapper: $('[data-electric-row="Power"]', questionnaire)
+    },
+
+    resistance: {
+      wrapper: $('[data-electric-row="Resistance"]', questionnaire)
+    },
+
+    frequency: {
+      wrapper: $('[data-electric-row="Frequency"]', questionnaire)
+    },
+
+    capacitance: {
+      wrapper: $('[data-electric-row="Capacitance"]', questionnaire)
+    },
+
+    phase: {
+      wrapper: $('[data-electric-row="Phase"]', questionnaire)
+    },
+
+    temperature: {
+      wrapper: $('[data-electric-row="Temperature"]', questionnaire)
+    },
+
+    // MECHANICAL — MATERIAL
+    material: {
+      wrapper: $('[data-tech-label="Material"]', questionnaire)?.closest(".spec-field")
+    },
+
+    // MECHANICAL — CAPACITY
+    capacity: {
+      wrapper: $('[data-mechanical-row="Capacity"]', questionnaire)
+    },
+
+    // MECHANICAL — CONNECTION TYPE
+    connectionType: {
+      wrapper: $('[data-tech-label="Connection Type"]', questionnaire)?.closest(".spec-field")
+    },
+
+    pressure: {
+      wrapper: $('[data-mechanical-row="Pressure"]', questionnaire)
+    },
+
+    flowrate: {
+      wrapper: $('[data-mechanical-row="Flowrate"]', questionnaire)
+    },
+
+    speed: {
+      wrapper: $('[data-mechanical-row="Speed"]', questionnaire)
+    },
+
+    tolerance: {
+      wrapper: $('[data-mechanical-row="Tolerance"]', questionnaire)
+    },
+
+    // LIQUID
+    concentration: {
+      wrapper: $("#concentration", questionnaire)?.closest(".field")
+    },
+
+    viscosity: {
+      wrapper: $("#viscosity", questionnaire)?.closest(".field")
+    },
+
+    // TECHNICAL OTHERS
+    // Mencakup heading, tombol Add Custom Attribute,
+    // dan dynamicCustomTechnicalContainer.
+    technicalOthers: {
+      wrapper: $("#dynamicCustomTechnicalContainer", questionnaire)
+        ?.closest(".q-technical-group")
+    }
+  };
+
+
+  // =====================================================
+  // UNIQUE SPECIFICATION FIELDS
+  // =====================================================
+
+  const uniqueMatrixFields = {
+    accessories: {
+      wrapper: $(".unique-accessories-field", questionnaire)
+    },
+
+    // UNIQUE OTHERS
+    // Mencakup heading, tombol addUniqueBtn,
+    // Accessories, dan dynamicCustomUniqueContainer.
+    // Bagian Unique Specification selalu opsional.
+    uniqueOthers: {
+      wrapper: $(".unique-specification-section", questionnaire)
+    }
+  };
+
+// =====================================================
+// TECHNICAL SPECIFICATION — REQUIRED STAR
+// =====================================================
+
+function updateTechnicalRequiredStar() {
+  Object.entries(technicalMatrixFields).forEach(([key, field]) => {
+    const wrapper = field.wrapper;
+    if (!wrapper) return;
+
+    const status = getCurrentMatrixStatus(key);
+
+    let label = null;
+
+    // ELECTRICAL
+    if (
+      ["voltage", "current", "power", "resistance",
+       "frequency", "capacitance", "phase", "temperature"].includes(key)
+    ) {
+      label = wrapper.querySelector(".electric-parameter strong");
+    }
+
+    // MATERIAL & CONNECTION TYPE
+    else if (key === "material" || key === "connectionType") {
+      label = wrapper.querySelector("span");
+    }
+
+    // MECHANICAL
+    else if (
+      ["capacity", "pressure", "flowrate", "speed", "tolerance"].includes(key)
+    ) {
+      label = wrapper.querySelector(
+        ".mechanical-parameter-heading strong"
+      );
+    }
+
+    if (!label) return;
+
+    // Hapus tanda bintang lama
+    label.querySelectorAll(".matrix-required-star").forEach(star => {
+      star.remove();
+    });
+
+    // Tambahkan tanda bintang jika wajib
+    if (status === "*") {
+      const star = document.createElement("span");
+
+      star.className = "matrix-required-star";
+      star.textContent = "*";
+      star.setAttribute("aria-label", "Wajib diisi");
+
+      label.appendChild(star);
+    }
+  });
+}
+
+  // =====================================================
+  // COMBINE ALL MATRIX FIELDS
+  // =====================================================
+
+  const allMatrixFields = {
+    ...generalMatrixFields,
+    ...technicalMatrixFields,
+    ...uniqueMatrixFields
+  };
+
+
+  // =====================================================
+  // SAVE ORIGINAL FIELD STATES
+  // =====================================================
+
+  const matrixOriginalStates = new Map();
+
+  Object.entries(allMatrixFields).forEach(([key, field]) => {
+    if (!field.wrapper) return;
+
+    matrixOriginalStates.set(key, {
+      hidden: field.wrapper.hidden,
+      required: field.input?.required ?? false,
+      disabled: field.input?.disabled ?? false
+    });
+  });
+
+
+  // =====================================================
+  // SHOW HIDDEN ATTRIBUTE ELEMENTS
+  // =====================================================
+
+  const showHiddenToggle =
+    $(".show-hidden-toggle input[type='checkbox']", document) ||
+    $("#showHiddenAttribute", document);
+
+  const showHiddenCounter =
+    $(".show-hidden-info small", document);
+
+
+  // =====================================================
+  // GET CURRENT MATRIX STATUS
+  // =====================================================
+
+  function getCurrentMatrixStatus(fieldName) {
+    const group = materialGroupSelect?.value || "";
+
+    if (group === "Others") return "LEGACY";
+
+    return MATERIAL_GROUP_MATRIX[group]?.[fieldName] || "";
+  }
+
+
+  // =====================================================
+  // UPDATE SHOW HIDDEN COUNTER
+  // =====================================================
+
+  function updateShowHiddenCounter(hiddenCount = 0) {
+    if (!showHiddenCounter) return;
+
+    showHiddenCounter.textContent =
+      `${hiddenCount} atribut tersembunyi`;
+  }
+
+
+  // =====================================================
+  // RESTORE ORIGINAL MATRIX FIELD
+  // =====================================================
+
+  function restoreMatrixField(key) {
+    const field = allMatrixFields[key];
+    const original = matrixOriginalStates.get(key);
+
+    if (!field?.wrapper || !original) return;
+
+    field.wrapper.hidden = original.hidden;
+
+    if (field.input) {
+      field.input.required = original.required;
+      field.input.disabled = original.disabled;
+    }
+
+    field.wrapper.removeAttribute("data-matrix-status");
+    field.wrapper.removeAttribute("data-matrix-required");
+  }
+
+
+  // =====================================================
+  // UPDATE CARD VISIBILITY
+  // =====================================================
+
+  function updateTechnicalCardVisibility() {
+    const electricCard = $(".electric-spec-card", questionnaire);
+    const mechanicalCard = $(".mechanical-spec-card", questionnaire);
+    const liquidCard = $(".liquid-spec-card", questionnaire);
+
+    if (electricCard) {
+      const rows = $$("[data-electric-row]", electricCard);
+
+      electricCard.hidden =
+        rows.length > 0 && rows.every(row => row.hidden);
+    }
+
+    if (mechanicalCard) {
+      const fields = [
+        ...$$(".mechanical-basic-grid .spec-field", mechanicalCard),
+        ...$$("[data-mechanical-row]", mechanicalCard)
+      ];
+
+      mechanicalCard.hidden =
+        fields.length > 0 && fields.every(field => field.hidden);
+    }
+
+    if (liquidCard) {
+      const fields = [
+        $("#concentration", liquidCard)?.closest(".field"),
+        $("#viscosity", liquidCard)?.closest(".field")
+      ].filter(Boolean);
+
+      liquidCard.hidden =
+        fields.length > 0 && fields.every(field => field.hidden);
+    }
+  }
+
+// =====================================================
+// UPDATE GENERAL SPECIFICATION REQUIRED STAR
+// =====================================================
+
+function updateGeneralRequiredStar(key, field, status) {
+  if (!field?.wrapper) return;
+
+  let target = null;
+
+  if (key === "dimension") {
+    target = $(".dimension-title", field.wrapper);
+  } else if (key === "uom") {
+    target = $("label", field.wrapper);
+  } else if (key === "packSize") {
+    target = $(".pack-size-heading strong", field.wrapper);
+  } else {
+    target = field.wrapper;
+  }
+
+  if (!target) return;
+
+  // Jika sudah ada tanda bintang bawaan HTML,
+  // cukup atur tampil atau sembunyinya.
+  const originalStar = target.querySelector(".required-star");
+
+  if (originalStar) {
+    originalStar.hidden = status !== "*";
+    return;
+  }
+
+  // Cari pembungkus teks label yang sudah dibuat sebelumnya.
+  let labelText = target.querySelector(
+    ":scope > .matrix-label-text"
+  );
+
+  // Jika belum ada, bungkus teks label.
+  if (!labelText) {
+    const textNode = Array.from(target.childNodes).find(node =>
+      node.nodeType === Node.TEXT_NODE &&
+      node.textContent.trim() !== ""
+    );
+
+    if (!textNode) return;
+
+    labelText = document.createElement("span");
+    labelText.className = "matrix-label-text";
+
+    target.insertBefore(labelText, textNode);
+    labelText.appendChild(textNode);
+  }
+
+  // Hapus bintang dinamis sebelumnya.
+  labelText.querySelectorAll(".matrix-required-star")
+    .forEach(star => star.remove());
+
+  // Buat bintang baru hanya jika wajib.
+  if (status === "*") {
+    const star = document.createElement("span");
+
+    star.className = "matrix-required-star";
+    star.textContent = "*";
+
+    labelText.appendChild(star);
+  }
+}
+
+  // =====================================================
+  // UPDATE MATERIAL GROUP MATRIX
+  // =====================================================
+
+  function updateMaterialGroupMatrix() {
+    if (!materialGroupSelect) return;
+
+    const group = materialGroupSelect.value;
+
+    // Others atau belum memilih Material Group:
+    // Kembalikan seluruh field ke kondisi awal.
+if (!MATERIAL_GROUP_MATRIX[group]) {
+  Object.keys(allMatrixFields).forEach(restoreMatrixField);
+
+  updateTechnicalCardVisibility();
+  updateTechnicalRequiredStar();
+  updateShowHiddenCounter(0);
+
+  return;
+}
+
+    const rules = MATERIAL_GROUP_MATRIX[group];
+    const showHidden = Boolean(showHiddenToggle?.checked);
+
+    let hiddenCount = 0;
+
+    Object.entries(allMatrixFields).forEach(([key, field]) => {
+      if (!field.wrapper) return;
+
+      const status = rules[key] || "";
+
+      // Update tanda bintang General Specification.
+if (generalMatrixFields[key]) {
+  updateGeneralRequiredStar(key, field, status);
+}
+
+field.wrapper.dataset.matrixStatus = status;
+
+      if (status === "") {
+        hiddenCount++;
+
+        // Blank: hidden, kecuali toggle sedang aktif.
+        field.wrapper.hidden = !showHidden;
+
+        // Field yang muncul melalui toggle bersifat opsional.
+        field.wrapper.removeAttribute("data-matrix-required");
+
+        if (field.input) {
+          field.input.required = false;
+        }
+
+        // Jangan disable dan jangan hapus nilai.
+        return;
+      }
+
+      // * atau O: tampil.
+      field.wrapper.hidden = false;
+
+      if (status === "*") {
+        field.wrapper.dataset.matrixRequired = "true";
+      } else {
+        field.wrapper.removeAttribute("data-matrix-required");
+      }
+
+      // Required pada General Specification.
+      // Dimension dan Pack Size tetap memakai validasi khusus.
+      if (field.input) {
+        if (key === "dimension" || key === "packSize") {
+          field.input.required = false;
+        } else {
+          field.input.required = status === "*";
+        }
+      }
+    });
+
+    updateTechnicalCardVisibility();
+updateTechnicalRequiredStar();
+updateShowHiddenCounter(hiddenCount);
+  }
+
+
+  // =====================================================
+  // MATERIAL GROUP EVENTS
+  // =====================================================
+
+  materialGroupSelect?.addEventListener("change", () => {
+    updateMaterialGroupOther();
+    updateMaterialGroupMatrix();
+
+    saveDraft();
+    transferToPrint();
+  });
+
+  materialGroupOtherInput?.addEventListener("input", () => {
+    saveDraft();
+    transferToPrint();
+  });
+
+
+  // =====================================================
+  // SHOW HIDDEN ATTRIBUTE EVENT
+  // =====================================================
+
+  showHiddenToggle?.addEventListener("change", () => {
+    updateMaterialGroupMatrix();
+
+    saveDraft();
+    transferToPrint();
+  });
+
+
+
 
   // =====================================================
   // UTILITIES
@@ -230,8 +1082,11 @@ const MECHANICAL_PARAMETERS = [
       return;
     }
 
+    const target = String(value);
     const option = [...select.options].find((item) =>
-      item.value === String(value) || item.textContent === String(value)
+      item.value === target ||
+      item.dataset?.groupId === target ||
+      item.textContent === target
     );
 
     if (option) {
@@ -243,6 +1098,11 @@ const MECHANICAL_PARAMETERS = [
     legacyOption.value = String(value);
     legacyOption.textContent = label || String(value);
     legacyOption.dataset.legacy = "true";
+    if (/^[1-9]\d*$/.test(target)) {
+      legacyOption.dataset.groupId = target;
+    } else {
+      legacyOption.dataset.groupCode = target;
+    }
     select.appendChild(legacyOption);
     select.value = legacyOption.value;
   }
@@ -357,6 +1217,8 @@ const MECHANICAL_PARAMETERS = [
         materialGroupSelect,
         "-- Pilih Material Category terlebih dahulu --"
       );
+      updateMaterialGroupOther(false);
+      updateMaterialGroupMatrix();
       return;
     }
 
@@ -376,13 +1238,22 @@ const MECHANICAL_PARAMETERS = [
       );
 
       groups.forEach((group) => {
+        const code = group.sapgroupcode ? String(group.sapgroupcode) : "";
         const option = document.createElement("option");
-        option.value = String(group.id);
-        option.textContent = group.sapgroupcode || group.dashboardgroupname || group.description;
+        option.value = code || String(group.id);
+        option.textContent =
+          code ||
+          group.dashboardgroupname ||
+          group.description ||
+          String(group.id);
+        option.dataset.groupId = String(group.id);
+        option.dataset.groupCode = code;
         materialGroupSelect.appendChild(option);
       });
 
       setSelectedOption(materialGroupSelect, restoreValue);
+      updateMaterialGroupOther(false);
+      updateMaterialGroupMatrix();
     } catch (error) {
       if (requestId !== materialGroupRequestId) return;
 
@@ -720,9 +1591,6 @@ const MECHANICAL_PARAMETERS = [
       select.appendChild(placeholder);
 
       requiredDocumentOptions.forEach(optionValue => {
-
-        // Others selalu tersedia di setiap dropdown.
-        // Pilihan dokumen biasa tidak boleh dipilih berulang.
         if (optionValue !== "Others") {
           const alreadySelected = selectedValues.some(
             (value, selectedIndex) =>
@@ -743,7 +1611,6 @@ const MECHANICAL_PARAMETERS = [
       select.value = currentValue;
     });
 
-    // Tombol hapus disembunyikan jika hanya ada satu baris.
     rows.forEach(row => {
       const removeButton = $(".remove-required-document", row);
 
@@ -796,10 +1663,6 @@ const MECHANICAL_PARAMETERS = [
     otherContainer.className = "required-document-other-container";
     otherContainer.hidden = value !== "Others";
 
-    // LABEL OTHERS
-    const otherLabel = document.createElement("label");
-    otherLabel.textContent = "Isi keterangan lainnya";
-
     // INPUT OTHERS
     const otherInput = document.createElement("input");
     otherInput.type = "text";
@@ -807,7 +1670,7 @@ const MECHANICAL_PARAMETERS = [
     otherInput.placeholder = "Masukkan keterangan lainnya...";
     otherInput.value = otherValue;
 
-    otherContainer.append(otherLabel, otherInput);
+    otherContainer.appendChild(otherInput);
 
     // TOMBOL HAPUS
     const removeButton = document.createElement("button");
@@ -824,7 +1687,6 @@ const MECHANICAL_PARAMETERS = [
 
     requiredDocumentsContainer.appendChild(row);
 
-    // EVENT DROPDOWN
     select.addEventListener("change", () => {
       const isOthers = select.value === "Others";
 
@@ -838,10 +1700,8 @@ const MECHANICAL_PARAMETERS = [
       saveDraft();
     });
 
-    // EVENT INPUT OTHERS
     otherInput.addEventListener("input", saveDraft);
 
-    // EVENT HAPUS
     removeButton.addEventListener("click", () => {
       row.remove();
 
@@ -999,52 +1859,36 @@ const MECHANICAL_PARAMETERS = [
   // =====================================================
 
   function initializeMechanicalUomOptions() {
-    const mainUom = $('select[name="uom"]', questionnaire);
+    const uomOptions = {
+      Capacity: ["L", "ML", "M3", "Others"],
+      Pressure: ["Bar", "PA", "PSI", "Others"],
+      Flowrate: ["M3H", "CFM", "KGS", "LMI", "LPH", "Others"],
+      Speed: ["RPM", "RPS", "Others"],
+      Tolerance: ["µM", "MM", "CM", "%", "Others"]
+    };
 
-    if (!mainUom) {
-      console.warn("Dropdown UoM utama tidak ditemukan.");
-      return;
-    }
+    document.querySelectorAll("[data-mechanical-row]").forEach(row => {
+      const parameter = row.dataset.mechanicalRow;
+      const options = uomOptions[parameter];
 
-    const sourceOptions = $$("option", mainUom)
-      .filter(option => option.value.trim() !== "")
-      .map(option => ({
-        value: option.value,
-        text: option.textContent.trim()
-      }));
+      if (!options) return;
 
-    $$('[data-mechanical-unit]', questionnaire).forEach(select => {
-      const currentValue = select.value;
+      row.querySelectorAll("select[data-mechanical-unit]").forEach(select => {
+        const currentValue = select.value;
 
-      select.innerHTML = "";
+        select.innerHTML = `
+          <option value="">-- Pilih UoM --</option>
+        `;
 
-      const placeholder = document.createElement("option");
-      placeholder.value = "";
-      placeholder.textContent = "-- Pilih UoM --";
-      select.appendChild(placeholder);
+        options.forEach(value => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
 
-      sourceOptions.forEach(item => {
-        if (item.value === "Others") return;
-
-        const option = document.createElement("option");
-        option.value = item.value;
-        option.textContent = item.text;
-        select.appendChild(option);
+        select.value = options.includes(currentValue) ? currentValue : "";
       });
-
-      const othersOption = document.createElement("option");
-      othersOption.value = "Others";
-      othersOption.textContent = "Others";
-      select.appendChild(othersOption);
-
-      if (
-        currentValue &&
-        [...select.options].some(option => option.value === currentValue)
-      ) {
-        select.value = currentValue;
-      } else {
-        select.value = "";
-      }
     });
   }
 
@@ -1405,6 +2249,7 @@ const MECHANICAL_PARAMETERS = [
   function getFormData() {
     updateReason();
     updateCategory();
+    updateMaterialGroupMatrix();
     updateDimension();
     updatePackSize();
     updateAllElectricalOthers();
@@ -1460,10 +2305,26 @@ const MECHANICAL_PARAMETERS = [
       questionnaire
     ).map(field => field.value);
 
+    const selectedGroupOption =
+      materialGroupSelect?.selectedOptions?.[0] || null;
+    const selectedGroupValue = selectedGroupOption?.value || "";
+    const selectedGroupId = selectedGroupOption?.dataset?.groupId || "";
+    const selectedGroupCode =
+      selectedGroupOption?.dataset?.groupCode ||
+      (/^[1-9]\d*$/.test(selectedGroupValue) ? "" : selectedGroupValue);
+    const selectedGroupValueIsNumeric = /^[1-9]\d*$/.test(selectedGroupValue);
+
+    data.materialGroup =
+      selectedGroupId ||
+      (selectedGroupValueIsNumeric ? selectedGroupValue : "");
+    data.materialGroupCode = selectedGroupCode;
+
     data.electricalAttributes = electricalAttributes;
     data.technicalAttributes = technicalAttributes;
     data.mechanicalAttributes = mechanicalAttributes;
     data.uniqueAttributes = uniqueAttributes;
+
+    // Tetap simpan Dimension meskipun field sedang disembunyikan.
     data.dimensionItems = collectDimensionItems();
     data.dimension = formatDimensionItems(data.dimensionItems);
     const dimensionField = $("#dimensionFinal", questionnaire);
@@ -1488,7 +2349,7 @@ const MECHANICAL_PARAMETERS = [
     add("PLANT", formData.plant);
     add("REQUESTOR", formData.requestor);
     add("DEPARTMENT", formData.department);
-    add("MATERIAL_GROUP", formData.materialGroup);
+    add("MATERIAL_GROUP", formData.materialGroupCode || formData.materialGroup);
     add("MATERIAL_CATEGORY", formData.materialCategory?.[0]);
     add("REASON_TO_PROCURE", formData.reason || formData.reasonChoice);
     add("LOCATION", formData.location);
@@ -1597,90 +2458,6 @@ const MECHANICAL_PARAMETERS = [
   }
 
   // =====================================================
-  // DYNAMIC TECHNICAL ROWS
-  // =====================================================
-
-  function createCustomTechnicalRow(item = {}) {
-    if (!technicalContainer) return;
-
-    const row = document.createElement("div");
-    row.className = "custom-tech-row q-grid";
-
-    row.innerHTML = `
-      <label class="q-field">
-        Attribute Name
-        <input
-          type="text"
-          data-custom-tech-name
-          placeholder="Enter attribute name"
-        >
-      </label>
-
-      <label class="q-field">
-        Attribute Detail
-        <input
-          type="text"
-          data-custom-tech-value
-          placeholder="Enter attribute detail"
-        >
-      </label>
-
-      <button type="button" class="q-remove-button">
-        Hapus
-      </button>
-    `;
-
-    $("[data-custom-tech-name]", row).value =
-      item.label || item.name || "";
-
-    $("[data-custom-tech-value]", row).value =
-      item.value || item.detail || "";
-
-    technicalContainer.appendChild(row);
-  }
-
-  // =====================================================
-  // DYNAMIC UNIQUE ROWS
-  // =====================================================
-
-  function createCustomUniqueRow(item = {}) {
-    if (!uniqueContainer) return;
-
-    const index = Date.now() + Math.floor(Math.random() * 1000);
-
-    const row = document.createElement("div");
-    row.className = "q-grid custom-unique-row";
-
-    const nameLabel = document.createElement("label");
-    nameLabel.className = "q-field";
-    nameLabel.textContent = "Attribute Name";
-
-    const nameInput = document.createElement("input");
-    nameInput.type = "text";
-    nameInput.name = `customUniqueName${index}`;
-    nameInput.value = item.name || "";
-    nameLabel.appendChild(nameInput);
-
-    const detailLabel = document.createElement("label");
-    detailLabel.className = "q-field";
-    detailLabel.textContent = "Atribute Detail";
-
-    const detailInput = document.createElement("input");
-    detailInput.type = "text";
-    detailInput.name = `customUniqueDetail${index}`;
-    detailInput.value = item.detail || "";
-    detailLabel.appendChild(detailInput);
-
-    const removeButton = document.createElement("button");
-    removeButton.type = "button";
-    removeButton.className = "q-remove-button";
-    removeButton.textContent = "Hapus";
-
-    row.append(nameLabel, detailLabel, removeButton);
-    uniqueContainer.appendChild(row);
-  }
-
-  // =====================================================
   // RESTORE FIELD VALUE
   // =====================================================
 
@@ -1765,96 +2542,16 @@ const MECHANICAL_PARAMETERS = [
     });
   }
 
-// =====================================================
-// RESTORE MECHANICAL ATTRIBUTES
-// =====================================================
+  // =====================================================
+  // RESTORE MECHANICAL ATTRIBUTES
+  // =====================================================
 
-function restoreMechanicalAttributes(data) {
-  const savedAttributes = Array.isArray(data) ? data : [];
+  function restoreMechanicalAttributes(data) {
+    const savedAttributes = Array.isArray(data) ? data : [];
 
-  savedAttributes.forEach(item => {
-    if (!item?.label) return;
+    savedAttributes.forEach(item => {
+      if (!item?.label) return;
 
-    const targetLabel =
-      item.label === "Speed & Tolerance"
-        ? "Speed"
-        : item.label;
-
-    const row = $$("[data-mechanical-row]", questionnaire)
-      .find(element =>
-        element.dataset.mechanicalRow === targetLabel
-      );
-
-    if (!row) return;
-
-    const value1 = $('[data-mechanical-value="1"]', row);
-    const value2 = $('[data-mechanical-value="2"]', row);
-
-    const unitSelect1 = $('[data-mechanical-unit="1"]', row);
-    const unitSelect2 = $('[data-mechanical-unit="2"]', row);
-
-    const unitOther1 = $('[data-mechanical-unit-other="1"]', row);
-    const unitOther2 = $('[data-mechanical-unit-other="2"]', row);
-
-    const symbolSelect = $("[data-mechanical-symbol]", row);
-    const symbolOther = $("[data-mechanical-symbol-other]", row);
-
-    if (value1) value1.value = item.data1 || "";
-    if (value2) value2.value = item.data2 || "";
-
-    if (unitSelect1) {
-      if (item.unit1Selection) {
-        unitSelect1.value = item.unit1Selection;
-      } else if (item.unit1) {
-        unitSelect1.value = item.unit1;
-      }
-    }
-
-    if (unitOther1) unitOther1.value = item.unit1Other || "";
-
-    if (unitSelect2) {
-      if (item.unit2Selection) {
-        unitSelect2.value = item.unit2Selection;
-      } else if (item.unit2) {
-        unitSelect2.value = item.unit2;
-      }
-    }
-
-    if (unitOther2) unitOther2.value = item.unit2Other || "";
-
-    if (symbolSelect) {
-      if (item.symbolSelection) {
-        symbolSelect.value = item.symbolSelection;
-      } else if (item.symbol) {
-        symbolSelect.value = MECHANICAL_SYMBOLS.includes(item.symbol)
-          ? item.symbol
-          : "Others";
-      }
-    }
-
-    if (symbolOther) symbolOther.value = item.symbolOther || "";
-
-    updateMechanicalOthers(row);
-  });
-}
-
-
-// =====================================================
-// RESTORE OLD MECHANICAL DATA
-// =====================================================
-
-function restoreOldMechanicalAttributes(data) {
-  const attributes = data.technicalAttributes || [];
-
-  attributes
-    .filter(item =>
-      item.category === "Mechanical" &&
-      (
-        MECHANICAL_PARAMETERS.includes(item.label) ||
-        item.label === "Speed & Tolerance"
-      )
-    )
-    .forEach(item => {
       const targetLabel =
         item.label === "Speed & Tolerance"
           ? "Speed"
@@ -1868,12 +2565,91 @@ function restoreOldMechanicalAttributes(data) {
       if (!row) return;
 
       const value1 = $('[data-mechanical-value="1"]', row);
+      const value2 = $('[data-mechanical-value="2"]', row);
 
-      if (value1 && !value1.value) {
-        value1.value = item.value || "";
+      const unitSelect1 = $('[data-mechanical-unit="1"]', row);
+      const unitSelect2 = $('[data-mechanical-unit="2"]', row);
+
+      const unitOther1 = $('[data-mechanical-unit-other="1"]', row);
+      const unitOther2 = $('[data-mechanical-unit-other="2"]', row);
+
+      const symbolSelect = $("[data-mechanical-symbol]", row);
+      const symbolOther = $("[data-mechanical-symbol-other]", row);
+
+      if (value1) value1.value = item.data1 || "";
+      if (value2) value2.value = item.data2 || "";
+
+      if (unitSelect1) {
+        if (item.unit1Selection) {
+          unitSelect1.value = item.unit1Selection;
+        } else if (item.unit1) {
+          unitSelect1.value = item.unit1;
+        }
       }
+
+      if (unitOther1) unitOther1.value = item.unit1Other || "";
+
+      if (unitSelect2) {
+        if (item.unit2Selection) {
+          unitSelect2.value = item.unit2Selection;
+        } else if (item.unit2) {
+          unitSelect2.value = item.unit2;
+        }
+      }
+
+      if (unitOther2) unitOther2.value = item.unit2Other || "";
+
+      if (symbolSelect) {
+        if (item.symbolSelection) {
+          symbolSelect.value = item.symbolSelection;
+        } else if (item.symbol) {
+          symbolSelect.value = MECHANICAL_SYMBOLS.includes(item.symbol)
+            ? item.symbol
+            : "Others";
+        }
+      }
+
+      if (symbolOther) symbolOther.value = item.symbolOther || "";
+
+      updateMechanicalOthers(row);
     });
-}
+  }
+
+  // =====================================================
+  // RESTORE OLD MECHANICAL DATA
+  // =====================================================
+
+  function restoreOldMechanicalAttributes(data) {
+    const attributes = data.technicalAttributes || [];
+
+    attributes
+      .filter(item =>
+        item.category === "Mechanical" &&
+        (
+          MECHANICAL_PARAMETERS.includes(item.label) ||
+          item.label === "Speed & Tolerance"
+        )
+      )
+      .forEach(item => {
+        const targetLabel =
+          item.label === "Speed & Tolerance"
+            ? "Speed"
+            : item.label;
+
+        const row = $$("[data-mechanical-row]", questionnaire)
+          .find(element =>
+            element.dataset.mechanicalRow === targetLabel
+          );
+
+        if (!row) return;
+
+        const value1 = $('[data-mechanical-value="1"]', row);
+
+        if (value1 && !value1.value) {
+          value1.value = item.value || "";
+        }
+      });
+  }
 
   // =====================================================
   // RESTORE DYNAMIC ATTRIBUTES
@@ -1898,6 +2674,17 @@ function restoreOldMechanicalAttributes(data) {
 
   function restoreForm(data) {
     if (!data || typeof data !== "object") return;
+
+    const rawCategory = Array.isArray(data.materialCategory)
+      ? data.materialCategory[0]
+      : data.materialCategory;
+
+    pendingMaterialCategoryValue = String(
+      rawCategory || data.category || ""
+    ).trim();
+    pendingMaterialGroupValue = String(
+      data.materialGroupCode || data.materialGroup || ""
+    ).trim();
 
     restoreDynamicAttributes(data);
     restoreRequiredDocuments(data);
@@ -1961,6 +2748,8 @@ function restoreOldMechanicalAttributes(data) {
     }
 
     updateReason();
+    updateMaterialGroupOther(false);
+    updateMaterialGroupMatrix();
     updateUomOther();
     updateElectricalOthersInAllRows();
     updateCategory();
@@ -2081,8 +2870,10 @@ function restoreOldMechanicalAttributes(data) {
 
       const savedPlant = plantSelect?.value || "";
       const savedDepartment = deptSelect?.value || "";
-      const savedCategory = getSelectedCategories()[0] || "";
-      const savedGroup = materialGroupSelect?.value || "";
+      const savedCategory =
+        pendingMaterialCategoryValue || getSelectedCategories()[0] || "";
+      const savedGroup =
+        pendingMaterialGroupValue || materialGroupSelect?.value || "";
       const savedReason = reasonChoice?.value || "";
 
       if (plantSelect) {
@@ -2151,6 +2942,8 @@ function restoreOldMechanicalAttributes(data) {
 
       const selectedCategory = getSelectedCategories()[0];
       await loadMaterialGroups(selectedCategory, savedGroup);
+      pendingMaterialCategoryValue = "";
+      pendingMaterialGroupValue = "";
 
       normalizeMaterialCategory();
       updateReason();
@@ -2207,10 +3000,24 @@ function restoreOldMechanicalAttributes(data) {
   function validateForm() {
     updateReason();
     updateCategory();
+    updateMaterialGroupOther();
+    updateMaterialGroupMatrix();
 
     syncDimensionField();
 
     if (!questionnaire.reportValidity()) return false;
+
+    // VALIDASI DIMENSION
+    if (
+      getCurrentMatrixStatus("dimension") === "*" &&
+      collectDimensionItems().length === 0
+    ) {
+      alert("Dimension wajib diisi untuk Material Group ini.");
+
+      $(".dimension-type", dimensionContainer)?.focus();
+
+      return false;
+    }
 
     const categories = getSelectedCategories();
 
@@ -2237,9 +3044,16 @@ function restoreOldMechanicalAttributes(data) {
       return false;
     }
 
-    const selectedGroup = materialGroupSelect?.selectedOptions[0]?.textContent
-      .trim();
-    const requiredFields = MATERIAL_GROUP_REQUIRED_FIELDS[selectedGroup] || [];
+    const selectedGroup = (
+      materialGroupSelect?.value ||
+      materialGroupSelect?.selectedOptions[0]?.textContent ||
+      ""
+    ).trim();
+    const requiredFields =
+      MATERIAL_GROUP_REQUIRED_FIELDS[selectedGroup] ||
+      MATERIAL_GROUP_REQUIRED_FIELDS[materialGroupSelect?.selectedOptions[0]?.dataset?.groupCode] ||
+      MATERIAL_GROUP_REQUIRED_FIELDS[materialGroupSelect?.selectedOptions[0]?.textContent?.trim()] ||
+      [];
 
     for (const field of requiredFields) {
       const missing = getMissingRequiredField(field);
@@ -2378,6 +3192,25 @@ function restoreOldMechanicalAttributes(data) {
       target.value = value ?? "";
     });
 
+    // MATERIAL GROUP — OTHERS KE PDF
+    const materialGroupPrint = $(
+      '[name="materialGroup"]',
+      printForm
+    );
+
+    if (materialGroupPrint) {
+      const materialGroupLabel =
+        data.materialGroupCode ||
+        materialGroupSelect?.selectedOptions?.[0]?.textContent?.trim() ||
+        data.materialGroup ||
+        "";
+
+      materialGroupPrint.value =
+        data.materialGroup === "Others"
+          ? (data.materialGroupOther || "Others")
+          : materialGroupLabel;
+    }
+
     const categoryField = $(
       '[name="materialCategory"]',
       printForm
@@ -2454,14 +3287,98 @@ function restoreOldMechanicalAttributes(data) {
     saveDraft();
   });
 
+
+  // =====================================================
+  // CREATE CUSTOM TECHNICAL ATTRIBUTE
+  // =====================================================
+
+  function createCustomTechnicalRow(item = {}) {
+    if (!technicalContainer) return;
+
+    const row = document.createElement("div");
+    row.className = "custom-tech-row q-grid";
+
+    // ATTRIBUTE NAME
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = "customTechnicalName[]";
+    nameInput.dataset.customTechName = "";
+    nameInput.placeholder = "Masukkan nama atribut";
+    nameInput.value = item.label || "";
+
+    // ATTRIBUTE VALUE
+    const valueInput = document.createElement("input");
+    valueInput.type = "text";
+    valueInput.name = "customTechnicalValue[]";
+    valueInput.dataset.customTechValue = "";
+    valueInput.placeholder = "Masukkan nilai atribut";
+    valueInput.value = item.value || "";
+
+    // REMOVE BUTTON
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "q-remove-button";
+    removeButton.textContent = "×";
+    removeButton.title = "Hapus atribut";
+
+    row.append(
+      nameInput,
+      valueInput,
+      removeButton
+    );
+
+    technicalContainer.appendChild(row);
+  }
+
+
+  // =====================================================
+  // CREATE CUSTOM UNIQUE ATTRIBUTE
+  // =====================================================
+
+  function createCustomUniqueRow(item = {}) {
+    if (!uniqueContainer) return;
+
+    const row = document.createElement("div");
+    row.className = "custom-unique-row q-grid";
+
+    // ATTRIBUTE NAME
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = "customUniqueName[]";
+    nameInput.placeholder = "Masukkan nama atribut";
+    nameInput.value = item.name || "";
+
+    // ATTRIBUTE DETAIL
+    const detailInput = document.createElement("input");
+    detailInput.type = "text";
+    detailInput.name = "customUniqueDetail[]";
+    detailInput.placeholder = "Masukkan detail atribut";
+    detailInput.value = item.detail || "";
+
+    // REMOVE BUTTON
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "q-remove-button";
+    removeButton.textContent = "×";
+    removeButton.title = "Hapus atribut";
+
+    row.append(
+      nameInput,
+      detailInput,
+      removeButton
+    );
+
+    uniqueContainer.appendChild(row);
+  }
+
   // =====================================================
   // BUTTON EVENTS — TECHNICAL & UNIQUE
   // =====================================================
 
-  $("#addTechnicalBtn")?.addEventListener("click", () => {
-    createCustomTechnicalRow();
-    saveDraft();
-  });
+$("#addTechnicalBtn")?.addEventListener("click", () => {
+  createCustomTechnicalRow();
+  saveDraft();
+});
 
   $("#addUniqueBtn")?.addEventListener("click", () => {
     createCustomUniqueRow();
@@ -2564,6 +3481,9 @@ function restoreOldMechanicalAttributes(data) {
     if (!confirmed) return;
 
     questionnaire.reset();
+
+    updateMaterialGroupOther();
+    updateMaterialGroupMatrix();
 
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(OLD_STORAGE_KEY);
@@ -2783,6 +3703,10 @@ function restoreOldMechanicalAttributes(data) {
     }
 
     normalizeMaterialCategory();
+
+    updateReason();
+    updateMaterialGroupOther(false);
+    updateMaterialGroupMatrix();
     updateUomOther();
     updateAllElectricalOthers();
     updateCategory();
