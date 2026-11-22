@@ -4967,21 +4967,3 @@ fieldset.q-field {
   margin-left: 4px;
 }
 
-.q-technical-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
-}
-
-.q-technical-title-row h3 {
-  margin: 0;
-}
-
-@media (max-width: 600px) {
-  .q-technical-title-row {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
