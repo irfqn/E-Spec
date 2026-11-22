@@ -66,7 +66,7 @@
   }
 
   const DIMENSION_OPTIONS = ["L", "W", "H", "T", "ID", "OD", "DN"];
-  const DIMENSION_SYMBOLS = ["x", "~", "/", "±", "-"];
+  const DIMENSION_SYMBOLS = ["/", "x", "~", "-", "±"];
 
   const MECHANICAL_PARAMETERS = [
     "Capacity",
