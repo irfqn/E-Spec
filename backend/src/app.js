@@ -8,6 +8,7 @@ const reasonToProcureRoutes = require("./routes/reason-to-procure.routes");
 const specificationRoutes = require("./routes/specification.routes");
 const specificationTypeRoutes = require("./routes/specification-type.routes");
 const authRoutes = require("./routes/auth.routes");
+const approvalRoutes = require("./routes/approval.routes");
 
 // Import routes
 const healthRoutes = require("./routes/health.routes");
@@ -34,6 +35,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/approvals", approvalRoutes);
 app.use("/api/plants", plantRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/material-groups", materialGroupRoutes);

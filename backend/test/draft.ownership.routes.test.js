@@ -8,6 +8,7 @@ const errorMiddleware = require("../src/middlewares/error.middleware");
 const routesPath = require.resolve("../src/routes/specification.routes");
 const controllerPath = require.resolve("../src/controllers/specification.controller");
 const servicePath = require.resolve("../src/services/specification.service");
+const submissionServicePath = require.resolve("../src/services/specification-submission.service");
 
 const baseFormData = {
   plant: "10",
@@ -58,12 +59,14 @@ const loadRoutes = (repositoryMock) => {
 
   Module._load = (request, parent, isMain) => {
     if (request === "../repositories/specification.repository") return repositoryMock;
+    if (request === "../repositories/specification-submission.repository") return repositoryMock;
     return originalLoad(request, parent, isMain);
   };
 
   delete require.cache[routesPath];
   delete require.cache[controllerPath];
   delete require.cache[servicePath];
+  delete require.cache[submissionServicePath];
 
   try {
     return require(routesPath);
@@ -72,6 +75,7 @@ const loadRoutes = (repositoryMock) => {
     delete require.cache[routesPath];
     delete require.cache[controllerPath];
     delete require.cache[servicePath];
+    delete require.cache[submissionServicePath];
   }
 };
 
@@ -109,6 +113,15 @@ const createRepositoryMock = (overrides = {}) => {
     updateDraft: async (id, payload, actor) => {
       calls.push({ type: "updateDraft", id, payload, actor });
       return { id, specification_type_id: 1, status: "Draft" };
+    },
+    submit: async (input) => {
+      calls.push({ type: "submit", input });
+      return {
+        specificationId: input.specificationId,
+        status: "In Approval",
+        cycle: { id: 70, cycleNo: input.resubmission ? 2 : 1, status: "Active" },
+        approvalSteps: [],
+      };
     },
   };
 };
@@ -339,6 +352,77 @@ test("PUT preserves the non-Draft conflict response", async () => {
       });
 
       assert.equal(response.status, 409);
+    });
+  });
+});
+
+test("PUT allows the exact owner to edit Revision Required", async () => {
+  await withEnvironment(enabledEnvironment, async () => {
+    const repository = createRepositoryMock({
+      existing: { status: "Revision Required" },
+    });
+    await withServer(repository, async (server) => {
+      const response = await request(server, {
+        method: "PUT",
+        path: "/api/specifications/60",
+        headers: requestorHeaders,
+        body: draftPayload(),
+      });
+
+      assert.equal(response.status, 200);
+      assert.equal(repository.calls.some((call) => call.type === "updateDraft"), true);
+    });
+  });
+});
+
+test("submission endpoints require Requestor identity and pass only req.user to the service", async () => {
+  await withEnvironment(enabledEnvironment, async () => {
+    const repository = createRepositoryMock();
+    await withServer(repository, async (server) => {
+      const unauthenticated = await request(server, {
+        method: "POST",
+        path: "/api/specifications/60/submit",
+        body: { comment: "Submit" },
+      });
+      const manager = await request(server, {
+        method: "POST",
+        path: "/api/specifications/60/submit",
+        headers: managerHeaders,
+        body: { comment: "Submit" },
+      });
+      const response = await request(server, {
+        method: "POST",
+        path: "/api/specifications/60/submit",
+        headers: requestorHeaders,
+        body: { comment: "Submit", userId: "FORGED", materialGroup: "FORGED" },
+      });
+
+      assert.equal(unauthenticated.status, 401);
+      assert.equal(manager.status, 403);
+      assert.equal(response.status, 200);
+      const submitted = repository.calls.find((call) => call.type === "submit");
+      assert.equal(submitted.input.actor.userId, "DEV-REQ-001");
+      assert.equal(submitted.input.comment, "Submit");
+      assert.equal(submitted.input.resubmission, false);
+    });
+  });
+});
+
+test("resubmission endpoint uses the protected Requestor workflow", async () => {
+  await withEnvironment(enabledEnvironment, async () => {
+    const repository = createRepositoryMock();
+    await withServer(repository, async (server) => {
+      const response = await request(server, {
+        method: "POST",
+        path: "/api/specifications/60/resubmit",
+        headers: requestorHeaders,
+        body: { comment: "Revisions completed" },
+      });
+
+      assert.equal(response.status, 200);
+      const submitted = repository.calls.find((call) => call.type === "submit");
+      assert.equal(submitted.input.resubmission, true);
+      assert.equal(response.body.data.cycle.cycleNo, 2);
     });
   });
 });

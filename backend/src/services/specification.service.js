@@ -152,7 +152,7 @@ const updateSpecificationDraft = async (id, payload, actor) => {
     throw createHttpError("Spesifikasi tidak ditemukan.", 404);
   }
 
-  if (existing.status !== "Draft") {
+  if (!["Draft", "Revision Required"].includes(existing.status)) {
     throw createHttpError("Spesifikasi tidak lagi dapat diubah.", 409);
   }
 

@@ -236,6 +236,22 @@ test("updateDraft preserves the non-Draft conflict behavior", async () => {
   );
 });
 
+test("updateDraft allows the exact owner to edit Revision Required", async () => {
+  const { repository, calls } = loadRepository({
+    id: 60,
+    specificationtypeid: 1,
+    status: "Revision Required",
+    createdbyuserid: "DEV-REQ-001",
+  });
+
+  await repository.updateDraft(60, createPayload(), {
+    userId: "DEV-REQ-001",
+    displayName: "Development Requestor",
+  });
+
+  assert.equal(calls.some(({ sql }) => /UPDATE specifications/.test(sql)), true);
+});
+
 test("updateDraft fails closed without an actor identity", async () => {
   const { repository, wasConnected } = loadRepository({
     id: 60,
@@ -351,6 +367,29 @@ test("service rejects a legacy draft without a creator identity", async () => {
     }),
     { statusCode: 403 }
   );
+});
+
+test("service allows the exact owner to edit Revision Required", async () => {
+  let updateCalled = false;
+  const service = loadService({
+    findEditableById: async () => ({
+      id: 60,
+      specificationtypeid: 1,
+      status: "Revision Required",
+      createdbyuserid: "DEV-REQ-001",
+    }),
+    updateDraft: async () => {
+      updateCalled = true;
+      return { id: 60, status: "Revision Required" };
+    },
+  });
+
+  await service.updateSpecificationDraft(60, createPayload(), {
+    userId: "DEV-REQ-001",
+    displayName: "Development Requestor",
+  });
+
+  assert.equal(updateCalled, true);
 });
 
 test("service ignores client-supplied creator and updater fields", async () => {

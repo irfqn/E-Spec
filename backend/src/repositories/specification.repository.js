@@ -327,7 +327,7 @@ const updateDraft = async (id, payload, actor) => {
       throw error;
     }
 
-    if (current.status !== "Draft") {
+    if (!["Draft", "Revision Required"].includes(current.status)) {
       const error = new Error("Spesifikasi tidak lagi dapat diubah.");
       error.statusCode = 409;
       throw error;
