@@ -1,19 +1,66 @@
 const pool = require("../config/database");
+const {
+  createValidationError,
+  validateBarang,
+  validateJasa,
+} = require("../utils/specification-draft.validation");
 
-const createValidationError = (message) => {
-  const error = new Error(message);
-  error.statusCode = 422;
-  return error;
+const isPositiveInteger = (value) => /^[1-9]\d*$/.test(String(value));
+
+const normalizeMaterialCategoryId = (formData, attributeValues = {}) => {
+  const attributeValue = attributeValues.MATERIAL_CATEGORY;
+  const rawValue = isPositiveInteger(attributeValue)
+    ? attributeValue
+    : formData.materialCategory ?? formData.category;
+  const values = Array.isArray(rawValue) ? rawValue : [rawValue];
+  const selected = values.filter((value) => value !== undefined && value !== null && value !== "");
+
+  if (!selected.length) {
+    throw createValidationError("Material Category wajib diisi.");
+  }
+
+  if (selected.length !== 1) {
+    throw createValidationError("Pilih tepat satu Material Category.");
+  }
+
+  if (!isPositiveInteger(selected[0])) {
+    throw createValidationError("Material Category harus berupa ID angka positif.");
+  }
+
+  return String(selected[0]);
 };
 
-const resolveMasterData = async (client, specificationTypeId, formData) => {
-  const [typeResult, plantResult] = await Promise.all([
-    client.query(
-      `SELECT id FROM specification_types WHERE id = $1 AND isactive = TRUE`,
-      [specificationTypeId]
-    ),
-    client.query(`SELECT id FROM plants WHERE id = $1`, [formData.plant]),
-  ]);
+const resolveMasterData = async (client, specificationTypeId, formData, attributeValues) => {
+  const materialGroupCondition = isPositiveInteger(formData.materialGroup)
+    ? "id = $1"
+    : "sapgroupcode = $1";
+  const materialCategoryId = normalizeMaterialCategoryId(formData, attributeValues);
+  const typeResult = await client.query(
+    `SELECT id, typecode FROM specification_types WHERE id = $1 AND isactive = TRUE`,
+    [specificationTypeId]
+  );
+  const plantResult = await client.query(
+    `SELECT id FROM plants WHERE id = $1`,
+    [formData.plant]
+  );
+  const departmentResult = formData.department
+    ? await client.query(
+      `SELECT id FROM departments WHERE id = $1 AND isactive = TRUE`,
+      [formData.department]
+    )
+    : { rows: [] };
+  const categoryResult = await client.query(
+    `SELECT id, categoryname, specificationtypeid
+     FROM material_categories WHERE id = $1 AND isactive = TRUE`,
+    [materialCategoryId]
+  );
+  const groupResult = formData.materialGroup
+    ? await client.query(
+      `SELECT id, sapgroupcode, materialcategoryid
+       FROM material_groups WHERE ${materialGroupCondition} AND isactive = TRUE`,
+      [formData.materialGroup]
+    )
+    : { rows: [] };
 
   if (!typeResult.rows[0]) {
     throw createValidationError("Tipe spesifikasi tidak aktif atau tidak ditemukan.");
@@ -23,34 +70,50 @@ const resolveMasterData = async (client, specificationTypeId, formData) => {
     throw createValidationError("Plant tidak ditemukan.");
   }
 
-  const references = [
-    ["department", "departments", "departmentid"],
-    ["materialCategory", "material_categories", "materialcategoryid"],
-    ["materialGroup", "material_groups", "materialgroupid"],
-  ];
-  const resolved = { plantId: plantResult.rows[0].id };
+  const type = typeResult.rows[0];
+  const department = departmentResult.rows[0] || null;
+  const category = categoryResult.rows[0] || null;
+  const group = groupResult.rows[0] || null;
 
-  for (const [field, table, column] of references) {
-    const value = formData[field];
-
-    if (value === undefined || value === null || value === "") {
-      resolved[field] = null;
-      continue;
+  for (const [field, value] of [["department", department], ["materialCategory", category], ["materialGroup", group]]) {
+    if (formData[field] !== undefined && formData[field] !== null && formData[field] !== "" && !value) {
+      throw createValidationError(`${field} tidak aktif atau tidak ditemukan.`);
     }
-
-    const result = await client.query(
-      `SELECT id FROM ${table} WHERE id = $1`,
-      [value]
-    );
-
-    if (!result.rows[0]) {
-      throw createValidationError(`${field} tidak ditemukan.`);
-    }
-
-    resolved[field] = result.rows[0].id;
   }
 
-  return resolved;
+  if (category && Number(category.specificationtypeid) !== Number(specificationTypeId)) {
+    throw createValidationError("Material Category tidak sesuai dengan tipe spesifikasi.");
+  }
+
+  if (category && group && Number(group.materialcategoryid) !== Number(category.id)) {
+    throw createValidationError("Material Group tidak sesuai dengan Material Category.");
+  }
+
+  return {
+    plantId: plantResult.rows[0].id,
+    department: department?.id || null,
+    materialCategory: category?.id || null,
+    materialGroup: group?.id || null,
+    typeCode: type.typecode,
+    categoryName: category?.categoryname || null,
+    groupCode: group?.sapgroupcode || null,
+  };
+};
+
+const validateReasonToProcure = async (client, specificationTypeId, formData) => {
+  const reasonId = formData.reasonChoice || formData.reasonToProcure || formData.reason;
+
+  if (!reasonId) return;
+
+  const result = await client.query(
+    `SELECT id FROM reason_to_procure_options
+     WHERE id = $1 AND specificationtypeid = $2 AND isactive = TRUE`,
+    [reasonId, specificationTypeId]
+  );
+
+  if (!result.rows[0]) {
+    throw createValidationError("Reason to Procure tidak aktif, tidak ditemukan, atau tidak sesuai tipe spesifikasi.");
+  }
 };
 
 const resolveAttributes = async (client, specificationTypeId, attributeValues) => {
@@ -61,7 +124,7 @@ const resolveAttributes = async (client, specificationTypeId, attributeValues) =
   const codes = entries.map(([code]) => code);
   const result = await client.query(
     `
-      SELECT sa.id, sa.attributecode, sa.supportsmultiplevalues
+      SELECT sa.id, sa.attributecode, sa.inputtype, sa.supportsmultiplevalues
       FROM specification_attributes sa
       INNER JOIN specification_sections ss ON ss.id = sa.sectionid
       WHERE ss.specificationtypeid = $1
@@ -85,6 +148,15 @@ const resolveAttributes = async (client, specificationTypeId, attributeValues) =
 
   return entries.flatMap(([code, value]) => {
     const attribute = attributes.get(code);
+
+    if (attribute.inputtype === "json") {
+      return [{
+        attributeId: attribute.id,
+        value,
+        sortOrder: 0,
+      }];
+    }
+
     const values = Array.isArray(value) ? value : [value];
 
     if (!attribute.supportsmultiplevalues && values.length > 1) {
@@ -99,16 +171,34 @@ const resolveAttributes = async (client, specificationTypeId, attributeValues) =
   });
 };
 
+const validateBusinessRules = async (client, payload, masterData) => {
+  await validateReasonToProcure(
+    client,
+    payload.specificationTypeId,
+    payload.formData
+  );
+
+  if (String(masterData.typeCode).toUpperCase() === "JASA") {
+    validateJasa(payload.formData, masterData);
+    return;
+  }
+
+  validateBarang({
+    ...payload.formData,
+    materialGroup: masterData.groupCode || payload.formData.materialGroup,
+  });
+};
+
 const insertValues = async (client, specificationId, values) => {
   for (const entry of values) {
     const value = entry.value;
-    const isObject = value && typeof value === "object" && !Array.isArray(value);
-    const valueText = isObject || typeof value === "boolean" || typeof value === "number"
+    const isJson = value && typeof value === "object";
+    const valueText = isJson || typeof value === "boolean" || typeof value === "number"
       ? null
       : String(value ?? "");
     const valueNumber = typeof value === "number" ? value : null;
     const valueBoolean = typeof value === "boolean" ? value : null;
-    const valueJson = isObject ? value : null;
+    const valueJson = isJson ? value : null;
 
     await client.query(
       `
@@ -137,7 +227,8 @@ const insertValues = async (client, specificationId, values) => {
 
 const findEditableById = async (id) => {
   const result = await pool.query(
-    `SELECT id, specificationtypeid, status FROM specifications WHERE id = $1`,
+    `SELECT id, specificationtypeid, status, createdbyuserid
+     FROM specifications WHERE id = $1`,
     [id]
   );
 
@@ -145,6 +236,12 @@ const findEditableById = async (id) => {
 };
 
 const createDraft = async (payload) => {
+  if (!payload.creatorUserId) {
+    const error = new Error("Autentikasi diperlukan.");
+    error.statusCode = 401;
+    throw error;
+  }
+
   const client = await pool.connect();
 
   try {
@@ -152,8 +249,10 @@ const createDraft = async (payload) => {
     const masterData = await resolveMasterData(
       client,
       payload.specificationTypeId,
-      payload.formData
+      payload.formData,
+      payload.attributeValues
     );
+    await validateBusinessRules(client, payload, masterData);
     const values = await resolveAttributes(
       client,
       payload.specificationTypeId,
@@ -164,8 +263,9 @@ const createDraft = async (payload) => {
         INSERT INTO specifications (
           documentno, specificationtypeid, plantid, departmentid,
           materialcategoryid, materialgroupid, requestor,
-          materialdescription, materialcode, reasonprocure, formdata
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+          materialdescription, materialcode, reasonprocure, formdata,
+          createdbyuserid, createdby
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
         RETURNING id, specificationtypeid AS specification_type_id, status
       `,
       [
@@ -176,10 +276,12 @@ const createDraft = async (payload) => {
         masterData.materialCategory,
         masterData.materialGroup,
         String(payload.formData.requestor).trim(),
-        String(payload.formData.materialDescription).trim(),
+        String(payload.formData.materialDescription ?? "").trim(),
         payload.formData.materialCode || null,
         payload.formData.reasonToProcure || payload.formData.reason || null,
         payload.formData,
+        payload.creatorUserId,
+        payload.creatorDisplayName,
       ]
     );
     const specification = insertResult.rows[0];
@@ -201,13 +303,20 @@ const createDraft = async (payload) => {
   }
 };
 
-const updateDraft = async (id, payload) => {
+const updateDraft = async (id, payload, actor) => {
+  if (!actor || typeof actor.userId !== "string" || !actor.userId.trim()) {
+    const error = new Error("Autentikasi diperlukan.");
+    error.statusCode = 401;
+    throw error;
+  }
+
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
     const locked = await client.query(
-      `SELECT specificationtypeid, status FROM specifications WHERE id = $1 FOR UPDATE`,
+      `SELECT specificationtypeid, status, createdbyuserid
+       FROM specifications WHERE id = $1 FOR UPDATE`,
       [id]
     );
     const current = locked.rows[0];
@@ -224,11 +333,22 @@ const updateDraft = async (id, payload) => {
       throw error;
     }
 
+    if (
+      !current.createdbyuserid ||
+      String(current.createdbyuserid) !== String(actor.userId).trim()
+    ) {
+      const error = new Error("Anda bukan pemilik Draft ini.");
+      error.statusCode = 403;
+      throw error;
+    }
+
     const masterData = await resolveMasterData(
       client,
       current.specificationtypeid,
-      payload.formData
+      payload.formData,
+      payload.attributeValues
     );
+    await validateBusinessRules(client, payload, masterData);
     const values = await resolveAttributes(
       client,
       current.specificationtypeid,
@@ -238,32 +358,34 @@ const updateDraft = async (id, payload) => {
     const updateResult = await client.query(
       `
         UPDATE specifications
-        SET documentno = $2,
-            plantid = $3,
-            departmentid = $4,
-            materialcategoryid = $5,
-            materialgroupid = $6,
-            requestor = $7,
-            materialdescription = $8,
-            materialcode = $9,
-            reasonprocure = $10,
-            formdata = $11,
+        SET plantid = $2,
+            departmentid = $3,
+            materialcategoryid = $4,
+            materialgroupid = $5,
+            requestor = $6,
+            materialdescription = $7,
+            materialcode = $8,
+            reasonprocure = $9,
+            formdata = $10,
+            updatedbyuserid = $11,
+            updatedby = $12,
             updateddate = CURRENT_TIMESTAMP
         WHERE id = $1
         RETURNING id, specificationtypeid AS specification_type_id, status
       `,
       [
         id,
-        payload.documentNo,
         masterData.plantId,
         masterData.department,
         masterData.materialCategory,
         masterData.materialGroup,
         String(payload.formData.requestor).trim(),
-        String(payload.formData.materialDescription).trim(),
+        String(payload.formData.materialDescription ?? "").trim(),
         payload.formData.materialCode || null,
         payload.formData.reasonToProcure || payload.formData.reason || null,
         payload.formData,
+        String(actor.userId).trim(),
+        String(actor.displayName ?? actor.userId).trim(),
       ]
     );
 

@@ -7,6 +7,7 @@ const materialCategoryRoutes = require("./routes/material-category.routes");
 const reasonToProcureRoutes = require("./routes/reason-to-procure.routes");
 const specificationRoutes = require("./routes/specification.routes");
 const specificationTypeRoutes = require("./routes/specification-type.routes");
+const authRoutes = require("./routes/auth.routes");
 
 // Import routes
 const healthRoutes = require("./routes/health.routes");
@@ -20,7 +21,7 @@ const app = express();
 
 // Middleware utama
 app.use(cors());
-app.use(express.json({ limit: "2mb" }));
+app.use(express.json({ limit: "10mb" }));
 
 // Health check server
 app.get("/", (req, res) => {
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/health", healthRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/plants", plantRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/material-groups", materialGroupRoutes);

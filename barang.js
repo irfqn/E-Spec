@@ -10,7 +10,24 @@
   const OLD_STORAGE_KEY = "eSpecBarangQuestionnaire.v1";
   const VERSION_STORAGE_KEY = "eSpecBarangVersion.v1";
   const HISTORY_KEY = "eSpecBarangTransactions.v1";
-  const API_BASE_URL = "http://localhost:3000/api";
+  const PERSISTED_DRAFT_ID_KEY = "eSpecBarangPersistedDraftId.v1";
+  const PERSISTED_DOCUMENT_NO_KEY = "eSpecBarangPersistedDocumentNo.v1";
+  const API_BASE_URL = window.ESPEC_CONFIG?.API_BASE_URL || "http://localhost:3000/api";
+  const DEV_IDENTITY_ALIASES = ["requestor", "manager", "head-engineering"];
+
+  function getApiHeaders() {
+    const headers = { "Content-Type": "application/json" };
+    const configuredIdentity = window.ESPEC_CONFIG?.DEV_IDENTITY;
+    const identity = typeof configuredIdentity === "string"
+      ? configuredIdentity.trim().toLowerCase()
+      : "";
+
+    if (DEV_IDENTITY_ALIASES.includes(identity)) {
+      headers["X-ESpec-Dev-Identity"] = identity;
+    }
+
+    return headers;
+  }
 
   const questionnaire = document.getElementById("questionnaireForm");
   const printForm = document.getElementById("printSpecForm");
@@ -112,6 +129,8 @@ const MECHANICAL_PARAMETERS = [
   let saving = false;
   let masterDataReady = false;
   let barangSpecificationTypeId = null;
+  let persistedDraftId = null;
+  let persistedDocumentNo = null;
   let plants = [];
   let categories = [];
   let departmentRequestId = 0;
@@ -625,6 +644,22 @@ const MECHANICAL_PARAMETERS = [
       .filter(item => item.type && item.value);
   }
 
+  function formatDimensionItems(items) {
+    return items.map((item) => {
+      const unit = item.unit === "Others" ? item.otherUnit : item.unit;
+      return [item.type, item.value, unit, item.symbol].filter(Boolean).join(" ");
+    }).join("; ");
+  }
+
+  function syncDimensionField() {
+    const value = formatDimensionItems(collectDimensionItems());
+    const dimensionField = $("#dimensionFinal", questionnaire);
+
+    if (dimensionField) dimensionField.value = value;
+
+    return value;
+  }
+
   function updateDimension() {
     if (!dimensionContainer) return;
 
@@ -632,6 +667,8 @@ const MECHANICAL_PARAMETERS = [
     const addButton = $("#addDimensionBtn");
 
     if (addButton) addButton.disabled = totalRows >= 3;
+
+    syncDimensionField();
   }
 
   // =====================================================
@@ -1345,7 +1382,7 @@ const MECHANICAL_PARAMETERS = [
     const detail2 =
       $('[name="uniqueDetail2"]', questionnaire)?.value.trim() || "";
 
-    if (name1 || detail1) attributes.push({ name: name1, detail: detail1 });
+    if (detail1) attributes.push({ name: name1, detail: detail1 });
     if (name2 || detail2) attributes.push({ name: name2, detail: detail2 });
 
     $$(".custom-unique-row", questionnaire).forEach(row => {
@@ -1428,6 +1465,10 @@ const MECHANICAL_PARAMETERS = [
     data.mechanicalAttributes = mechanicalAttributes;
     data.uniqueAttributes = uniqueAttributes;
     data.dimensionItems = collectDimensionItems();
+    data.dimension = formatDimensionItems(data.dimensionItems);
+    const dimensionField = $("#dimensionFinal", questionnaire);
+
+    if (dimensionField) dimensionField.value = data.dimension;
     data.requiredDocuments = collectRequiredDocuments();
     data.drawingImage = drawingImage;
     data.specType = "Barang";
@@ -1502,13 +1543,11 @@ const MECHANICAL_PARAMETERS = [
       ?.filter((item) => item.category === "Other") || [];
 
     if (technicalOthers.length) values.TECHNICAL_OTHERS = technicalOthers;
-    if (formData.uniqueAttributes?.length) values.UNIQUE_OTHERS = formData.uniqueAttributes;
-
     return values;
   }
 
   function getDraftDocumentNumber(formData) {
-    const existing = String(formData.persistedDocumentNo || "").trim();
+    const existing = String(persistedDocumentNo || formData.persistedDocumentNo || "").trim();
 
     return existing || `${formData.docNo || "DRAFT"}-${Date.now()}`;
   }
@@ -1520,6 +1559,7 @@ const MECHANICAL_PARAMETERS = [
 
     const formData = getFormData();
     const documentNo = getDraftDocumentNumber(formData);
+    persistedDocumentNo = documentNo;
     formData.persistedDocumentNo = documentNo;
     const isUpdate = Boolean(persistedDraftId);
     const response = await fetch(
@@ -1528,7 +1568,7 @@ const MECHANICAL_PARAMETERS = [
         : `${API_BASE_URL}/specifications`,
       {
         method: isUpdate ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getApiHeaders(),
         body: JSON.stringify({
           ...(isUpdate ? {} : { specificationTypeId: barangSpecificationTypeId }),
           documentNo,
@@ -1550,6 +1590,7 @@ const MECHANICAL_PARAMETERS = [
     }
 
     localStorage.setItem(PERSISTED_DRAFT_ID_KEY, String(persistedDraftId));
+    localStorage.setItem(PERSISTED_DOCUMENT_NO_KEY, documentNo);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 
     return { isUpdate };
@@ -1998,6 +2039,9 @@ function restoreOldMechanicalAttributes(data) {
       persistedDraftId = Number(
         localStorage.getItem(PERSISTED_DRAFT_ID_KEY) || 0
       ) || null;
+      persistedDocumentNo = String(
+        localStorage.getItem(PERSISTED_DOCUMENT_NO_KEY) || data.persistedDocumentNo || ""
+      ).trim() || null;
 
       setStatus("Draft sebelumnya berhasil dipulihkan");
 
@@ -2164,6 +2208,8 @@ function restoreOldMechanicalAttributes(data) {
     updateReason();
     updateCategory();
 
+    syncDimensionField();
+
     if (!questionnaire.reportValidity()) return false;
 
     const categories = getSelectedCategories();
@@ -2209,6 +2255,12 @@ function restoreOldMechanicalAttributes(data) {
   }
 
   function getMissingRequiredField(field) {
+    if (field === "dimension") {
+      const hasDimension = collectDimensionItems().length > 0;
+
+      return hasDimension ? null : $(".dimension-type", dimensionContainer) || $(".dimension-value", dimensionContainer);
+    }
+
     if (field.startsWith("technical:")) {
       const label = field.slice("technical:".length);
 
@@ -2516,7 +2568,9 @@ function restoreOldMechanicalAttributes(data) {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(OLD_STORAGE_KEY);
     localStorage.removeItem(PERSISTED_DRAFT_ID_KEY);
+    localStorage.removeItem(PERSISTED_DOCUMENT_NO_KEY);
     persistedDraftId = null;
+    persistedDocumentNo = null;
 
     drawingImage = "";
 
@@ -2612,7 +2666,7 @@ function restoreOldMechanicalAttributes(data) {
       setStatus("Mengambil dokumen dari database...");
 
       const response = await fetch(
-        `http://localhost:3000/api/documents/${encodeURIComponent(id)}`
+        `${API_BASE_URL}/documents/${encodeURIComponent(id)}`
       );
 
       const result = await response.json();

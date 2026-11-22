@@ -46,7 +46,8 @@ const getSpecificationById = async (req, res, next) => {
 const createSpecificationDraft = async (req, res, next) => {
   try {
     const specification = await specificationService.createSpecificationDraft(
-      req.body
+      req.body,
+      req.user
     );
 
     return res.status(201).json({
@@ -72,7 +73,8 @@ const updateSpecificationDraft = async (req, res, next) => {
 
     const specification = await specificationService.updateSpecificationDraft(
       Number(id),
-      req.body
+      req.body,
+      req.user
     );
 
     return res.status(200).json({

@@ -51,10 +51,10 @@ const getReasonToProcureBySpecificationTypeId = async (
   try {
     const { specificationTypeId } = req.params;
 
-    if (!["1", "2"].includes(specificationTypeId)) {
+    if (!/^[1-9]\d*$/.test(specificationTypeId)) {
       return res.status(400).json({
         success: false,
-        message: "Tipe spesifikasi tidak valid. Gunakan ID 1 atau 2.",
+        message: "ID tipe spesifikasi tidak valid.",
       });
     }
 

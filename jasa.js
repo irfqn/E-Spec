@@ -6,9 +6,28 @@
   // E-SPEC JASA — QUESTIONNAIRE CONTROLLER
   // =====================================================
 
-  const API_BASE_URL = "http://localhost:3000/api";
+  const API_BASE_URL =
+    window.ESPEC_CONFIG?.API_BASE_URL ||
+    "http://localhost:3000/api";
+  const DEV_IDENTITY_ALIASES = ["requestor", "manager", "head-engineering"];
+
+  function getApiHeaders() {
+    const headers = { "Content-Type": "application/json" };
+    const configuredIdentity = window.ESPEC_CONFIG?.DEV_IDENTITY;
+    const identity = typeof configuredIdentity === "string"
+      ? configuredIdentity.trim().toLowerCase()
+      : "";
+
+    if (DEV_IDENTITY_ALIASES.includes(identity)) {
+      headers["X-ESpec-Dev-Identity"] = identity;
+    }
+
+    return headers;
+  }
+
   const STORAGE_KEY = "eSpecJasaQuestionnaire.v1";
   const PERSISTED_DRAFT_ID_KEY = "eSpecJasaPersistedDraftId.v1";
+  const PERSISTED_DOCUMENT_NO_KEY = "eSpecJasaPersistedDocumentNo.v1";
 
   const questionnaire = document.getElementById("questionnaireJasaForm");
   const printForm = document.getElementById("printJasaForm");
@@ -31,10 +50,12 @@
   const plantSelect = questionnaire.querySelector('[name="plant"]');
   const deptSelect = questionnaire.querySelector('[name="department"]');
   const reasonChoice = questionnaire.querySelector('[name="reasonChoice"]');
+  const materialGroupSelect = questionnaire.querySelector('[name="materialGroup"]');
   let plants = [];
   let departmentRequestId = 0;
   let jasaSpecificationTypeId = null;
   let persistedDraftId = null;
+  let persistedDocumentNo = null;
   let jasaMaterialCategoryId = null;
   let jasaMaterialGroups = [];
 
@@ -315,6 +336,33 @@
       const savedPlant = plantSelect?.value || "";
       const savedDepartment = deptSelect?.value || "";
       const savedReason = reasonChoice?.value || "";
+      const savedMaterialGroup = materialGroupSelect?.value || "";
+
+      if (materialGroupSelect) {
+        const availableGroups = new Set(
+          jasaMaterialGroups.map((group) => group.sapgroupcode)
+        );
+
+        [...materialGroupSelect.options].forEach((option) => {
+          if (!option.value) return;
+
+          option.disabled = !availableGroups.has(option.value);
+          option.textContent = option.disabled
+            ? `${option.value} (belum tersedia)`
+            : option.value;
+        });
+
+        if (savedMaterialGroup) {
+          const savedOption = [...materialGroupSelect.options].find(
+            (option) => option.value === savedMaterialGroup
+          );
+
+          if (savedOption) {
+            savedOption.disabled = !availableGroups.has(savedMaterialGroup);
+            materialGroupSelect.value = savedMaterialGroup;
+          }
+        }
+      }
 
       if (plantSelect) {
         setSelectMessage(plantSelect, "Pilih Plant");
@@ -441,25 +489,23 @@
     add("REQUESTOR", formData.requestor);
     add("DEPARTMENT", formData.department);
     add("REASON_TO_PROCURE", formData.reasonChoice);
-    add("LOCATION", formData.location);
     add("PROJECT_NAME", formData.projectName);
     add("PROJECT_DESCRIPTION", formData.projectDescription);
     add("TIMELINE", formData.timeline);
-    add("TECHNICAL", formData["technicalSpecification[]"]);
-    add("KPI", formData["kpi[]"]);
-    add("ENVIRONMENT_CONDITION_RESTRICTION", formData.environmentCondition);
-    add("HSE_STANDARD", formData.hse);
-    add("LICENSE_REGULATION", formData.licenseRegulation);
-    add("WARRANTY_AFTER_SALES", formData.warranty);
-    add("ATTACHMENT_DOCUMENTS", formData.attachmentDocuments);
-    add("REQUIRED_DOCUMENTS", formData.requiredDocuments);
-    add("NOTES", formData.notes);
+
+    if (formData.attachmentDocuments?.length) {
+      add("ATTACHMENT_DOCUMENTS", formData.attachmentDocuments);
+    }
+
+    if (formData.requiredDocuments?.length) {
+      add("REQUIRED_DOCUMENTS", formData.requiredDocuments);
+    }
 
     return values;
   }
 
   function getDraftDocumentNumber(formData) {
-    return String(formData.persistedDocumentNo || "").trim() ||
+    return String(persistedDocumentNo || formData.persistedDocumentNo || "").trim() ||
       `${formData.docNo || "F/SJ-001"}-${Date.now()}`;
   }
 
@@ -470,6 +516,7 @@
 
     const formData = getFormData();
     const documentNo = getDraftDocumentNumber(formData);
+    persistedDocumentNo = documentNo;
     formData.persistedDocumentNo = documentNo;
     const selectedCategory = Array.isArray(formData.materialCategory)
       ? formData.materialCategory[0]
@@ -493,7 +540,10 @@
     const payloadFormData = {
       ...formData,
       materialCategory: jasaMaterialCategoryId,
-      materialGroup: materialGroupId
+      materialCategoryLabel: selectedCategory,
+      materialGroup: materialGroupId,
+      materialGroupCode: formData.materialGroup,
+      reasonToProcure: formData.reasonChoice,
     };
     const isUpdate = Boolean(persistedDraftId);
     const response = await fetch(
@@ -502,7 +552,7 @@
         : `${API_BASE_URL}/specifications`,
       {
         method: isUpdate ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getApiHeaders(),
         body: JSON.stringify({
           ...(isUpdate ? {} : { specificationTypeId: jasaSpecificationTypeId }),
           documentNo,
@@ -524,6 +574,7 @@
     }
 
     localStorage.setItem(PERSISTED_DRAFT_ID_KEY, String(persistedDraftId));
+    localStorage.setItem(PERSISTED_DOCUMENT_NO_KEY, documentNo);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 
     return { isUpdate };
@@ -569,6 +620,10 @@
 
         return;
       }
+
+      persistedDocumentNo = String(
+        localStorage.getItem(PERSISTED_DOCUMENT_NO_KEY) || saved.persistedDocumentNo || ""
+      ).trim() || null;
 
       // Pulihkan Plant terlebih dahulu.
       if (plantSelect && saved.plant !== undefined) {
@@ -1164,7 +1219,7 @@ function transferToPrint(data = getFormData()) {
 
     try {
       const response = await fetch(
-        `${API_URL}/${encodeURIComponent(documentId)}`
+        `${API_BASE_URL}/specifications/${encodeURIComponent(documentId)}`
       );
 
       const result = await response.json().catch(() => ({}));
@@ -1292,7 +1347,9 @@ function transferToPrint(data = getFormData()) {
 
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(PERSISTED_DRAFT_ID_KEY);
+      localStorage.removeItem(PERSISTED_DOCUMENT_NO_KEY);
       persistedDraftId = null;
+      persistedDocumentNo = null;
 
       initializeDocumentInfo();
       transferToPrint({});

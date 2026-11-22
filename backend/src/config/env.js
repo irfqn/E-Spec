@@ -1,8 +1,15 @@
 const path = require("path");
 const dotenv = require("dotenv");
 
-// Memuat file .env dari folder backend
-const envPath = path.resolve(__dirname, "../../.env");
+const environment = process.env.E_SPEC_ENV;
+
+if (environment !== undefined && !["development", "test"].includes(environment)) {
+  throw new Error("E_SPEC_ENV harus bernilai development, test, atau tidak diatur.");
+}
+
+// Resolve from this file so startup is independent of the working directory.
+const envFileName = environment === "test" ? ".env.test" : ".env";
+const envPath = path.resolve(__dirname, "../..", envFileName);
 
 const result = dotenv.config({
   path: envPath,
@@ -10,7 +17,7 @@ const result = dotenv.config({
 });
 
 if (result.error) {
-  throw new Error(`Gagal membaca file .env: ${result.error.message}`);
+  throw new Error(`Gagal membaca file ${envFileName}: ${result.error.message}`);
 }
 
 module.exports = {
@@ -23,4 +30,8 @@ module.exports = {
   DB_PASSWORD: process.env.DB_PASSWORD,
 
   DB_SSL: process.env.DB_SSL === "true",
+
+  E_SPEC_ENV: environment,
+  NODE_ENV: process.env.NODE_ENV,
+  E_SPEC_ENABLE_DEV_IDENTITY: process.env.E_SPEC_ENABLE_DEV_IDENTITY === "true",
 };

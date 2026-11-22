@@ -7,6 +7,9 @@ backend/node_modules/
 .env.*
 !.env.example
 
+# Local frontend API overrides
+/frontend.local.js
+
 # Logs
 *.log
 npm-debug.log*

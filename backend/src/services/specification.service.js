@@ -46,6 +46,22 @@ const createHttpError = (message, statusCode) => {
   return error;
 };
 
+const normalizeActor = (actor) => {
+  if (
+    !actor ||
+    typeof actor !== "object" ||
+    typeof actor.userId !== "string" ||
+    !actor.userId.trim()
+  ) {
+    throw createHttpError("Autentikasi diperlukan.", 401);
+  }
+
+  return {
+    userId: actor.userId.trim(),
+    displayName: String(actor.displayName ?? actor.userId).trim() || actor.userId.trim(),
+  };
+};
+
 const normalizePayload = (payload, existingTypeId) => {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     throw createHttpError("Payload JSON tidak valid.", 400);
@@ -89,7 +105,7 @@ const normalizePayload = (payload, existingTypeId) => {
     throw createHttpError("attributeValues wajib berupa object.", 422);
   }
 
-  const requiredFields = ["plant", "requestor", "materialDescription"];
+  const requiredFields = ["plant", "requestor"];
 
   requiredFields.forEach((field) => {
     if (!String(formData[field] ?? "").trim()) {
@@ -113,17 +129,23 @@ const normalizePayload = (payload, existingTypeId) => {
   };
 };
 
-const createSpecificationDraft = async (payload) => {
+const createSpecificationDraft = async (payload, actor) => {
+  const normalizedActor = normalizeActor(actor);
   const normalizedPayload = normalizePayload(payload);
 
   if (normalizedPayload.specificationTypeId === undefined) {
     throw createHttpError("specificationTypeId wajib diisi.", 422);
   }
 
-  return specificationRepository.createDraft(normalizedPayload);
+  return specificationRepository.createDraft({
+    ...normalizedPayload,
+    creatorUserId: normalizedActor.userId,
+    creatorDisplayName: normalizedActor.displayName,
+  });
 };
 
-const updateSpecificationDraft = async (id, payload) => {
+const updateSpecificationDraft = async (id, payload, actor) => {
+  const normalizedActor = normalizeActor(actor);
   const existing = await specificationRepository.findEditableById(id);
 
   if (!existing) {
@@ -134,9 +156,16 @@ const updateSpecificationDraft = async (id, payload) => {
     throw createHttpError("Spesifikasi tidak lagi dapat diubah.", 409);
   }
 
+  if (
+    !existing.createdbyuserid ||
+    String(existing.createdbyuserid) !== normalizedActor.userId
+  ) {
+    throw createHttpError("Anda bukan pemilik Draft ini.", 403);
+  }
+
   const normalizedPayload = normalizePayload(payload, existing.specificationtypeid);
 
-  return specificationRepository.updateDraft(id, normalizedPayload);
+  return specificationRepository.updateDraft(id, normalizedPayload, normalizedActor);
 };
 
 module.exports = {
