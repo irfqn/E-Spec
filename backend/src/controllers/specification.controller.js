@@ -45,6 +45,89 @@ const getSpecificationById = async (req, res, next) => {
   }
 };
 
+const getMyDraftSpecifications = async (req, res, next) => {
+  try {
+    const { specificationTypeId, status } = req.query;
+
+    const specifications = await specificationService.getMyDraftSpecifications(
+      { specificationTypeId, status },
+      req.user
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: specifications,
+      total: specifications.length,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getMyDraftSpecificationById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!/^[1-9]\d*$/.test(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "ID spesifikasi tidak valid.",
+      });
+    }
+
+    const specification = await specificationService.getMyDraftSpecificationById(
+      Number(id),
+      req.user
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: specification,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getScopedSpecifications = async (req, res, next) => {
+  try {
+    const specifications = await specificationService.getScopedSpecifications(req.user);
+
+    return res.status(200).json({
+      success: true,
+      data: specifications,
+      total: specifications.length,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getScopedSpecificationById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!/^[1-9]\d*$/.test(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "ID spesifikasi tidak valid.",
+      });
+    }
+
+    const specification = await specificationService.getScopedSpecificationById(
+      Number(id),
+      req.user
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: specification,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createSpecificationDraft = async (req, res, next) => {
   try {
     const specification = await specificationService.createSpecificationDraft(
@@ -172,6 +255,10 @@ const getWorkflow = async (req, res, next) => {
 module.exports = {
   getAllSpecifications,
   getSpecificationById,
+  getMyDraftSpecifications,
+  getMyDraftSpecificationById,
+  getScopedSpecifications,
+  getScopedSpecificationById,
   createSpecificationDraft,
   updateSpecificationDraft,
   submitSpecification,

@@ -71,7 +71,16 @@ The exact assigned user ID is preserved for later Task 05D-style authorization. 
 | 1 | Manager | `DEV-MGR-001` |
 | 2 | HeadEngineering | `DEV-HE-001` |
 
-These are development test definitions only. They are not written to `approval_patterns` or `approval_matrix_rules`. `material_groups.approvalpatternno` is not modified, and `SERVICEPM` is not created in master data.
+### BEARING (Barang development simulation)
+
+| Step | Role | Assigned user |
+|---|---|---|
+| 1 | Manager | `DEV-MGR-001` |
+| 2 | HeadEngineering | `DEV-HE-001` |
+
+This route is a development simulation pending approval-matrix business confirmation. It applies only when all three values match the tested combination: specification type `7101` (Barang), material category `7501` (`OPEX - BARANG TEKNIK`), and material group code `BEARING`. The Requestor is the submitter and is never an approval step. Any missing or mismatched combination still fails closed.
+
+These are development test definitions only. They are not written to `approval_patterns` or `approval_matrix_rules`. `material_groups.approvalpatternno` is not modified, `SERVICEPM` is not created in master data, and production routing is unchanged.
 
 ## Fail-closed behavior
 

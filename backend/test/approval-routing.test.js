@@ -24,6 +24,12 @@ const specification = Object.freeze({
   departmentId: 7301,
 });
 
+const bearingSpecification = Object.freeze({
+  ...specification,
+  specificationTypeId: 7101,
+  materialCategoryId: 7501,
+});
+
 const requestorUserId = "DEV-REQ-001";
 
 test("SERVICE development route contains exactly one Manager step", () => {
@@ -36,6 +42,19 @@ test("SERVICE development route contains exactly one Manager step", () => {
 
 test("SERVICEPM development route contains Manager then HeadEngineering", () => {
   const rules = getDevelopmentApprovalRules("SERVICEPM", enabledEnvironment);
+
+  assert.deepEqual(rules, [
+    { stepNo: 1, approverRole: ROLES.MANAGER, isRequired: true },
+    { stepNo: 2, approverRole: ROLES.HEAD_ENGINEERING, isRequired: true },
+  ]);
+});
+
+test("BEARING development simulation resolves Manager then HeadEngineering for tested Barang combination", () => {
+  const rules = getDevelopmentApprovalRules(
+    "BEARING",
+    enabledEnvironment,
+    bearingSpecification
+  );
 
   assert.deepEqual(rules, [
     { stepNo: 1, approverRole: ROLES.MANAGER, isRequired: true },
@@ -126,6 +145,27 @@ test("unsupported material group codes are rejected", () => {
   );
 });
 
+test("BEARING fails closed outside the tested Barang combination", () => {
+  assert.throws(
+    () => getDevelopmentApprovalRules("BEARING", enabledEnvironment),
+    /tidak memiliki development approval route/
+  );
+  assert.throws(
+    () => getDevelopmentApprovalRules("BEARING", enabledEnvironment, {
+      ...bearingSpecification,
+      specificationTypeId: 7102,
+    }),
+    /tidak memiliki development approval route/
+  );
+  assert.throws(
+    () => getDevelopmentApprovalRules("BEARING", enabledEnvironment, {
+      ...bearingSpecification,
+      materialCategoryId: 9999,
+    }),
+    /tidak memiliki development approval route/
+  );
+});
+
 test("development routing fails closed outside development and test", () => {
   assert.throws(
     () => getDevelopmentApprovalRules("SERVICE", {
@@ -186,6 +226,24 @@ test("SERVICEPM builds a fully resolved Manager then HeadEngineering route", asy
   );
 });
 
+test("BEARING builds a fully resolved Manager then HeadEngineering route", async () => {
+  const route = await buildApprovalRoute({
+    materialGroupCode: "BEARING",
+    specification: bearingSpecification,
+    requestorUserId,
+    environment: enabledEnvironment,
+  });
+
+  assert.equal(route.materialGroupCode, "BEARING");
+  assert.deepEqual(
+    route.steps.map((step) => [step.stepNo, step.approverRole, step.assignedApproverUserId]),
+    [
+      [1, ROLES.MANAGER, "DEV-MGR-001"],
+      [2, ROLES.HEAD_ENGINEERING, "DEV-HE-001"],
+    ]
+  );
+});
+
 test("routing is deterministic and does not mutate shared definitions", async () => {
   const first = await buildApprovalRoute({
     materialGroupCode: "SERVICEPM",
@@ -236,6 +294,39 @@ test("a Requestor cannot approve its own document", async () => {
       environment: enabledEnvironment,
     }),
     { statusCode: 409 }
+  );
+});
+
+test("a Requestor cannot approve their own BEARING document", async () => {
+  await assert.rejects(
+    buildApprovalRoute({
+      materialGroupCode: "BEARING",
+      specification: bearingSpecification,
+      requestorUserId: "DEV-MGR-001",
+      environment: enabledEnvironment,
+    }),
+    { statusCode: 409 }
+  );
+});
+
+test("BEARING route cannot be generated outside the supported organizational scope", async () => {
+  await assert.rejects(
+    buildApprovalRoute({
+      materialGroupCode: "BEARING",
+      specification: { ...bearingSpecification, plantId: 9999 },
+      requestorUserId,
+      environment: enabledEnvironment,
+    }),
+    { statusCode: 403 }
+  );
+  await assert.rejects(
+    buildApprovalRoute({
+      materialGroupCode: "BEARING",
+      specification: { ...bearingSpecification, departmentId: 9999 },
+      requestorUserId,
+      environment: enabledEnvironment,
+    }),
+    { statusCode: 403 }
   );
 });
 

@@ -26,6 +26,21 @@ const DEVELOPMENT_APPROVAL_PATTERNS = Object.freeze({
   ]),
 });
 
+const DEVELOPMENT_SIMULATION_BARANG_ROUTES = Object.freeze({
+  "7101:7501:BEARING": Object.freeze([
+    Object.freeze({
+      stepNo: 1,
+      approverRole: ROLES.MANAGER,
+      isRequired: true,
+    }),
+    Object.freeze({
+      stepNo: 2,
+      approverRole: ROLES.HEAD_ENGINEERING,
+      isRequired: true,
+    }),
+  ]),
+});
+
 const SUPPORTED_APPROVER_ROLES = Object.freeze([
   ROLES.MANAGER,
   ROLES.HEAD_ENGINEERING,
@@ -97,7 +112,8 @@ const normalizeApprovalRules = (rules) => {
 
 const getDevelopmentApprovalRules = (
   materialGroupCode,
-  environment = process.env
+  environment = process.env,
+  specification = null
 ) => {
   if (!isDevelopmentIdentityEnabled(environment)) {
     throw createApprovalError(
@@ -111,7 +127,15 @@ const getDevelopmentApprovalRules = (
   }
 
   const normalizedCode = materialGroupCode.trim().toUpperCase();
-  const rules = DEVELOPMENT_APPROVAL_PATTERNS[normalizedCode];
+  const groupRules = DEVELOPMENT_APPROVAL_PATTERNS[normalizedCode];
+  const specificationTypeId = Number(specification?.specificationTypeId);
+  const materialCategoryId = Number(specification?.materialCategoryId);
+  const simulationKey = `${specificationTypeId}:${materialCategoryId}:${normalizedCode}`;
+  const simulationRules = Number.isInteger(specificationTypeId)
+    && Number.isInteger(materialCategoryId)
+    ? DEVELOPMENT_SIMULATION_BARANG_ROUTES[simulationKey]
+    : undefined;
+  const rules = groupRules || simulationRules;
 
   if (!rules) {
     throw createApprovalError(
@@ -128,6 +152,7 @@ const developmentApprovalPatternProvider = Object.freeze({
 
 module.exports = {
   DEVELOPMENT_APPROVAL_PATTERNS,
+  DEVELOPMENT_SIMULATION_BARANG_ROUTES,
   SUPPORTED_APPROVER_ROLES,
   normalizeApprovalRules,
   getDevelopmentApprovalRules,

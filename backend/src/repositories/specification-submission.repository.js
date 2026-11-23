@@ -187,13 +187,14 @@ const insertCycleAndSteps = async ({
          specificationid,
          approvalcycleid,
          stepno,
-         approvalruleid,
+         approvalmatrixruleid,
          approverrole,
          approvername,
          approvalstatus,
          assignedapproveruserid
        ) VALUES ($1, $2, $3, NULL, $4, $5, $6, $7)
        RETURNING
+         approvalmatrixruleid,
          stepno,
          approverrole,
          approvername,

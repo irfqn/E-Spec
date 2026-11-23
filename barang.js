@@ -5,12 +5,7 @@
   // E-SPEC BARANG — QUESTIONNAIRE CONTROLLER
   // =====================================================
 
-  const STORAGE_KEY = "eSpecBarangQuestionnaire.v2";
-  const OLD_STORAGE_KEY = "eSpecBarangQuestionnaire.v1";
   const VERSION_STORAGE_KEY = "eSpecBarangVersion.v1";
-  const HISTORY_KEY = "eSpecBarangTransactions.v1";
-  const PERSISTED_DRAFT_ID_KEY = "eSpecBarangPersistedDraftId.v1";
-  const PERSISTED_DOCUMENT_NO_KEY = "eSpecBarangPersistedDocumentNo.v1";
   const API_BASE_URL = window.ESPEC_CONFIG?.API_BASE_URL || "http://localhost:3000/api";
   const DEV_IDENTITY_ALIASES = ["requestor", "manager", "head-engineering"];
 
@@ -42,9 +37,9 @@
   const $$ = (selector, parent = document) =>
     [...parent.querySelectorAll(selector)];
 
-  const pdfBtn = $("#pdfBtn");
   const resetBtn = $("#resetBtn");
   const saveBtn = $("#saveAdminBtn");
+  const submitBtn = $("#submitBtn");
   const draftStatus = $("#draftStatus");
 
   const plantSelect = $("#plantCodeSelect");
@@ -126,10 +121,13 @@
   let drawingImage = "";
   let loadingDocument = false;
   let saving = false;
+  let submitting = false;
   let masterDataReady = false;
   let barangSpecificationTypeId = null;
   let persistedDraftId = null;
   let persistedDocumentNo = null;
+  let hasUnsavedChanges = false;
+  let legacyPendingClear = false;
   let plants = [];
   let categories = [];
   let departmentRequestId = 0;
@@ -1001,8 +999,19 @@ updateShowHiddenCounter(hiddenCount);
     return `${year}-${month}-${day}`;
   }
 
-  function setStatus(message) {
-    if (draftStatus) draftStatus.textContent = message;
+  function setStatus(message, warning = false) {
+    if (!draftStatus) return;
+
+    draftStatus.textContent = message;
+    draftStatus.classList.toggle("warning", Boolean(warning));
+  }
+
+  function showDraftOwnershipIssue(message) {
+    setStatus(message, true);
+  }
+
+  function clearDraftOwnershipIssue() {
+    setStatus(draftStatus?.textContent || "", false);
   }
 
   function formatDate(value) {
@@ -2352,9 +2361,7 @@ updateShowHiddenCounter(hiddenCount);
     add("MATERIAL_GROUP", formData.materialGroupCode || formData.materialGroup);
     add("MATERIAL_CATEGORY", formData.materialCategory?.[0]);
     add("REASON_TO_PROCURE", formData.reason || formData.reasonChoice);
-    add("LOCATION", formData.location);
     add("MATERIAL_DESCRIPTION", formData.materialDescription);
-    add("MATERIAL_CODE", formData.materialCode);
     add("TYPE_MODEL_PART_NUMBER", formData.partNumber);
     add("VARIANS", formData.variant);
     add("DIMENSION", formData.dimension);
@@ -2362,7 +2369,6 @@ updateShowHiddenCounter(hiddenCount);
     add("CATALOGUE", formData.catalogue);
     add("UOM", formData.uomOther || formData.uom);
     add("PACK_SIZE", formData.packSize);
-    add("MATERIAL", formData.material);
     add("KONSENTRASI", formData.concentration);
     add("VISCOSITAS", formData.viscosity);
     add("ADDITIONAL_SERVICE", formData.additionalService);
@@ -2377,7 +2383,6 @@ updateShowHiddenCounter(hiddenCount);
       Current: "CURRENT",
       Frequency: "FREQUENCY",
       Temperature: "TEMPERATURE",
-      Material: "MATERIAL",
       Capacity: "CAPACITY",
       "Connection Type": "CONNECTION_TYPE",
       Pressure: "PRESSURE",
@@ -2407,6 +2412,47 @@ updateShowHiddenCounter(hiddenCount);
     return values;
   }
 
+  function getCurrentDraftOwnerId() {
+    return String(window.ESpecDevAuth?.getProfile()?.userId || "").trim();
+  }
+
+  function confirmDiscardChanges() {
+    return !hasUnsavedChanges || confirm(
+      "Perubahan belum disimpan ke server akan hilang. Lanjutkan?"
+    );
+  }
+
+  function parseDetailFormData(detail) {
+    let formData = detail?.formData || detail?.form_data || {};
+
+    if (typeof formData === "string") {
+      formData = safeJSONParse(formData, {});
+    }
+
+    if (!formData || typeof formData !== "object" || Array.isArray(formData)) {
+      formData = {};
+    }
+
+    return {
+      ...formData,
+      persistedDocumentNo: detail?.documentNo || formData.persistedDocumentNo || ""
+    };
+  }
+
+  async function reapplyServerMasterData(data) {
+    if (!masterDataReady) return;
+
+    const savedPlant = String(data.plant || plantSelect?.value || "");
+    await loadDepartments(findPlant(savedPlant)?.id, data.department || deptSelect?.value || "");
+
+    const savedGroup = String(
+      pendingMaterialGroupValue || data.materialGroup || materialGroupSelect?.value || ""
+    );
+    await loadMaterialGroups(getSelectedCategories()[0], savedGroup);
+    pendingMaterialCategoryValue = "";
+    pendingMaterialGroupValue = "";
+  }
+
   function getDraftDocumentNumber(formData) {
     const existing = String(persistedDocumentNo || formData.persistedDocumentNo || "").trim();
 
@@ -2418,11 +2464,24 @@ updateShowHiddenCounter(hiddenCount);
       throw new Error("Tipe spesifikasi Barang belum tersedia.");
     }
 
+    const currentOwnerId = getCurrentDraftOwnerId();
+
+    if (!currentOwnerId) {
+      throw new Error("Identitas development tidak tersedia untuk menyimpan Draft.");
+    }
+
     const formData = getFormData();
     const documentNo = getDraftDocumentNumber(formData);
     persistedDocumentNo = documentNo;
     formData.persistedDocumentNo = documentNo;
     const isUpdate = Boolean(persistedDraftId);
+
+    setStatus(
+      isUpdate
+        ? "Menyimpan perubahan Draft ke server..."
+        : "Menyimpan Draft baru ke server..."
+    );
+
     const response = await fetch(
       isUpdate
         ? `${API_BASE_URL}/specifications/${encodeURIComponent(persistedDraftId)}`
@@ -2441,6 +2500,15 @@ updateShowHiddenCounter(hiddenCount);
     const result = await response.json().catch(() => ({}));
 
     if (!response.ok) {
+      if (response.status === 403 && /pemilik|akses/i.test(result.message || "")) {
+        persistedDraftId = null;
+        persistedDocumentNo = null;
+        hasUnsavedChanges = true;
+        showDraftOwnershipIssue(
+          "Server menolak pembaruan karena Draft bukan milik identitas ini. Pilih Draft yang dimiliki atau buat Draft baru."
+        );
+      }
+
       throw new Error(result.message || "Gagal menyimpan draft ke server.");
     }
 
@@ -2450,11 +2518,96 @@ updateShowHiddenCounter(hiddenCount);
       throw new Error("Server tidak mengembalikan ID spesifikasi.");
     }
 
-    localStorage.setItem(PERSISTED_DRAFT_ID_KEY, String(persistedDraftId));
-    localStorage.setItem(PERSISTED_DOCUMENT_NO_KEY, documentNo);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    persistedDocumentNo = result.data?.documentNo || documentNo;
+    formData.persistedDocumentNo = persistedDocumentNo;
+    hasUnsavedChanges = false;
+    clearDraftOwnershipIssue();
+
+    if (legacyPendingClear) {
+      window.ESpecDraftWorkspace?.clearLegacy?.("barang");
+      legacyPendingClear = false;
+    }
+
+    window.ESpecDraftWorkspace?.refreshActive?.();
 
     return { isUpdate };
+  }
+
+  async function getSubmissionAction(id) {
+    const response = await fetch(
+      `${API_BASE_URL}/specifications/${encodeURIComponent(id)}`,
+      { headers: getApiHeaders() }
+    );
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.message || "Gagal memeriksa status dokumen.");
+    }
+
+    const status = result.data?.status;
+
+    if (status === "Draft") return "submit";
+    if (status === "Revision Required") return "resubmit";
+
+    throw new Error(
+      `Dokumen berstatus ${status || "tidak diketahui"} dan tidak dapat diajukan.`
+    );
+  }
+
+  async function submitForApproval() {
+    if (submitting) return;
+    if (!validateForm()) return;
+
+    submitting = true;
+    const originalText = submitBtn?.textContent;
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Mengajukan...";
+    }
+
+    try {
+      initializeDocumentInfo();
+      saveDraft();
+      setStatus("Menyimpan draft dan memeriksa status dokumen...");
+
+      await saveDraftToServer();
+      const action = await getSubmissionAction(persistedDraftId);
+
+      const response = await fetch(
+        `${API_BASE_URL}/specifications/${encodeURIComponent(persistedDraftId)}/${action}`,
+        {
+          method: "POST",
+          headers: getApiHeaders(),
+          body: JSON.stringify({})
+        }
+      );
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(result.message || "Gagal mengajukan spesifikasi.");
+      }
+
+      const message = result.message || (
+        action === "resubmit"
+          ? "Spesifikasi berhasil diajukan ulang untuk approval."
+          : "Spesifikasi berhasil diajukan untuk approval."
+      );
+
+      setStatus(message);
+      alert(message);
+    } catch (error) {
+      console.error("Gagal mengajukan spesifikasi Barang:", error);
+      setStatus("Perubahan belum tersimpan, tetapi pengajuan gagal", true);
+      alert(`Gagal mengajukan spesifikasi.\n\n${error.message}`);
+    } finally {
+      submitting = false;
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    }
   }
 
   // =====================================================
@@ -2794,55 +2947,106 @@ updateShowHiddenCounter(hiddenCount);
   function saveDraft() {
     if (loadingDocument) return;
 
+    hasUnsavedChanges = true;
+    setStatus("Perubahan belum disimpan");
+  }
+
+  function applyFormDataToQuestionnaire(data) {
+    loadingDocument = true;
+
     try {
-      const data = getFormData();
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-
-      setStatus("Draft tersimpan otomatis di browser");
+      restoreForm(data);
+      return true;
     } catch (error) {
-      console.error("Gagal menyimpan draft:", error);
-
-      setStatus(
-        "Draft gagal disimpan. Periksa ukuran gambar atau penyimpanan browser."
-      );
+      console.error("Gagal menerapkan data Draft:", error);
+      return false;
+    } finally {
+      loadingDocument = false;
     }
   }
 
-  function restoreDraft() {
-    try {
-      const saved =
-        localStorage.getItem(STORAGE_KEY) ||
-        localStorage.getItem(OLD_STORAGE_KEY);
+  async function resumeServerDraft(detail) {
+    if (!confirmDiscardChanges()) return;
 
-      if (!saved) return false;
+    const data = parseDetailFormData(detail);
 
-      const data = safeJSONParse(saved, null);
-
-      if (!data) return false;
-
-      loadingDocument = true;
-      restoreForm(data);
-      loadingDocument = false;
-
-      persistedDraftId = Number(
-        localStorage.getItem(PERSISTED_DRAFT_ID_KEY) || 0
-      ) || null;
-      persistedDocumentNo = String(
-        localStorage.getItem(PERSISTED_DOCUMENT_NO_KEY) || data.persistedDocumentNo || ""
-      ).trim() || null;
-
-      setStatus("Draft sebelumnya berhasil dipulihkan");
-
-      return true;
-    } catch (error) {
-      loadingDocument = false;
-
-      console.error("Gagal memulihkan draft:", error);
-      setStatus("Draft sebelumnya gagal dipulihkan");
-
-      return false;
+    if (!applyFormDataToQuestionnaire(data)) {
+      setStatus("Draft server gagal dipulihkan ke formulir.", true);
+      return;
     }
+
+    persistedDraftId = detail?.id || null;
+    persistedDocumentNo = detail?.documentNo || null;
+    await reapplyServerMasterData(data);
+    hasUnsavedChanges = false;
+    clearDraftOwnershipIssue();
+
+    setStatus(
+      `Draft ${detail?.documentNo || detail?.id || ""} dimuat dari server. Terakhir diperbarui ${
+        window.ESpecDraftWorkspace?.formatUpdatedAt?.(detail?.updatedAt) || "-"
+      }.`
+    );
+  }
+
+  async function resumeDraftFromQuery(id) {
+    if (!/^[1-9]\d*$/.test(String(id))) {
+      setStatus("ID Draft tidak valid.", true);
+      return;
+    }
+
+    try {
+      setStatus("Memuat Draft dari server...");
+
+      const response = await fetch(
+        `${API_BASE_URL}/specifications/my-drafts/${encodeURIComponent(id)}`,
+        { headers: getApiHeaders() }
+      );
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || result.success !== true) {
+        throw new Error(result.message || "Draft tidak ditemukan.");
+      }
+
+      await resumeServerDraft(result.data);
+    } catch (error) {
+      setStatus(error.message || "Gagal memuat Draft dari server.", true);
+    }
+  }
+
+  async function importLegacyBarang(legacy) {
+    if (!legacy?.formData) {
+      setStatus("Tidak ada data Draft lama di browser untuk dipulihkan.", true);
+      return;
+    }
+
+    if (!confirmDiscardChanges()) return;
+
+    clearFormForNewDraft();
+    persistedDraftId = null;
+    persistedDocumentNo = null;
+    legacyPendingClear = true;
+
+    const source = legacy?.formData && typeof legacy.formData === "object"
+      ? legacy.formData
+      : {};
+    const legacyFormData = { ...source };
+
+    delete legacyFormData.persistedDocumentNo;
+
+    const data = parseDetailFormData({ formData: legacyFormData, documentNo: "" });
+
+    if (!applyFormDataToQuestionnaire(data)) {
+      legacyPendingClear = false;
+      setStatus("Data Draft lama gagal dipulihkan ke formulir.", true);
+      return;
+    }
+
+    await reapplyServerMasterData(data);
+    hasUnsavedChanges = true;
+
+    setStatus(
+      "Data Draft lama dimuat sebagai Draft baru. Klik Save As Draft untuk menyimpannya ke server."
+    );
   }
 
   async function loadMasterData() {
@@ -3119,28 +3323,8 @@ updateShowHiddenCounter(hiddenCount);
 
   function saveTransactionLocally() {
     try {
-      const data = getFormData();
-
       const versionInput = getVersionInput();
-      const createdDateInput = getCreatedDateInput();
-
       const currentVersion = Number(versionInput?.value || 0);
-
-      const history = safeJSONParse(
-        localStorage.getItem(HISTORY_KEY),
-        []
-      );
-
-      history.push({
-        id: Date.now(),
-        version: String(currentVersion).padStart(2, "0"),
-        createdDate: createdDateInput?.value || todayISO(),
-        submittedAt: new Date().toISOString(),
-        formData: data
-      });
-
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-
       const nextVersion = currentVersion + 1;
 
       localStorage.setItem(
@@ -3152,16 +3336,9 @@ updateShowHiddenCounter(hiddenCount);
         versionInput.value = String(nextVersion).padStart(2, "0");
       }
 
-      saveDraft();
-
       return true;
     } catch (error) {
-      console.error("Gagal menyimpan transaksi:", error);
-
-      alert(
-        "Transaksi gagal disimpan di browser. Periksa kapasitas penyimpanan."
-      );
-
+      console.error("Gagal memperbarui versi dokumen:", error);
       return false;
     }
   }
@@ -3473,24 +3650,16 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
   // RESET
   // =====================================================
 
-  resetBtn?.addEventListener("click", () => {
-    const confirmed = confirm(
-      "Yakin ingin mengosongkan seluruh jawaban spesifikasi barang?"
-    );
-
-    if (!confirmed) return;
-
+  function clearFormForNewDraft() {
     questionnaire.reset();
 
     updateMaterialGroupOther();
     updateMaterialGroupMatrix();
 
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(OLD_STORAGE_KEY);
-    localStorage.removeItem(PERSISTED_DRAFT_ID_KEY);
-    localStorage.removeItem(PERSISTED_DOCUMENT_NO_KEY);
     persistedDraftId = null;
     persistedDocumentNo = null;
+    hasUnsavedChanges = false;
+    clearDraftOwnershipIssue();
 
     drawingImage = "";
 
@@ -3522,9 +3691,24 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
     updateDimension();
     updatePackSize();
     updateAllMechanicalOthers();
+    transferToPrint({});
+  }
 
-    saveDraft();
+  function startNewDraft() {
+    if (!confirmDiscardChanges()) return;
 
+    clearFormForNewDraft();
+    setStatus("Draft baru siap dibuat. Klik Save As Draft untuk menyimpannya ke server.");
+  }
+
+  resetBtn?.addEventListener("click", () => {
+    const confirmed = confirm(
+      "Yakin ingin mengosongkan seluruh jawaban spesifikasi barang?"
+    );
+
+    if (!confirmed) return;
+
+    clearFormForNewDraft();
     setStatus("Form berhasil direset");
 
     window.scrollTo({
@@ -3566,7 +3750,7 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
       );
     } catch (error) {
       console.error("Gagal menyimpan draft Barang:", error);
-      setStatus("Draft browser tersimpan, tetapi penyimpanan server gagal");
+      setStatus("Perubahan belum tersimpan, penyimpanan server gagal", true);
       alert(`Gagal menyimpan draft ke server.\n\n${error.message}`);
     } finally {
       saving = false;
@@ -3586,7 +3770,8 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
       setStatus("Mengambil dokumen dari database...");
 
       const response = await fetch(
-        `${API_BASE_URL}/documents/${encodeURIComponent(id)}`
+        `${API_BASE_URL}/specifications/my-documents/${encodeURIComponent(id)}`,
+        { headers: getApiHeaders() }
       );
 
       const result = await response.json();
@@ -3599,11 +3784,11 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
         );
       }
 
-      const row = result.document || result;
+      const row = result.data || result.document || result;
 
       let formData =
-        row.form_data ||
         row.formData ||
+        row.form_data ||
         {};
 
       if (typeof formData === "string") {
@@ -3616,11 +3801,12 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
         id: row.id,
 
         docNo:
-          row.doc_no ??
+          row.documentNo ??
+          row.document_no ??
           row.docNo ??
           "",
 
-        revision: row.revision ?? "",
+        revision: row.revisionNo ?? row.revision ?? "",
 
         plant:
           row.plant ??
@@ -3638,16 +3824,18 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
           "",
 
         materialDescription:
+          row.materialDescription ??
           row.material_description ??
           formData.materialDescription ??
           "",
 
         materialCode:
+          row.materialCode ??
           row.material_code ??
           formData.materialCode ??
           "",
 
-        specType: row.spec_type || "Barang"
+        specType: row.specificationTypeName || row.spec_type || "Barang"
       };
 
       restoreForm(data);
@@ -3670,13 +3858,10 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
     }
   }
 
-  // =====================================================
-  // INITIALIZATION
-  // =====================================================
-
-  function initialize() {
+  async function initialize() {
     const params = new URLSearchParams(window.location.search);
     const printId = params.get("printId");
+    const legacyImport = params.get("legacyImport");
 
     initializeMechanicalUomOptions();
 
@@ -3692,13 +3877,7 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
 
     initializeDocumentInfo();
 
-    const restored = restoreDraft();
-
-    if (
-      !restored &&
-      dimensionContainer &&
-      !$(".dimension-row", dimensionContainer)
-    ) {
+    if (dimensionContainer && !$(".dimension-row", dimensionContainer)) {
       createDimensionRow();
     }
 
@@ -3714,32 +3893,23 @@ $("#addTechnicalBtn")?.addEventListener("click", () => {
     updatePackSize();
     updateAllMechanicalOthers();
 
-    loadMasterData().then(() => {
-      if (masterDataReady) saveDraft();
+    loadMasterData().then(async () => {
+      if (legacyImport) {
+        await importLegacyBarang(window.ESpecDraftWorkspace?.readLegacy?.("barang"));
+      }
+
+      const resumeId = params.get("resumeId");
+
+      if (resumeId) await resumeDraftFromQuery(resumeId);
     });
   }
 
-  // =====================================================
-  // PDF BUTTON
-  // =====================================================
-
-  pdfBtn?.addEventListener("click", () => {
-    if (!validateForm()) return;
-
-    initializeDocumentInfo();
-
-    const data = getFormData();
-
-    saveDraft();
-    transferToPrint(data);
-
-    window.print();
-  });
+  submitBtn?.addEventListener("click", submitForApproval);
 
   // =====================================================
   // START APPLICATION
   // =====================================================
 
-  initialize();
+  Promise.resolve(window.ESpecRoleNav?.ready).then(() => initialize());
 
 })();

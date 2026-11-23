@@ -17,8 +17,17 @@ const requireRequestor = [
   requireRoles([ROLES.REQUESTOR]),
 ];
 const requireApprovalUser = [authenticate, requireAuthenticated];
+const requireScopedReadUser = [authenticate, requireAuthenticated];
 
 router.get("/", specificationController.getAllSpecifications);
+router.get("/my-drafts", ...requireRequestor, specificationController.getMyDraftSpecifications);
+router.get("/my-drafts/:id", ...requireRequestor, specificationController.getMyDraftSpecificationById);
+router.get("/my-documents", ...requireScopedReadUser, specificationController.getScopedSpecifications);
+router.get(
+  "/my-documents/:id",
+  ...requireScopedReadUser,
+  specificationController.getScopedSpecificationById
+);
 router.post("/", ...requireRequestor, specificationController.createSpecificationDraft);
 router.post("/:id/submit", ...requireRequestor, specificationController.submitSpecification);
 router.post("/:id/resubmit", ...requireRequestor, specificationController.resubmitSpecification);

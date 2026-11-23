@@ -72,7 +72,8 @@ const buildApprovalRoute = async ({
 
   const rules = await patternProvider.getApprovalRules(
     materialGroupCode,
-    environment
+    environment,
+    specification
   );
   const orderedRules = normalizeOrderedRules(rules);
   const steps = [];

@@ -18,6 +18,13 @@ const headEngineering = {
   plantIds: [7201],
   departmentIds: [7301],
 };
+const requestor = {
+  userId: "DEV-REQ-001",
+  displayName: "Development Requestor",
+  roles: ["Requestor"],
+  plantIds: [7201],
+  departmentIds: [7301],
+};
 
 const loadRepository = ({ step = {}, hasNextStep = false, failAt } = {}) => {
   const originalLoad = Module._load;
@@ -159,6 +166,75 @@ test("HeadEngineering cannot skip the Manager actionable step", async () => {
   );
   assert.equal(calls.some(({ sql }) => /UPDATE specification_approval_steps/.test(sql)), false);
   assert.equal(calls.at(-1).sql, "ROLLBACK");
+});
+
+test("BEARING first pending step is Manager", async () => {
+  const { repository, calls } = loadRepository();
+  await assert.rejects(
+    () => repository.decide({ specificationId: 60, actor: headEngineering, decision: "approve" }),
+    { statusCode: 403 }
+  );
+  assert.equal(calls.some(({ sql }) => /UPDATE specification_approval_steps/.test(sql)), false);
+});
+
+test("BEARING Manager approval leaves HeadEngineering as the next pending step", async () => {
+  const { repository, calls } = loadRepository({ hasNextStep: true });
+  const result = await repository.decide({
+    specificationId: 60,
+    actor: manager,
+    decision: "approve",
+  });
+
+  assert.equal(result.decision, "Approved");
+  assert.equal(
+    calls.some(({ sql, values }) => /WHERE approvalcycleid = \$1 AND approvalstatus = \$2/.test(sql) && values[1] === "Pending"),
+    true
+  );
+  assert.equal(calls.some(({ sql }) => /UPDATE specification_approval_cycles/.test(sql)), false);
+  assert.equal(calls.some(({ sql }) => /UPDATE specifications/.test(sql)), false);
+});
+
+test("BEARING HeadEngineering approval completes the document", async () => {
+  const { repository, calls } = loadRepository({
+    step: {
+      id: 81,
+      stepno: 2,
+      approverrole: "HeadEngineering",
+      approvername: "Development Head Engineering",
+      assignedapproveruserid: "DEV-HE-001",
+    },
+  });
+  const result = await repository.decide({
+    specificationId: 60,
+    actor: headEngineering,
+    decision: "approve",
+  });
+
+  assert.equal(result.decision, "Approved");
+  assert.equal(calls.some(({ sql, values }) => /UPDATE specification_approval_cycles/.test(sql) && values.includes("Completed")), true);
+  assert.equal(calls.some(({ sql, values }) => /UPDATE specifications/.test(sql) && values.includes("Approved")), true);
+});
+
+test("BEARING Requestor cannot approve the document", async () => {
+  const { repository, calls } = loadRepository();
+  await assert.rejects(
+    () => repository.decide({ specificationId: 60, actor: requestor, decision: "approve" }),
+    { statusCode: 403 }
+  );
+  assert.equal(calls.some(({ sql }) => /UPDATE specification_approval_steps/.test(sql)), false);
+});
+
+test("BEARING exact assigned-user authorization is enforced", async () => {
+  const { repository, calls } = loadRepository();
+  await assert.rejects(
+    () => repository.decide({
+      specificationId: 60,
+      actor: { ...manager, userId: "DEV-MGR-002" },
+      decision: "approve",
+    }),
+    { statusCode: 403, message: "Anda bukan approver yang ditugaskan." }
+  );
+  assert.equal(calls.some(({ sql }) => /UPDATE specification_approval_steps/.test(sql)), false);
 });
 
 test("wrong organizational scope is rejected before any decision write", async () => {

@@ -8,7 +8,7 @@ const jasaPage = fs.readFileSync(path.resolve(__dirname, "../../jasa.html"), "ut
 
 test("Jasa uses the local API override with the port 3000 fallback", () => {
   assert.match(jasaScript, /window\.ESPEC_CONFIG\?\.API_BASE_URL\s*\|\|\s*"http:\/\/localhost:3000\/api"/);
-  assert.match(jasaPage, /<script src="frontend\.local\.js"><\/script>\s*<script src="jasa\.js"><\/script>/);
+  assert.match(jasaPage, /<script src="frontend\.local\.js"><\/script>\s*<script src="role-nav\.js"><\/script>\s*<script src="draft-workspace\.js"><\/script>\s*<script src="jasa\.js"><\/script>/);
 });
 
 test("Jasa sends only active test-master-data attribute codes", () => {

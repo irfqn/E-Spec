@@ -35,9 +35,9 @@ Use the master-data group row whose `sapgroupcode` is `BEARING`. The live Barang
 | `MATERIAL_GROUP` | `materialGroup` | Selected group database ID | Workbook required; reference resolved by backend | Present |
 | `MATERIAL_CATEGORY` | first selected category | Non-empty selected category ID | Workbook required; reference/type relationship enforced | Present |
 | `REASON_TO_PROCURE` | `reason` or `reasonChoice` | Non-empty selected reason ID | Workbook required; active/type relationship enforced | Present |
-| `LOCATION` | `location` | Non-empty only | Workbook marks Asset-only, not BEARING minimum | Missing, optional |
+| `LOCATION` | `location` | Not submitted as `attributeValues`; persisted via `formData.location` | Workbook marks Asset-only, not BEARING minimum | Missing, optional |
 | `MATERIAL_DESCRIPTION` | `materialDescription` | Non-empty text | BEARING mandatory in matrix and backend | Present |
-| `MATERIAL_CODE` | `materialCode` | Non-empty only | Optional in matrix | Missing, optional |
+| `MATERIAL_CODE` | `materialCode` | Not submitted as `attributeValues`; persisted via `formData.materialCode` and `specifications.materialcode` | Optional in matrix | Missing, optional |
 | `TYPE_MODEL_PART_NUMBER` | `partNumber` | Non-empty text | BEARING mandatory in matrix and backend | Present |
 | `VARIANS` | `variant` | Non-empty text | BEARING mandatory in matrix and backend | Present |
 | `DIMENSION` | derived `dimension` | Non-empty derived text | BEARING mandatory in matrix and backend | Present |

@@ -4,6 +4,7 @@ const {
   validateBarang,
   validateJasa,
 } = require("../utils/specification-draft.validation");
+const { SPECIFICATION_STATUS } = require("../workflow/constants/statuses");
 
 const isPositiveInteger = (value) => /^[1-9]\d*$/.test(String(value));
 
@@ -462,7 +463,7 @@ const findAll = async ({ specificationTypeId, status }) => {
   return result.rows;
 };
 
-const findById = async (id) => {
+const findAllScopedDocuments = async ({ actorUserId }) => {
   const result = await pool.query(
     `
       SELECT
@@ -472,6 +473,120 @@ const findById = async (id) => {
         s.specificationtypeid AS specification_type_id,
         st.typecode AS specification_type_code,
         st.typename AS specification_type_name,
+        s.requestor,
+        d.departmentname AS department,
+        s.materialdescription AS material_description,
+        s.materialcode AS material_code,
+        s.status,
+        s.submittedat AS submitted_at,
+        s.createddate AS created_at,
+        s.updateddate AS updated_at
+      FROM specifications s
+      INNER JOIN specification_types st
+        ON st.id = s.specificationtypeid
+      LEFT JOIN departments d
+        ON d.id = s.departmentid
+      WHERE s.createdbyuserid = $1
+         OR EXISTS (
+           SELECT 1
+           FROM specification_approval_steps step
+           WHERE step.specificationid = s.id
+             AND (step.assignedapproveruserid = $1 OR step.actionbyuserid = $1)
+         )
+      ORDER BY s.updateddate DESC NULLS LAST, s.id DESC
+    `,
+    [actorUserId]
+  );
+
+  return result.rows;
+};
+
+const findAllMyDrafts = async ({ creatorUserId, specificationTypeId, status }) => {
+  const conditions = [
+    "s.createdbyuserid = $1",
+    `s.status IN ($2, $3)`,
+  ];
+  const values = [
+    creatorUserId,
+    SPECIFICATION_STATUS.DRAFT,
+    SPECIFICATION_STATUS.REVISION_REQUIRED,
+  ];
+
+  if (specificationTypeId !== undefined) {
+    values.push(specificationTypeId);
+    conditions.push(`s.specificationtypeid = $${values.length}`);
+  }
+
+  if (status !== undefined) {
+    values.push(status);
+    conditions.push(`s.status = $${values.length}`);
+  }
+
+  const result = await pool.query(
+    `
+      SELECT
+        s.id,
+        s.documentno AS document_no,
+        s.revisionno AS revision_no,
+        s.specificationtypeid AS specification_type_id,
+        st.typecode AS specification_type_code,
+        st.typename AS specification_type_name,
+        s.status,
+        s.createddate AS created_at,
+        s.updateddate AS updated_at
+      FROM specifications s
+      INNER JOIN specification_types st
+        ON st.id = s.specificationtypeid
+      WHERE ${conditions.join(" AND ")}
+      ORDER BY s.updateddate DESC NULLS LAST, s.id DESC
+    `,
+    values
+  );
+
+  return result.rows;
+};
+
+const loadSpecificationById = async (id, options = {}) => {
+  const settings =
+    options && typeof options === "object"
+      ? options
+      : { creatorUserId: options };
+
+  const conditions = ["s.id = $1"];
+  const values = [id];
+
+  if (settings.creatorUserId) {
+    values.push(settings.creatorUserId);
+    conditions.push(`s.createdbyuserid = $${values.length}`);
+  }
+
+  if (settings.approverUserId) {
+    values.push(settings.approverUserId);
+    conditions.push(
+      `EXISTS (
+         SELECT 1
+         FROM specification_approval_steps step
+         WHERE step.specificationid = s.id
+           AND (step.assignedapproveruserid = $${values.length} OR step.actionbyuserid = $${values.length})
+       )`
+    );
+  }
+
+  if (settings.editableOnly) {
+    values.push(SPECIFICATION_STATUS.DRAFT, SPECIFICATION_STATUS.REVISION_REQUIRED);
+    conditions.push(`s.status IN ($${values.length - 1}, $${values.length})`);
+  }
+
+  const result = await pool.query(
+    `
+      SELECT
+        s.id,
+        s.documentno AS document_no,
+        s.revisionno AS revision_no,
+        s.specificationtypeid AS specification_type_id,
+        st.typecode AS specification_type_code,
+        st.typename AS specification_type_name,
+        d.departmentname AS department,
         s.plantid AS plant_id,
         s.departmentid AS department_id,
         s.subdepartmentid AS sub_department_id,
@@ -494,6 +609,8 @@ const findById = async (id) => {
       FROM specifications s
       INNER JOIN specification_types st
         ON st.id = s.specificationtypeid
+      LEFT JOIN departments d
+        ON d.id = s.departmentid
       LEFT JOIN LATERAL (
         SELECT jsonb_agg(
           jsonb_build_object(
@@ -570,17 +687,37 @@ const findById = async (id) => {
         FROM specification_status_history ssh
         WHERE ssh.specificationid = s.id
       ) status_history ON TRUE
-      WHERE s.id = $1
+      WHERE ${[
+        conditions[0],
+        conditions.length > 1 ? `(${conditions.slice(1).join(" OR ")})` : null,
+      ]
+        .filter(Boolean)
+        .join(" AND ")}
     `,
-    [id]
+    values
   );
 
   return result.rows[0] || null;
 };
 
+const findById = (id) => loadSpecificationById(id);
+
+const findMyDraftById = (id, creatorUserId) =>
+  loadSpecificationById(id, { creatorUserId, editableOnly: true });
+
+const findScopedDocumentById = (id, actorUserId) =>
+  loadSpecificationById(id, {
+    creatorUserId: actorUserId,
+    approverUserId: actorUserId,
+  });
+
 module.exports = {
   findAll,
+  findAllScopedDocuments,
+  findAllMyDrafts,
   findById,
+  findMyDraftById,
+  findScopedDocumentById,
   findEditableById,
   createDraft,
   updateDraft,

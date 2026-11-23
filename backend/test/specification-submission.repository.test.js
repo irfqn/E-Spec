@@ -39,6 +39,12 @@ const route = {
       assignedApproverUserId: "DEV-MGR-001",
       assignedApproverDisplayName: "Development Manager",
     },
+    {
+      stepNo: 2,
+      approverRole: "HeadEngineering",
+      assignedApproverUserId: "DEV-HE-001",
+      assignedApproverDisplayName: "Development Head Engineering",
+    },
   ],
 };
 
@@ -69,7 +75,16 @@ const loadRepository = ({ current = specification(), latest = null, active = nul
       }
       if (/INSERT INTO specification_approval_steps/.test(sql)) {
         if (failAt === "step") throw new Error("step write failed");
-        return { rows: [{ stepno: 1, approverrole: "Manager", approvername: "Development Manager", approvalstatus: "Pending", assignedapproveruserid: "DEV-MGR-001" }] };
+        return {
+          rows: [{
+            approvalmatrixruleid: null,
+            stepno: values[2],
+            approverrole: values[3],
+            approvername: values[4],
+            approvalstatus: values[5],
+            assignedapproveruserid: values[6],
+          }],
+        };
       }
       if (/UPDATE specifications/.test(sql)) return { rows: [] };
       if (/INSERT INTO specification_status_history/.test(sql)) return { rows: [] };
@@ -122,6 +137,35 @@ test("initial submission persists an active cycle, pending step, status history,
   assert.equal(calls.some(({ sql }) => /INSERT INTO specification_status_history/.test(sql)), true);
   assert.equal(calls.some(({ sql }) => /UPDATE specifications/.test(sql)), true);
   assert.equal(released(), true);
+});
+
+test("approval step insert uses approvalmatrixruleid with NULL for development routing", async () => {
+  const { repository, calls } = loadRepository();
+
+  const result = await repository.submit({
+    specificationId: 60,
+    actor,
+    buildRoute: async () => route,
+  });
+
+  const stepInserts = calls.filter(({ sql }) => /INSERT INTO specification_approval_steps/.test(sql));
+  assert.equal(stepInserts.length, 2);
+
+  for (const { sql } of stepInserts) {
+    assert.match(sql, /\bapprovalmatrixruleid\b/);
+    assert.doesNotMatch(sql, /\bapprovalruleid\b/);
+    assert.match(sql, /VALUES \(\$1, \$2, \$3, NULL, \$4, \$5, \$6, \$7\)/);
+  }
+
+  assert.deepEqual(result.approvalSteps.map(({ approvalmatrixruleid }) => approvalmatrixruleid), [null, null]);
+  assert.deepEqual(
+    result.approvalSteps.map(({ assignedapproveruserid }) => assignedapproveruserid),
+    ["DEV-MGR-001", "DEV-HE-001"]
+  );
+  assert.deepEqual(
+    result.approvalSteps.map(({ approverrole }) => approverrole),
+    ["Manager", "HeadEngineering"]
+  );
 });
 
 test("failed submission rolls back all workflow writes", async () => {

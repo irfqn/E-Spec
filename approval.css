@@ -777,6 +777,129 @@
   }
 }
 
+.approval-detail-content {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.approval-detail-content,
+.approval-detail-content *,
+.approval-detail-content *::before,
+.approval-detail-content *::after {
+  box-sizing: border-box;
+}
+
+.approval-detail-content > .panel {
+  min-width: 0;
+  max-width: 100%;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.approval-detail-content > .panel > .panel-top {
+  margin: 0;
+  padding: 0 0 22px;
+}
+
+.approval-detail-content .panel-heading {
+  min-width: 0;
+}
+
+.approval-detail-content .approval-document-info,
+.approval-detail-content .approval-form-grid {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 14px;
+}
+
+.approval-form-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.approval-form-section {
+  min-width: 0;
+  margin: 0 0 22px;
+  padding: 18px 16px;
+  border: 1px solid #ececf5;
+  border-radius: 14px;
+  background: #fcfcff;
+}
+
+.approval-section-title,
+.approval-subsection-title {
+  min-width: 0;
+  margin: 0 0 14px;
+  color: var(--approval-ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.approval-section-title {
+  font-size: 14px;
+}
+
+.approval-subsection-title {
+  margin-top: 18px;
+  font-size: 12px;
+}
+
+.approval-form-section:last-child {
+  margin-bottom: 0;
+}
+
+.approval-detail-content .readonly-field,
+.approval-detail-content .readonly-field input,
+.approval-detail-content .readonly-field select,
+.approval-detail-content .readonly-field textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.approval-detail-content .readonly-field {
+  overflow: visible;
+}
+
+.approval-detail-content .readonly-field input,
+.approval-detail-content .readonly-field select,
+.approval-detail-content .readonly-field textarea {
+  background: #f8fafc;
+  color: #334155;
+  cursor: default;
+  opacity: 1;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1280px) {
+  .approval-detail-content .approval-document-info {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .approval-detail-content .approval-action-area {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .approval-detail-content .approval-buttons {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .approval-detail-content .decision-select {
+    flex: 1 1 260px;
+  }
+
+  .approval-detail-content .decision-comment {
+    flex: 1 1 100%;
+  }
+}
+
 /* =========================================
    RESPONSIVE MOBILE
 ========================================= */
@@ -809,22 +932,24 @@
     overflow-x: auto;
   }
 
-  .approval-document-info {
-    grid-template-columns: 1fr;
+  .approval-detail-content .approval-document-info,
+  .approval-detail-content .approval-form-grid,
+  .approval-detail-content .approval-form-fields {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .approval-info-item.rejection-reason {
     grid-column: auto;
   }
 
-  .approval-detail-panel {
-    padding: 0 15px 17px;
+  .approval-detail-content > .panel {
+    padding: 16px;
     border-radius: 14px;
   }
 
-  .approval-detail-panel > .panel-top {
-    margin: 0 -15px;
-    padding: 17px 15px;
+  .approval-detail-content > .panel > .panel-top {
+    margin: 0;
+    padding: 0 0 16px;
   }
 
   .approval-detail-panel > .panel-top {
@@ -1316,6 +1441,66 @@
 
 
 /* =====================================================
+   MY E-SPEC — DRAFT WORKSPACE
+===================================================== */
+
+.my-draft-panel {
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid #e9ebf3;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(39, 42, 90, .045);
+}
+
+.my-draft-panel > .panel-top {
+  padding: 20px 22px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.my-draft-panel .panel-heading h2 {
+  color: #202b45;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.my-draft-panel .panel-heading p {
+  color: #8791a5;
+  font-size: 10px;
+}
+
+.draft-source-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px 0;
+}
+
+.draft-source-switch label {
+  color: #202b45;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.draft-source-switch select {
+  padding: 9px 11px;
+  border: 1px solid #e9ebf3;
+  border-radius: 10px;
+  background: #fff;
+  color: #202b45;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.draft-source-panel {
+  padding: 14px 22px 20px;
+}
+
+.draft-source-panel[hidden] {
+  display: none;
+}
+
+/* =====================================================
    MY E-SPEC — TABLE WORKSPACE
    Tambahan styling khusus halaman approval.html
    Tema utama E-Spec tetap dipertahankan
@@ -1725,4 +1910,38 @@
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+.readonly-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.readonly-field label {
+  color: var(--approval-muted, #64748b);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.readonly-field input,
+.readonly-field select,
+.decision-select,
+.decision-comment {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--approval-line, #e2e8f0);
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #334155;
+  font: inherit;
+}
+
+.decision-comment {
+  margin-top: 10px;
+  resize: vertical;
+}
+
+.approval-buttons {
+  min-width: 320px;
 }

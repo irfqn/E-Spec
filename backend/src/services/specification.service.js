@@ -1,4 +1,10 @@
 const specificationRepository = require("../repositories/specification.repository");
+const { SPECIFICATION_STATUS } = require("../workflow/constants/statuses");
+
+const EDITABLE_DRAFT_STATUSES = [
+  SPECIFICATION_STATUS.DRAFT,
+  SPECIFICATION_STATUS.REVISION_REQUIRED,
+];
 
 const getAllSpecifications = async ({ specificationTypeId, status }) => {
   const filters = {};
@@ -40,6 +46,53 @@ const getSpecificationById = async (id) => {
   return specification;
 };
 
+const parseFormData = (value) => {
+  if (!value) return {};
+  if (typeof value === "object") return value;
+
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+
+const attributeValueFromRow = (value) => {
+  if (!value || typeof value !== "object") return undefined;
+
+  if (value.json !== null && value.json !== undefined) return value.json;
+  if (value.optionId !== null && value.optionId !== undefined) return value.optionId;
+  if (value.text !== null && value.text !== undefined) return value.text;
+  if (value.number !== null && value.number !== undefined) return value.number;
+  if (value.boolean !== null && value.boolean !== undefined) return value.boolean;
+
+  return undefined;
+};
+
+const attributeValuesFromSections = (sections) => {
+  const values = {};
+
+  if (!Array.isArray(sections)) return values;
+
+  sections.forEach((section) => {
+    if (!Array.isArray(section?.attributes)) return;
+
+    section.attributes.forEach((attribute) => {
+      if (!attribute?.code || !Array.isArray(attribute.values)) return;
+
+      const normalized = attribute.values
+        .map(attributeValueFromRow)
+        .filter((value) => value !== undefined);
+
+      if (normalized.length === 1) values[attribute.code] = normalized[0];
+      else if (normalized.length > 1) values[attribute.code] = normalized;
+    });
+  });
+
+  return values;
+};
+
 const createHttpError = (message, statusCode) => {
   const error = new Error(message);
   error.statusCode = statusCode;
@@ -59,6 +112,132 @@ const normalizeActor = (actor) => {
   return {
     userId: actor.userId.trim(),
     displayName: String(actor.displayName ?? actor.userId).trim() || actor.userId.trim(),
+  };
+};
+
+const getMyDraftSpecifications = async ({ specificationTypeId, status }, actor) => {
+  const normalizedActor = normalizeActor(actor);
+  const filters = { creatorUserId: normalizedActor.userId };
+
+  if (specificationTypeId !== undefined) {
+    if (!/^[1-9]\d*$/.test(String(specificationTypeId))) {
+      throw createHttpError("specificationTypeId harus berupa angka positif.", 400);
+    }
+
+    filters.specificationTypeId = Number(specificationTypeId);
+  }
+
+  if (status !== undefined) {
+    const normalizedStatus = String(status).trim();
+
+    if (!EDITABLE_DRAFT_STATUSES.includes(normalizedStatus)) {
+      throw createHttpError("status Draft tidak dikenali.", 400);
+    }
+
+    filters.status = normalizedStatus;
+  }
+
+  const specifications = await specificationRepository.findAllMyDrafts(filters);
+
+  return specifications.map((row) => ({
+    id: row.id,
+    documentNo: row.document_no,
+    revisionNo: row.revision_no,
+    specificationTypeId: row.specification_type_id,
+    specificationTypeCode: row.specification_type_code,
+    specificationTypeName: row.specification_type_name,
+    status: row.status,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }));
+};
+
+const getMyDraftSpecificationById = async (id, actor) => {
+  const normalizedActor = normalizeActor(actor);
+  const row = await specificationRepository.findMyDraftById(id, normalizedActor.userId);
+
+  if (!row) {
+    throw createHttpError("Draft tidak ditemukan.", 404);
+  }
+
+  const formData = parseFormData(row.form_data);
+
+  return {
+    id: row.id,
+    documentNo: row.document_no,
+    revisionNo: row.revision_no,
+    specificationTypeId: row.specification_type_id,
+    specificationTypeCode: row.specification_type_code,
+    specificationTypeName: row.specification_type_name,
+    status: row.status,
+    formData,
+    form_data: formData,
+    attributeValues: attributeValuesFromSections(row.sections),
+    sections: row.sections || [],
+    createdBy: row.created_by,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+};
+
+const getScopedSpecifications = async (actor) => {
+  const normalizedActor = normalizeActor(actor);
+  const specifications = await specificationRepository.findAllScopedDocuments({
+    actorUserId: normalizedActor.userId,
+  });
+
+  return specifications.map((row) => ({
+    id: row.id,
+    documentNo: row.document_no,
+    revisionNo: row.revision_no,
+    specificationTypeId: row.specification_type_id,
+    specificationTypeCode: row.specification_type_code,
+    specificationTypeName: row.specification_type_name,
+    requestor: row.requestor,
+    department: row.department,
+    materialDescription: row.material_description,
+    materialCode: row.material_code,
+    status: row.status,
+    submittedAt: row.submitted_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }));
+};
+
+const getScopedSpecificationById = async (id, actor) => {
+  const normalizedActor = normalizeActor(actor);
+  const row = await specificationRepository.findScopedDocumentById(
+    id,
+    normalizedActor.userId
+  );
+
+  if (!row) {
+    throw createHttpError("Spesifikasi tidak ditemukan atau tidak dapat diakses.", 403);
+  }
+
+  const formData = parseFormData(row.form_data);
+
+  return {
+    id: row.id,
+    documentNo: row.document_no,
+    revisionNo: row.revision_no,
+    specificationTypeId: row.specification_type_id,
+    specificationTypeCode: row.specification_type_code,
+    specificationTypeName: row.specification_type_name,
+    requestor: row.requestor,
+    department: row.department,
+    materialDescription: row.material_description,
+    materialCode: row.material_code,
+    status: row.status,
+    formData,
+    form_data: formData,
+    attributeValues: attributeValuesFromSections(row.sections),
+    sections: row.sections || [],
+    createdBy: row.created_by,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    submittedAt: row.submitted_at,
+    statusHistory: row.status_history || [],
   };
 };
 
@@ -171,6 +350,10 @@ const updateSpecificationDraft = async (id, payload, actor) => {
 module.exports = {
   getAllSpecifications,
   getSpecificationById,
+  getMyDraftSpecifications,
+  getMyDraftSpecificationById,
+  getScopedSpecifications,
+  getScopedSpecificationById,
   createSpecificationDraft,
   updateSpecificationDraft,
 };
